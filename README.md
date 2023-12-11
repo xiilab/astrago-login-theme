@@ -10,12 +10,7 @@
 
 # Introduction
 
-This repo constitutes an easily reusable setup for a standalone Keycloak theme project OR for a SPA React App that generates a
-Keycloak theme that goes along with it.  
-If you are only looking to create a theme (and not a theme + an App) there are a lot of things that you can remove from this starter: [Please read this section of the README](#standalone-keycloak-theme).
-
-> ❗️ WARNING ❗️: Don't waste time trying to port this setup to [Vite](https://vitejs.dev/).  
-> Currently Keycloakify only works collocated with Webpack projects but [we are working toward enabling collocation with Vite](https://github.com/keycloakify/keycloakify/pull/275)!  
+Uyuni 키클락 테마 파일
 
 # Quick start
 
@@ -52,6 +47,23 @@ npx initialize-email-theme # For initializing your email theme
 npx download-builtin-keycloak-theme # For downloading the default theme (as a reference)
                                     # Look for the files in build_keycloak/src/main/resources/theme/{base,keycloak}
 ```
+
+# 개발 진행
+
+```
+nvm use lts/gallium 
+yarn install
+yarn start
+```
+- ./src/keycloak-theme/login/kcContext.ts 의 파일 수정 : 103 줄
+```
+export const { kcContext } = getKcContext({
+  // Uncomment to test the login page for development.
+  //   mockPageId: "login.ftl", // login 화면 개발시 해당 라인 주석 해제후 개발 진행
+  //   mockPageId: "register.ftl", // 회원가입 화면 개발시 해당 라인 주석 해제후 개발 진행
+});
+```
+
 
 # The CI workflow
 
