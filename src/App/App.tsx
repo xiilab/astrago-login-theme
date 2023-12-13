@@ -41,103 +41,10 @@ const { OidcProvider } = createOidcProvider({
   publicUrl: process.env.PUBLIC_URL,
 });
 
-// const notoSansKr = Noto_Sans_KR({
-//     // preload: true, 기본값
-//     subsets: ['latin'], // 또는 preload: false
-//     weight: ['100', '400', '500', '600', '700', '900'], // 가변 폰트가 아닌 경우, 사용할 fontWeight 배열
-//   });
-
-// //
-// const normalCss = css`
-//   // reset 할 내용들
-//   html {
-//     font-family: sans-serif; /* 1 */
-//     -ms-text-size-adjust: 100%; /* 2 */
-//     -webkit-text-size-adjust: 100%; /* 2 */
-//     /* TODO font */
-//     height: 100%;
-//   }
-
-//   /**
-//    * 기본 마진값을 제거.
-//    */
-//   body {
-//     margin: 0;
-//     height: 100%;
-//   }
-
-//   article,
-//   aside,
-//   details,
-//   figcaption,
-//   figure,
-//   footer,
-//   header,
-//   hgroup,
-//   main,
-//   menu,
-//   nav,
-//   section,
-//   summary {
-//     display: block;
-//   }
-
-//   h2,
-//   h3,
-//   h4 {
-//     padding: 0;
-//     margin: 0;
-//   }
-
-//   textarea {
-//     font-family: none;
-//   }
-
-//   p,
-//   ul,
-//   figure {
-//     padding: 0;
-//     margin: 0;
-//   }
-
-//   a:active,
-//   a:hover {
-//     outline: 0;
-//   }
-
-//   * {
-//     box-sizing: border-box;
-//   }
-
-//   #__next {
-//     height: 100%;
-//   }
-
-//   * {
-//     scrollbar-width: thin;
-//     scrollbar-color: blue orange;
-//   }
-
-//   /* Works on Chrome, Edge, and Safari */
-//   *::-webkit-scrollbar {
-//     width: 4px;
-//   }
-
-//   *::-webkit-scrollbar-track {
-//     background: #363636;
-//   }
-
-//   *::-webkit-scrollbar-thumb {
-//     background-color: #ff7525;
-//     border-radius: 2px;
-//     border: 2px solid #ff7525;
-//   }
-// `;
 
 export default function App() {
   return (
     <OidcProvider>
-      {/* <Global styles={normalCss} /> */}
       <ContextualizedApp />
     </OidcProvider>
   );

@@ -220,13 +220,13 @@ export default function Login(
                         </div>
                       )}
                     </div> */}
-                    <ResetWrapper>
+                    {/* <ResetWrapper>
                       {realm.resetPasswordAllowed && (
                         <a tabIndex={5} href={url.loginResetCredentialsUrl}>
                           Find Password
                         </a>
                       )}
-                    </ResetWrapper>
+                    </ResetWrapper> */}
                     {/* </div> */}
                     <DivisorWrapper>
                       <Line />
@@ -380,15 +380,15 @@ const PasswordInputContainer = styled(InputContainer)`
   margin-bottom: 6px;
 `;
 
-const ResetWrapper = styled('div')`
-  text-align: right;
-  text-decoration: none;
-  margin-bottom: 27px;
-  a {
-    color: #7a7a7a;
-    font-size: 12px;
-  }
-`;
+// const ResetWrapper = styled('div')`
+//   text-align: right;
+//   text-decoration: none;
+//   margin-bottom: 27px;
+//   a {
+//     color: #7a7a7a;
+//     font-size: 12px;
+//   }
+// `;
 
 const DivisorWrapper = styled('div')`
   display: flex;
@@ -396,7 +396,7 @@ const DivisorWrapper = styled('div')`
   justify-content: space-between;
   color: #7a7a7a;
   align-items: center;
-  margin-bottom: 59px;
+  margin: 59px 0;
   p {
     font-size: 14px;
     line-height: 25px;

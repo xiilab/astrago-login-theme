@@ -312,12 +312,10 @@ export default function Register(
                   <div className={getClassName('kcFormOptionsWrapperClass')}>
                     {/* <a href={url.loginUrl}>{msg('backToLogin')}</a> */}
                     <LoginUrlText>
-                      <div>
-                        Were you a member?
-                        <a href={url.loginUrl}>
-                          <span>Back to Login</span>
-                        </a>
-                      </div>
+                      <p>Were you a member?</p>
+                      <a href={url.loginUrl}>
+                        <span>Back to Login</span>
+                      </a>
                     </LoginUrlText>
                   </div>
                 </div>
@@ -421,12 +419,13 @@ const RegisterButton = styled('div')`
   }
 `;
 
-const LoginUrlText = styled('span')`
-  display: inline;
+const LoginUrlText = styled('div')`
   font-size: 14px;
   text-align: center;
   color: #ffffff;
   text-decoration: none;
+  display:flex;
+  justify-content: center;
   span {
     margin-left: 5px;
     color: #ff7525;
