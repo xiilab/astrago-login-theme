@@ -416,6 +416,7 @@ const RegisterButton = styled('div')`
     color: #ffffff;
     font-weight: 700;
     font-size: 21px;
+    cursor: pointer;
   }
 `;
 
