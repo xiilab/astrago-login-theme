@@ -68,7 +68,7 @@ export default function Template(props: TemplateProps<KcContext, I18n>) {
               displayWide && getClassName('kcFormCardAccountClass')
             )}
           >
-            <header className={getClassName('kcFormHeaderClass')}>
+            {/* <header className={getClassName('kcFormHeaderClass')}>
               {realm.internationalizationEnabled &&
                 (assert(locale !== undefined), true) &&
                 locale.supported.length > 1 && (
@@ -78,14 +78,14 @@ export default function Template(props: TemplateProps<KcContext, I18n>) {
                       className={getClassName('kcLocaleWrapperClass')}
                     >
                       <div className="kc-dropdown" id="kc-locale-dropdown">
-                        {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+                        // eslint-disable-next-line jsx-a11y/anchor-is-valid 
                         <a href="#" id="kc-current-locale-link">
                           {labelBySupportedLanguageTag[currentLanguageTag]}
                         </a>
                         <ul>
                           {locale.supported.map(({ languageTag }) => (
                             <li key={languageTag} className="kc-dropdown-item">
-                              {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+                              // eslint-disable-next-line jsx-a11y/anchor-is-valid 
                               <a
                                 href="#"
                                 onClick={() => changeLocale(languageTag)}
@@ -174,7 +174,7 @@ export default function Template(props: TemplateProps<KcContext, I18n>) {
                   </div>
                 </>
               )}
-            </header>
+            </header> */}
             <div id="kc-content">
               <div id="kc-content-wrapper">
                 {/* App-initiated actions should not see warning messages about the need to complete the action during login. */}
