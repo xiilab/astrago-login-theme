@@ -39,7 +39,7 @@ export default function Template(props: TemplateProps<KcContext, I18n>) {
       // `${url.resourcesCommonPath}/node_modules/patternfly/dist/css/patternfly.min.css`,
       // `${url.resourcesCommonPath}/node_modules/patternfly/dist/css/patternfly-additions.min.css`,
       // `${url.resourcesCommonPath}/lib/zocial/zocial.css`,
-      `${url.resourcesPath}/css/login.css`,
+      // `${url.resourcesPath}/css/login.css`,
     ],
     htmlClassName: getClassName('kcHtmlClass'),
     bodyClassName: getClassName('kcBodyClass'),
@@ -178,7 +178,7 @@ export default function Template(props: TemplateProps<KcContext, I18n>) {
             <div id="kc-content">
               <div id="kc-content-wrapper">
                 {/* App-initiated actions should not see warning messages about the need to complete the action during login. */}
-                {displayMessage &&
+                {/* {displayMessage &&
                   message !== undefined &&
                   (message.type !== 'warning' || !isAppInitiatedAction) && (
                     <div className={clsx('alert', `alert-${message.type}`)}>
@@ -209,7 +209,7 @@ export default function Template(props: TemplateProps<KcContext, I18n>) {
                         }}
                       />
                     </div>
-                  )}
+                  )} */}
                 {children}
                 {auth !== undefined &&
                   auth.showTryAnotherWayLink &&
