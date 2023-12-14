@@ -14,6 +14,8 @@ import { ReactComponent as VisibilityIcon } from './icons/remove_red_eye_white.s
 import { ReactComponent as GoogleLogoIcon } from './icons/google_logo.svg';
 import Footer from '../../Footer';
 
+const ERROR_MESSAGE =
+  '아이디 또는 비밀번호를 잘못 입력했습니다. 입력하신 내용을 다시 확인해주세요.';
 const my_custom_param = new URL(window.location.href).searchParams.get(
   'my_custom_param'
 );
@@ -22,9 +24,18 @@ if (my_custom_param !== null) {
 }
 
 export default function Login(
-  props: PageProps<Extract<KcContext, { pageId: 'login.ftl' }>, I18n>
+  props: PageProps<Extract<KcContext, { pageId: 'login.ftl' }>, I18n> & {
+    displayMessage?: boolean;
+  }
 ) {
-  const { kcContext, i18n, doUseDefaultCss, Template, classes } = props;
+  const {
+    kcContext,
+    i18n,
+    doUseDefaultCss,
+    Template,
+    classes,
+    displayMessage = true,
+  } = props;
 
   const { getClassName } = useGetClassName({
     doUseDefaultCss,
@@ -39,6 +50,7 @@ export default function Login(
     login,
     auth,
     registrationDisabled,
+    message,
   } = kcContext;
 
   const { msg, msgStr } = i18n;
@@ -173,25 +185,39 @@ export default function Login(
                     >
                       {msg('password')}
                     </label> */}
-                      <PasswordInputContainer>
-                        <LockIcon />
-                        <input
-                          tabIndex={2}
-                          id="password"
-                          className={getClassName('kcInputClass')}
-                          name="password"
-                          type={passwordType.type}
-                          autoComplete="off"
-                          placeholder="Password"
-                        />
-                        <VisibleButton onClick={handlePasswordType}>
-                          {passwordType.visible ? (
-                            <VisibilityIcon />
-                          ) : (
-                            <VisibilityOffIcon />
-                          )}
-                        </VisibleButton>
-                      </PasswordInputContainer>
+                      <PasswordInputWrapper>
+                        <PasswordInputContainer>
+                          <LockIcon />
+                          <input
+                            tabIndex={2}
+                            id="password"
+                            className={getClassName('kcInputClass')}
+                            name="password"
+                            type={passwordType.type}
+                            autoComplete="off"
+                            placeholder="Password"
+                          />
+                          <VisibleButton onClick={handlePasswordType}>
+                            {passwordType.visible ? (
+                              <VisibilityIcon />
+                            ) : (
+                              <VisibilityOffIcon />
+                            )}
+                          </VisibleButton>
+                        </PasswordInputContainer>
+                        {displayMessage && message !== undefined && (
+                          <div
+                            className={clsx('alert', `alert-${message.type}`)}
+                          >
+                            <ErrorText
+                              className="kc-feedback-text"
+                              dangerouslySetInnerHTML={{
+                                __html: ERROR_MESSAGE,
+                              }}
+                            />
+                          </div>
+                        )}
+                      </PasswordInputWrapper>
                     </div>
 
                     {/* <div
@@ -322,6 +348,19 @@ const Container = styled('div')`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+
+  #kc-registration {
+    font-size: 14px;
+    text-align: center;
+    span {
+      color: #ffffff;
+    }
+
+    a {
+      margin-left: 5px;
+      color: #ff7525;
+    }
+  }
 `;
 
 const Section = styled('div')`
@@ -340,7 +379,7 @@ const Title = styled('div')`
 
 const SubTitle = styled('div')`
   color: #ff7525;
-  size: 18px;
+  font-size: 18px;
   text-align: center;
   line-height: 25.01px;
   margin-top: 38px;
@@ -374,10 +413,12 @@ const InputContainer = styled('div')`
     outline: none;
   }
 `;
-
+const PasswordInputWrapper = styled('div')`
+  position: relative;
+`;
 const PasswordInputContainer = styled(InputContainer)`
   margin-top: 20px;
-  margin-bottom: 6px;
+  /* margin-bottom: 10px; */
 `;
 
 // const ResetWrapper = styled('div')`
@@ -449,4 +490,12 @@ const LoginButton = styled(Button)`
     font-size: 16px;
     cursor: pointer;
   }
+`;
+
+const ErrorText = styled('div')`
+  color: #ff0000;
+  font-size: 12px;
+  line-height: 24px;
+  position: absolute;
+  bottom: -30px;
 `;
