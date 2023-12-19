@@ -12,6 +12,9 @@ import { ReactComponent as LockIcon } from './icons/lock_outline_white.svg';
 import { ReactComponent as VisibilityOffIcon } from './icons/visibility_off_white.svg';
 import { ReactComponent as VisibilityIcon } from './icons/remove_red_eye_white.svg';
 import { ReactComponent as GoogleLogoIcon } from './icons/google_logo.svg';
+// import { ReactComponent as BackgroundImg } from './loginBackground.svg';
+import mySvg from './loginBackground.svg';
+
 import Footer from '../../Footer';
 
 const ERROR_MESSAGE =
@@ -88,145 +91,146 @@ export default function Login(
 
   return (
     <>
-      <Container>
-        <Template
-          {...{ kcContext, i18n, doUseDefaultCss, classes }}
-          displayInfo={social.displayInfo}
-          displayWide={realm.password && social.providers !== undefined}
-          headerNode={msg('doLogIn')}
-          infoNode={
-            realm.password &&
-            realm.registrationAllowed &&
-            !registrationDisabled && (
-              <div id="kc-registration">
-                <span>
-                  Don't have account?
-                  <a tabIndex={6} href={url.registrationUrl}>
-                    Create an account
-                  </a>
-                </span>
-              </div>
-            )
-          }
-        >
-          <Section>
-            <Title>Uyuni</Title>
-            <SubTitle>Login to your Account</SubTitle>
-            <div
-              id="kc-form"
-              className={clsx(
-                realm.password &&
-                  social.providers !== undefined &&
-                  getClassName('kcContentWrapperClass')
-              )}
-            >
+      <Wrapper>
+        <Container>
+          <Template
+            {...{ kcContext, i18n, doUseDefaultCss, classes }}
+            displayInfo={social.displayInfo}
+            displayWide={realm.password && social.providers !== undefined}
+            headerNode={msg('doLogIn')}
+            infoNode={
+              realm.password &&
+              realm.registrationAllowed &&
+              !registrationDisabled && (
+                <div id="kc-registration">
+                  <span>
+                    Don't have account?
+                    <a tabIndex={6} href={url.registrationUrl}>
+                      Create an account
+                    </a>
+                  </span>
+                </div>
+              )
+            }
+          >
+            <Section>
+              <Title>ASTRAGO</Title>
+              <SubTitle>Login to your Account</SubTitle>
               <div
-                id="kc-form-wrapper"
+                id="kc-form"
                 className={clsx(
                   realm.password &&
-                    social.providers && [
-                      getClassName('kcFormSocialAccountContentClass'),
-                      getClassName('kcFormSocialAccountClass'),
-                    ]
+                    social.providers !== undefined &&
+                    getClassName('kcContentWrapperClass')
                 )}
               >
-                {realm.password && (
-                  <form
-                    id="kc-form-login"
-                    onSubmit={onSubmit}
-                    action={url.loginAction}
-                    method="post"
-                  >
-                    <div className={getClassName('kcFormGroupClass')}>
-                      {!usernameHidden &&
-                        (() => {
-                          const label = !realm.loginWithEmailAllowed
-                            ? 'username'
-                            : realm.registrationEmailAsUsername
-                              ? 'email'
-                              : 'usernameOrEmail';
+                <div
+                  id="kc-form-wrapper"
+                  className={clsx(
+                    realm.password &&
+                      social.providers && [
+                        getClassName('kcFormSocialAccountContentClass'),
+                        getClassName('kcFormSocialAccountClass'),
+                      ]
+                  )}
+                >
+                  {realm.password && (
+                    <form
+                      id="kc-form-login"
+                      onSubmit={onSubmit}
+                      action={url.loginAction}
+                      method="post"
+                    >
+                      <div className={getClassName('kcFormGroupClass')}>
+                        {!usernameHidden &&
+                          (() => {
+                            const label = !realm.loginWithEmailAllowed
+                              ? 'username'
+                              : realm.registrationEmailAsUsername
+                                ? 'email'
+                                : 'usernameOrEmail';
 
-                          const autoCompleteHelper: typeof label =
-                            label === 'usernameOrEmail' ? 'username' : label;
+                            const autoCompleteHelper: typeof label =
+                              label === 'usernameOrEmail' ? 'username' : label;
 
-                          return (
-                            <>
-                              {/* <label
+                            return (
+                              <>
+                                {/* <label
                               htmlFor={autoCompleteHelper}
                               className={getClassName('kcLabelClass')}
                             >
                               {msg(label)}
                             </label> */}
-                              <InputContainer>
-                                <MailIcon />
-                                <input
-                                  tabIndex={1}
-                                  id={autoCompleteHelper}
-                                  className={getClassName('kcInputClass')}
-                                  //NOTE: This is used by Google Chrome auto fill so we use it to tell
-                                  //the browser how to pre fill the form but before submit we put it back
-                                  //to username because it is what keycloak expects.
-                                  name={autoCompleteHelper}
-                                  defaultValue={login.username}
-                                  placeholder="E-mail"
-                                  type="text"
-                                  autoFocus={true}
-                                  autoComplete="off"
-                                />
-                              </InputContainer>
-                            </>
-                          );
-                        })()}
-                    </div>
-                    <div className={getClassName('kcFormGroupClass')}>
-                      {/* <label
+                                <InputContainer>
+                                  <MailIcon />
+                                  <input
+                                    tabIndex={1}
+                                    id={autoCompleteHelper}
+                                    className={getClassName('kcInputClass')}
+                                    //NOTE: This is used by Google Chrome auto fill so we use it to tell
+                                    //the browser how to pre fill the form but before submit we put it back
+                                    //to username because it is what keycloak expects.
+                                    name={autoCompleteHelper}
+                                    defaultValue={login.username}
+                                    placeholder="E-mail"
+                                    type="text"
+                                    autoFocus={true}
+                                    autoComplete="off"
+                                  />
+                                </InputContainer>
+                              </>
+                            );
+                          })()}
+                      </div>
+                      <div className={getClassName('kcFormGroupClass')}>
+                        {/* <label
                       htmlFor="password"
                       className={getClassName('kcLabelClass')}
                     >
                       {msg('password')}
                     </label> */}
-                      <PasswordInputWrapper>
-                        <PasswordInputContainer>
-                          <LockIcon />
-                          <input
-                            tabIndex={2}
-                            id="password"
-                            className={getClassName('kcInputClass')}
-                            name="password"
-                            type={passwordType.type}
-                            autoComplete="off"
-                            placeholder="Password"
-                          />
-                          <VisibleButton onClick={handlePasswordType}>
-                            {passwordType.visible ? (
-                              <VisibilityIcon />
-                            ) : (
-                              <VisibilityOffIcon />
-                            )}
-                          </VisibleButton>
-                        </PasswordInputContainer>
-                        {displayMessage && message !== undefined && (
-                          <div
-                            className={clsx('alert', `alert-${message.type}`)}
-                          >
-                            <ErrorText
-                              className="kc-feedback-text"
-                              dangerouslySetInnerHTML={{
-                                __html: ERROR_MESSAGE,
-                              }}
+                        <PasswordInputWrapper>
+                          <PasswordInputContainer>
+                            <LockIcon />
+                            <input
+                              tabIndex={2}
+                              id="password"
+                              className={getClassName('kcInputClass')}
+                              name="password"
+                              type={passwordType.type}
+                              autoComplete="off"
+                              placeholder="Password"
                             />
-                          </div>
-                        )}
-                      </PasswordInputWrapper>
-                    </div>
+                            <VisibleButton onClick={handlePasswordType}>
+                              {passwordType.visible ? (
+                                <VisibilityIcon />
+                              ) : (
+                                <VisibilityOffIcon />
+                              )}
+                            </VisibleButton>
+                          </PasswordInputContainer>
+                          {displayMessage && message !== undefined && (
+                            <div
+                              className={clsx('alert', `alert-${message.type}`)}
+                            >
+                              <ErrorText
+                                className="kc-feedback-text"
+                                dangerouslySetInnerHTML={{
+                                  __html: ERROR_MESSAGE,
+                                }}
+                              />
+                            </div>
+                          )}
+                        </PasswordInputWrapper>
+                      </div>
 
-                    {/* <div
+                      {/* <div
                     className={clsx(
                       getClassName('kcFormGroupClass'),
                       getClassName('kcFormSettingClass')
                     )}
                   > */}
-                    {/* <div id="kc-form-options">
+                      {/* <div id="kc-form-options">
                       {realm.rememberMe && !usernameHidden && (
                         <div className="checkbox">
                           <label>
@@ -246,108 +250,163 @@ export default function Login(
                         </div>
                       )}
                     </div> */}
-                    {/* <ResetWrapper>
+                      {/* <ResetWrapper>
                       {realm.resetPasswordAllowed && (
                         <a tabIndex={5} href={url.loginResetCredentialsUrl}>
                           Find Password
                         </a>
                       )}
                     </ResetWrapper> */}
-                    {/* </div> */}
-                    <DivisorWrapper>
-                      <Line />
-                      <p>or</p>
-                      <Line />
-                    </DivisorWrapper>
+                      {/* </div> */}
+                      <DivisorWrapper>
+                        <Line />
+                        <p>or</p>
+                        <Line />
+                      </DivisorWrapper>
 
-                    <GoogleLoginButton>
-                      <GoogleLogoIcon />
-                      <p>Login of Google</p>
-                    </GoogleLoginButton>
-                    <div
-                      id="kc-form-buttons"
-                      className={getClassName('kcFormGroupClass')}
-                    >
-                      <input
-                        type="hidden"
-                        id="id-hidden-input"
-                        name="credentialId"
-                        {...(auth?.selectedCredential !== undefined
-                          ? {
-                              value: auth.selectedCredential,
-                            }
-                          : {})}
-                      />
-                      <LoginButton>
+                      <GoogleLoginButton>
+                        <GoogleLogoIcon />
+                        <p>Login of Google</p>
+                      </GoogleLoginButton>
+                      <div
+                        id="kc-form-buttons"
+                        className={getClassName('kcFormGroupClass')}
+                      >
                         <input
-                          tabIndex={4}
-                          // className={clsx(
-                          // getClassName('kcButtonClass'),
-                          // getClassName('kcButtonPrimaryClass'),
-                          // getClassName('kcButtonBlockClass'),
-                          // getClassName('kcButtonLargeClass')
-                          // )}
-                          name="login"
-                          id="kc-login"
-                          type="submit"
-                          // value={msgStr('doLogIn')}
-                          value="LOG IN"
-                          disabled={isLoginButtonDisabled}
+                          type="hidden"
+                          id="id-hidden-input"
+                          name="credentialId"
+                          {...(auth?.selectedCredential !== undefined
+                            ? {
+                                value: auth.selectedCredential,
+                              }
+                            : {})}
                         />
-                      </LoginButton>
-                    </div>
-                  </form>
-                )}
-              </div>
-              {realm.password && social.providers !== undefined && (
-                <div
-                  id="kc-social-providers"
-                  className={clsx(
-                    getClassName('kcFormSocialAccountContentClass'),
-                    getClassName('kcFormSocialAccountClass')
+                        <LoginButton>
+                          <input
+                            tabIndex={4}
+                            // className={clsx(
+                            // getClassName('kcButtonClass'),
+                            // getClassName('kcButtonPrimaryClass'),
+                            // getClassName('kcButtonBlockClass'),
+                            // getClassName('kcButtonLargeClass')
+                            // )}
+                            name="login"
+                            id="kc-login"
+                            type="submit"
+                            // value={msgStr('doLogIn')}
+                            value="LOG IN"
+                            disabled={isLoginButtonDisabled}
+                          />
+                        </LoginButton>
+                      </div>
+                    </form>
                   )}
-                >
-                  <ul
+                </div>
+                {realm.password && social.providers !== undefined && (
+                  <div
+                    id="kc-social-providers"
                     className={clsx(
-                      getClassName('kcFormSocialAccountListClass'),
-                      social.providers.length > 4 &&
-                        getClassName('kcFormSocialAccountDoubleListClass')
+                      getClassName('kcFormSocialAccountContentClass'),
+                      getClassName('kcFormSocialAccountClass')
                     )}
                   >
-                    {social.providers.map((p) => (
-                      <li
-                        key={p.providerId}
-                        className={getClassName(
-                          'kcFormSocialAccountListLinkClass'
-                        )}
-                      >
-                        <a
-                          href={p.loginUrl}
-                          id={`zocial-${p.alias}`}
-                          className={clsx('zocial', p.providerId)}
+                    <ul
+                      className={clsx(
+                        getClassName('kcFormSocialAccountListClass'),
+                        social.providers.length > 4 &&
+                          getClassName('kcFormSocialAccountDoubleListClass')
+                      )}
+                    >
+                      {social.providers.map((p) => (
+                        <li
+                          key={p.providerId}
+                          className={getClassName(
+                            'kcFormSocialAccountListLinkClass'
+                          )}
                         >
-                          <span>{p.displayName}</span>
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-          </Section>
-        </Template>
-      </Container>
+                          <a
+                            href={p.loginUrl}
+                            id={`zocial-${p.alias}`}
+                            className={clsx('zocial', p.providerId)}
+                          >
+                            <span>{p.displayName}</span>
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            </Section>
+          </Template>
+        </Container>
+        <BackgroundWrapper
+          data-sy="BackgroundWrapper"
+          style={{
+            backgroundSize: 'cover',
+            backgroundImage: `url(${mySvg})`,
+            backgroundPosition: 'center',
+          }}
+        >
+          <BackgroundContainer data-sy="BackgroundContainer">
+            <LogoTitle>ASTRAGO.ai</LogoTitle>
+            <LogoContent>
+              <span>ASTRAGO.ai는 우주와 별을 뜻하는 ‘Astra’처럼</span>
+              <span>
+                광대한 기술과 미래지향적인 첨단 인공지능 혁신을 제공하는
+                솔루션입니다.
+              </span>
+            </LogoContent>
+          </BackgroundContainer>
+        </BackgroundWrapper>
+      </Wrapper>
       <Footer></Footer>
     </>
   );
 }
 
+const Wrapper = styled('div')`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+`;
+const BackgroundWrapper = styled('div')`
+  flex-grow: 1;
+  min-width: 768px;
+`;
+
+const BackgroundContainer = styled('div')`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #ffffff;
+  gap: 19px;
+  height: 100%;
+`;
+
+const LogoTitle = styled('div')`
+  font-weight: 700;
+  font-size: 50px;
+  text-align: center;
+`;
+
+const LogoContent = styled('div')`
+  span {
+    display: block;
+  }
+  font-weight: 500;
+  font-size: 16px;
+  text-align: center;
+`;
 const Container = styled('div')`
   min-height: calc(100vh - 80px);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  min-width: 600px;
 
   #kc-registration {
     font-size: 14px;
@@ -365,7 +424,7 @@ const Container = styled('div')`
 
 const Section = styled('div')`
   margin: 0 auto;
-  width: 462px;
+  width: 400px;
 `;
 
 const Title = styled('div')`
@@ -450,7 +509,7 @@ const Line = styled('div')`
 `;
 
 const Button = styled('button')`
-  width: 462px;
+  width: 400px;
   height: 54px;
   border-radius: 10px;
   cursor: pointer;
