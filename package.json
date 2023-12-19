@@ -1,5 +1,5 @@
 {
-    "name": "keycloakify-starter",
+    "name": "astrago-login-theme",
     "homepage": "https://starter.keycloakify.dev",
     "version": "5.0.5",
     "description": "A starter/demo project for keycloakify",
@@ -16,8 +16,8 @@
     },
     "keycloakify": {
         "themeName": [
-            "keycloakify-starter",
-            "keycloakify-starter-variant-1"
+            "astrago",
+            "astrago-variant-1"
         ],
         "extraThemeProperties": [
             "foo=bar"
