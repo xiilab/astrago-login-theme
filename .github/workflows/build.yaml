@@ -20,7 +20,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - uses: npm install
+      - run: npm install
       - run: npm run build
       - run: npx keycloakify
       - run: mv build_keycloak/target/retrocompat-*.jar build_keycloak/target/retrocompat-keycloak-theme.jar
