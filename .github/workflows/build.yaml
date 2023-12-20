@@ -24,7 +24,7 @@ jobs:
       - run: DISABLE_ESLINT_PLUGIN=true npm run build
       - run: DISABLE_ESLINT_PLUGIN=true npx keycloakify
       - run: mv build_keycloak/target/retrocompat-*.jar build_keycloak/target/retrocompat-keycloak-theme.jar
-      - run: mv build_keycloak/target/*.jar build_keycloak/target/keycloak-theme.jar
+      - run: mv build_keycloak/target/astrago-*.jar build_keycloak/target/keycloak-theme.jar
     
       - name: Create release
         id: create_release
