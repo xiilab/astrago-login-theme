@@ -1,33 +1,33 @@
-import { useState, type FormEventHandler } from 'react';
-import { clsx } from 'keycloakify/tools/clsx';
-import { useConstCallback } from 'keycloakify/tools/useConstCallback';
-import type { PageProps } from 'keycloakify/login/pages/PageProps';
-import { useGetClassName } from 'keycloakify/login/lib/useGetClassName';
-import type { KcContext } from '../kcContext';
-import type { I18n } from '../i18n';
-import styled from '@emotion/styled';
+import { useState, type FormEventHandler } from "react";
+import { clsx } from "keycloakify/tools/clsx";
+import { useConstCallback } from "keycloakify/tools/useConstCallback";
+import type { PageProps } from "keycloakify/login/pages/PageProps";
+import { useGetClassName } from "keycloakify/login/lib/useGetClassName";
+import type { KcContext } from "../kcContext";
+import type { I18n } from "../i18n";
+import styled from "@emotion/styled";
 
-import { ReactComponent as MailIcon } from './icons/mail_outline_white.svg';
-import { ReactComponent as LockIcon } from './icons/lock_outline_white.svg';
-import { ReactComponent as VisibilityOffIcon } from './icons/visibility_off_white.svg';
-import { ReactComponent as VisibilityIcon } from './icons/remove_red_eye_white.svg';
-import { ReactComponent as GoogleLogoIcon } from './icons/google_logo.svg';
+import { ReactComponent as MailIcon } from "./icons/mail_outline_white.svg";
+import { ReactComponent as LockIcon } from "./icons/lock_outline_white.svg";
+import { ReactComponent as VisibilityOffIcon } from "./icons/visibility_off_white.svg";
+import { ReactComponent as VisibilityIcon } from "./icons/remove_red_eye_white.svg";
+import { ReactComponent as GoogleLogoIcon } from "./icons/google_logo.svg";
 // import { ReactComponent as BackgroundImg } from './loginBackground.svg';
-import mySvg from './loginBackground.svg';
+import mySvg from "./loginBackground.svg";
 
-import Footer from '../../Footer';
+import Footer from "../../Footer";
 
 const ERROR_MESSAGE =
-  '아이디 또는 비밀번호를 잘못 입력했습니다. 입력하신 내용을 다시 확인해주세요.';
+  "아이디 또는 비밀번호를 잘못 입력했습니다. 입력하신 내용을 다시 확인해주세요.";
 const my_custom_param = new URL(window.location.href).searchParams.get(
-  'my_custom_param'
+  "my_custom_param"
 );
 if (my_custom_param !== null) {
-  console.log('my_custom_param:', my_custom_param);
+  console.log("my_custom_param:", my_custom_param);
 }
 
 export default function Login(
-  props: PageProps<Extract<KcContext, { pageId: 'login.ftl' }>, I18n> & {
+  props: PageProps<Extract<KcContext, { pageId: "login.ftl" }>, I18n> & {
     displayMessage?: boolean;
   }
 ) {
@@ -54,22 +54,23 @@ export default function Login(
     auth,
     registrationDisabled,
     message,
+    client,
   } = kcContext;
 
   const { msg, msgStr } = i18n;
 
   const [isLoginButtonDisabled, setIsLoginButtonDisabled] = useState(false);
   const [passwordType, setPasswordType] = useState({
-    type: 'password',
+    type: "password",
     visible: false,
   });
 
   const handlePasswordType = () => {
     setPasswordType(() => {
       if (!passwordType.visible) {
-        return { type: 'text', visible: true };
+        return { type: "text", visible: true };
       }
-      return { type: 'password', visible: false };
+      return { type: "password", visible: false };
     });
   };
 
@@ -84,7 +85,7 @@ export default function Login(
     //the POST request.
     formElement
       .querySelector("input[name='email']")
-      ?.setAttribute('name', 'username');
+      ?.setAttribute("name", "username");
 
     formElement.submit();
   });
@@ -97,7 +98,7 @@ export default function Login(
             {...{ kcContext, i18n, doUseDefaultCss, classes }}
             displayInfo={social.displayInfo}
             displayWide={realm.password && social.providers !== undefined}
-            headerNode={msg('doLogIn')}
+            headerNode={msg("doLogIn")}
             infoNode={
               realm.password &&
               realm.registrationAllowed &&
@@ -105,7 +106,8 @@ export default function Login(
                 <div id="kc-registration">
                   <span>
                     Don't have account?
-                    <a tabIndex={6} href={url.registrationUrl}>
+                    {/* <a tabIndex={6} href={url.registrationUrl}> */}
+                    <a tabIndex={6} href={"http://10.61.3.12:30080/register"}>
                       Create an account
                     </a>
                   </span>
@@ -121,7 +123,7 @@ export default function Login(
                 className={clsx(
                   realm.password &&
                     social.providers !== undefined &&
-                    getClassName('kcContentWrapperClass')
+                    getClassName("kcContentWrapperClass")
                 )}
               >
                 <div
@@ -129,8 +131,8 @@ export default function Login(
                   className={clsx(
                     realm.password &&
                       social.providers && [
-                        getClassName('kcFormSocialAccountContentClass'),
-                        getClassName('kcFormSocialAccountClass'),
+                        getClassName("kcFormSocialAccountContentClass"),
+                        getClassName("kcFormSocialAccountClass"),
                       ]
                   )}
                 >
@@ -141,17 +143,17 @@ export default function Login(
                       action={url.loginAction}
                       method="post"
                     >
-                      <div className={getClassName('kcFormGroupClass')}>
+                      <div className={getClassName("kcFormGroupClass")}>
                         {!usernameHidden &&
                           (() => {
                             const label = !realm.loginWithEmailAllowed
-                              ? 'username'
+                              ? "username"
                               : realm.registrationEmailAsUsername
-                                ? 'email'
-                                : 'usernameOrEmail';
+                                ? "email"
+                                : "usernameOrEmail";
 
                             const autoCompleteHelper: typeof label =
-                              label === 'usernameOrEmail' ? 'username' : label;
+                              label === "usernameOrEmail" ? "username" : label;
 
                             return (
                               <>
@@ -166,7 +168,7 @@ export default function Login(
                                   <input
                                     tabIndex={1}
                                     id={autoCompleteHelper}
-                                    className={getClassName('kcInputClass')}
+                                    className={getClassName("kcInputClass")}
                                     //NOTE: This is used by Google Chrome auto fill so we use it to tell
                                     //the browser how to pre fill the form but before submit we put it back
                                     //to username because it is what keycloak expects.
@@ -182,7 +184,7 @@ export default function Login(
                             );
                           })()}
                       </div>
-                      <div className={getClassName('kcFormGroupClass')}>
+                      <div className={getClassName("kcFormGroupClass")}>
                         {/* <label
                       htmlFor="password"
                       className={getClassName('kcLabelClass')}
@@ -195,7 +197,7 @@ export default function Login(
                             <input
                               tabIndex={2}
                               id="password"
-                              className={getClassName('kcInputClass')}
+                              className={getClassName("kcInputClass")}
                               name="password"
                               type={passwordType.type}
                               autoComplete="off"
@@ -211,7 +213,7 @@ export default function Login(
                           </PasswordInputContainer>
                           {displayMessage && message !== undefined && (
                             <div
-                              className={clsx('alert', `alert-${message.type}`)}
+                              className={clsx("alert", `alert-${message.type}`)}
                             >
                               <ErrorText
                                 className="kc-feedback-text"
@@ -270,7 +272,7 @@ export default function Login(
                       </GoogleLoginButton>
                       <div
                         id="kc-form-buttons"
-                        className={getClassName('kcFormGroupClass')}
+                        className={getClassName("kcFormGroupClass")}
                       >
                         <input
                           type="hidden"
@@ -307,28 +309,28 @@ export default function Login(
                   <div
                     id="kc-social-providers"
                     className={clsx(
-                      getClassName('kcFormSocialAccountContentClass'),
-                      getClassName('kcFormSocialAccountClass')
+                      getClassName("kcFormSocialAccountContentClass"),
+                      getClassName("kcFormSocialAccountClass")
                     )}
                   >
                     <ul
                       className={clsx(
-                        getClassName('kcFormSocialAccountListClass'),
+                        getClassName("kcFormSocialAccountListClass"),
                         social.providers.length > 4 &&
-                          getClassName('kcFormSocialAccountDoubleListClass')
+                          getClassName("kcFormSocialAccountDoubleListClass")
                       )}
                     >
                       {social.providers.map((p) => (
                         <li
                           key={p.providerId}
                           className={getClassName(
-                            'kcFormSocialAccountListLinkClass'
+                            "kcFormSocialAccountListLinkClass"
                           )}
                         >
                           <a
                             href={p.loginUrl}
                             id={`zocial-${p.alias}`}
-                            className={clsx('zocial', p.providerId)}
+                            className={clsx("zocial", p.providerId)}
                           >
                             <span>{p.displayName}</span>
                           </a>
@@ -344,9 +346,9 @@ export default function Login(
         <BackgroundWrapper
           data-sy="BackgroundWrapper"
           style={{
-            backgroundSize: 'cover',
+            backgroundSize: "cover",
             backgroundImage: `url(${mySvg})`,
-            backgroundPosition: 'center',
+            backgroundPosition: "center",
           }}
         >
           <BackgroundContainer data-sy="BackgroundContainer">
@@ -366,17 +368,17 @@ export default function Login(
   );
 }
 
-const Wrapper = styled('div')`
+const Wrapper = styled("div")`
   display: flex;
   flex-direction: row;
   width: 100%;
 `;
-const BackgroundWrapper = styled('div')`
+const BackgroundWrapper = styled("div")`
   flex-grow: 1;
   min-width: 768px;
 `;
 
-const BackgroundContainer = styled('div')`
+const BackgroundContainer = styled("div")`
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -386,13 +388,13 @@ const BackgroundContainer = styled('div')`
   height: 100%;
 `;
 
-const LogoTitle = styled('div')`
+const LogoTitle = styled("div")`
   font-weight: 700;
   font-size: 50px;
   text-align: center;
 `;
 
-const LogoContent = styled('div')`
+const LogoContent = styled("div")`
   span {
     display: block;
   }
@@ -400,7 +402,7 @@ const LogoContent = styled('div')`
   font-size: 16px;
   text-align: center;
 `;
-const Container = styled('div')`
+const Container = styled("div")`
   min-height: calc(100vh - 80px);
   display: flex;
   flex-direction: column;
@@ -422,12 +424,12 @@ const Container = styled('div')`
   }
 `;
 
-const Section = styled('div')`
+const Section = styled("div")`
   margin: 0 auto;
   width: 400px;
 `;
 
-const Title = styled('div')`
+const Title = styled("div")`
   color: #ffffff;
   /* margin-top: 180px; */
   font-size: 40px;
@@ -436,7 +438,7 @@ const Title = styled('div')`
   text-align: center;
 `;
 
-const SubTitle = styled('div')`
+const SubTitle = styled("div")`
   color: #ff7525;
   font-size: 18px;
   text-align: center;
@@ -445,7 +447,7 @@ const SubTitle = styled('div')`
   margin-bottom: 42px;
 `;
 
-const InputContainer = styled('div')`
+const InputContainer = styled("div")`
   background-color: #373737;
   height: 52px;
   border-radius: 10px;
@@ -472,7 +474,7 @@ const InputContainer = styled('div')`
     outline: none;
   }
 `;
-const PasswordInputWrapper = styled('div')`
+const PasswordInputWrapper = styled("div")`
   position: relative;
 `;
 const PasswordInputContainer = styled(InputContainer)`
@@ -490,7 +492,7 @@ const PasswordInputContainer = styled(InputContainer)`
 //   }
 // `;
 
-const DivisorWrapper = styled('div')`
+const DivisorWrapper = styled("div")`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -503,19 +505,19 @@ const DivisorWrapper = styled('div')`
   }
 `;
 
-const Line = styled('div')`
+const Line = styled("div")`
   width: 200px;
   border-top: 1px solid #7a7a7a;
 `;
 
-const Button = styled('button')`
+const Button = styled("button")`
   width: 400px;
   height: 54px;
   border-radius: 10px;
   cursor: pointer;
 `;
 
-const VisibleButton = styled('div')`
+const VisibleButton = styled("div")`
   background: transparent;
   cursor: pointer;
   border: none;
@@ -551,7 +553,7 @@ const LoginButton = styled(Button)`
   }
 `;
 
-const ErrorText = styled('div')`
+const ErrorText = styled("div")`
   color: #ff0000;
   font-size: 12px;
   line-height: 24px;
