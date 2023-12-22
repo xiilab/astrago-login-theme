@@ -12,6 +12,8 @@ import { ReactComponent as LockIcon } from "./icons/lock_outline_white.svg";
 import { ReactComponent as VisibilityOffIcon } from "./icons/visibility_off_white.svg";
 import { ReactComponent as VisibilityIcon } from "./icons/remove_red_eye_white.svg";
 import { ReactComponent as GoogleLogoIcon } from "./icons/google_logo.svg";
+import { ReactComponent as Logo } from "./log.svg";
+import Logo2 from "./Logo";
 // import { ReactComponent as BackgroundImg } from './loginBackground.svg';
 import mySvg from "./loginBackground.svg";
 
@@ -117,7 +119,10 @@ export default function Login(
             }
           >
             <Section>
-              <Title>ASTRAGO</Title>
+              {/* <Title>ASTRAGO</Title> */}
+              <Title>
+                <Logo />
+              </Title>
               <SubTitle>Login to your Account</SubTitle>
               <div
                 id="kc-form"
@@ -353,7 +358,11 @@ export default function Login(
           }}
         >
           <BackgroundContainer data-sy="BackgroundContainer">
-            <LogoTitle>ASTRAGO.ai</LogoTitle>
+            {/* <LogoTitle>ASTRAGO.ai</LogoTitle> */}
+            <LogoTitle>
+              <Logo2 />
+            </LogoTitle>
+
             <LogoContent>
               <span>ASTRAGO.ai는 우주와 별을 뜻하는 ‘Astra’처럼</span>
               <span>
@@ -393,11 +402,14 @@ const LogoTitle = styled("div")`
   font-weight: 700;
   font-size: 50px;
   text-align: center;
+
+  margin-bottom: 34px;
 `;
 
 const LogoContent = styled("div")`
   span {
     display: block;
+    line-height: 28px;
   }
   font-weight: 500;
   font-size: 16px;
@@ -444,7 +456,7 @@ const SubTitle = styled("div")`
   font-size: 18px;
   text-align: center;
   line-height: 25.01px;
-  margin-top: 38px;
+  margin-top: 47px;
   margin-bottom: 42px;
 `;
 
