@@ -47,6 +47,7 @@ const Section = styled('section')`
   font-weight: 300;
   line-height: 22px;
   letter-spacing: -2%;
+  max-height: 80px;
 `;
 
 const RightLayout = styled('div')`
