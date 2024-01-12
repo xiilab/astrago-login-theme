@@ -472,7 +472,7 @@ const SubTitle = styled('div')`
 const InputContainer = styled('div')<ErrorInputContainerProps>`
   background-color: #ffffff;
   border: ${(props) =>
-    props.showError ? '1px solid #F14A4A' : '1px solid #E2E1E7'};
+    props.showError ? '1px solid #F14A4A' : '1px solid #D5D4D8'};
   height: 48px;
   border-radius: 8px;
   display: flex;
@@ -484,7 +484,7 @@ const InputContainer = styled('div')<ErrorInputContainerProps>`
 
   &:focus-within {
     border: ${(props) =>
-      props.showError ? '1px solid #F14A4A' : '1px solid #E2E1E7'};
+      props.showError ? '1px solid #F14A4A' : '1px solid #D5D4D8'};
   }
 
   input {
@@ -498,7 +498,7 @@ const InputContainer = styled('div')<ErrorInputContainerProps>`
   input::placeholder {
     size: 14px;
     font-style: normal;
-    color: #afadb4;
+    color: #D5D4D8;
   }
 
   input:focus {
@@ -578,7 +578,7 @@ const GoogleLoginButton = styled(Button)`
   justify-content: center;
   gap: 24px;
   background: #ffffff;
-  border: 1px solid #e2e1e7;
+  border: 1px solid #D5D4D8;
   margin-bottom: 16px;
   p {
     font-weight: 500;
