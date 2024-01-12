@@ -372,7 +372,7 @@ export default function Login(
             </LogoTitle>
 
             <LogoContent>
-              <span>ASTRAGO.ai는 우주와 별을 뜻하는 ‘Astra’처럼</span>
+              <span>AstraGo.ai는 우주와 별을 뜻하는 ‘Astra’처럼</span>
               <span>
                 광대한 기술과 미래지향적인 첨단 인공지능 혁신을 제공하는
                 솔루션입니다.
