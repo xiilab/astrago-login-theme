@@ -7,13 +7,13 @@ import type { KcContext } from '../kcContext';
 import type { I18n } from '../i18n';
 import styled from '@emotion/styled';
 
-import { ReactComponent as MailIcon } from './icons/mail_outline_white.svg';
-import { ReactComponent as LockIcon } from './icons/lock_outline_white.svg';
+import { ReactComponent as MailIcon } from './icons/mail_outline.svg';
+import { ReactComponent as LockIcon } from './icons/lock_outline.svg';
 import { ReactComponent as VisibilityOffIcon } from './icons/visibility_off_white.svg';
 import { ReactComponent as VisibilityIcon } from './icons/remove_red_eye_white.svg';
 import { ReactComponent as GoogleLogoIcon } from './icons/google_logo.svg';
-import { ReactComponent as Logo } from './log.svg';
-import Logo2 from './Logo';
+import { ReactComponent as WhiteLogo } from './WhiteLogo.svg';
+import { ReactComponent as BlackLogo } from './BlackLogo.svg';
 // import { ReactComponent as BackgroundImg } from './loginBackground.svg';
 import mySvg from './loginBackground.svg';
 
@@ -122,7 +122,7 @@ export default function Login(
             <Section>
               {/* <Title>ASTRAGO</Title> */}
               <Title>
-                <Logo />
+                <BlackLogo />
               </Title>
               <SubTitle>Login to your Account</SubTitle>
               <div
@@ -353,6 +353,9 @@ export default function Login(
               </div>
             </Section>
           </Template>
+          <FooterWrapper>
+            <Footer></Footer>
+          </FooterWrapper>
         </Container>
         <BackgroundWrapper
           data-sy="BackgroundWrapper"
@@ -365,7 +368,7 @@ export default function Login(
           <BackgroundContainer data-sy="BackgroundContainer">
             {/* <LogoTitle>ASTRAGO.ai</LogoTitle> */}
             <LogoTitle>
-              <Logo2 />
+              <WhiteLogo />
             </LogoTitle>
 
             <LogoContent>
@@ -378,19 +381,24 @@ export default function Login(
           </BackgroundContainer>
         </BackgroundWrapper>
       </Wrapper>
-      <Footer></Footer>
     </>
   );
 }
+const FooterWrapper = styled('div')`
+  position: absolute;
+  bottom: 0;
+  left: 76px;
+`;
 
 const Wrapper = styled('div')`
   display: flex;
   flex-direction: row;
   width: 100%;
 `;
+
 const BackgroundWrapper = styled('div')`
   flex-grow: 1;
-  min-width: 768px;
+  min-width: 1500px;
 `;
 
 const BackgroundContainer = styled('div')`
@@ -407,8 +415,6 @@ const LogoTitle = styled('div')`
   font-weight: 700;
   font-size: 50px;
   text-align: center;
-
-  margin-bottom: 34px;
 `;
 
 const LogoContent = styled('div')`
@@ -422,30 +428,32 @@ const LogoContent = styled('div')`
 `;
 
 const Container = styled('div')`
-  min-height: calc(100vh - 80px);
+  position: relative;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  min-width: 600px;
+  min-width: 532px;
 
   #kc-registration {
     font-size: 14px;
     text-align: center;
     span {
-      color: #ffffff;
+      color: #90919e;
     }
 
     a {
       margin-left: 5px;
-      color: #1d74f5;
+      color: #5b29c7;
+      font-weight: 700;
     }
   }
 `;
 
 const Section = styled('div')`
   margin: 0 auto;
-  width: 400px;
+  width: 380px;
 `;
 
 const Title = styled('div')`
@@ -453,29 +461,30 @@ const Title = styled('div')`
 `;
 
 const SubTitle = styled('div')`
-  color: #1d74f5;
-  font-size: 16px;
+  color: #5b29c7;
+  font-size: 14px;
+  font-weight: 700;
   text-align: center;
   line-height: 25px;
-  margin: 50px 0;
+  margin: 32px 0 34px 0;
 `;
 
 const InputContainer = styled('div')<ErrorInputContainerProps>`
-  background-color: #373737;
+  background-color: #ffffff;
   border: ${(props) =>
-    props.showError ? '1px solid #F14A4A' : '1px solid #373737'};
+    props.showError ? '1px solid #F14A4A' : '1px solid #E2E1E7'};
   height: 48px;
-  border-radius: 4px;
+  border-radius: 8px;
   display: flex;
   flex-direction: row;
   align-items: center;
   padding: 0 22px 0 20px;
-  gap: 12px;
+  gap: 10px;
   transition: all 0.5s ease;
 
   &:focus-within {
     border: ${(props) =>
-      props.showError ? '1px solid #F14A4A' : '1px solid #373737'};
+      props.showError ? '1px solid #F14A4A' : '1px solid #E2E1E7'};
   }
 
   input {
@@ -483,12 +492,13 @@ const InputContainer = styled('div')<ErrorInputContainerProps>`
     height: 28px;
     background: transparent;
     border-color: transparent;
-    color: #ffffff;
+    color: #17171f;
   }
 
   input::placeholder {
     size: 14px;
     font-style: normal;
+    color: #afadb4;
   }
 
   input:focus {
@@ -498,9 +508,9 @@ const InputContainer = styled('div')<ErrorInputContainerProps>`
   input:-webkit-autofill:hover,
   input:-webkit-autofill:focus,
   input:-webkit-autofill:active {
-    -webkit-text-fill-color: #ffffff;
-    -webkit-box-shadow: 0 0 0px 1000px #373737 inset;
-    box-shadow: 0 0 0px 1000px #373737 inset;
+    -webkit-text-fill-color: #17171f;
+    -webkit-box-shadow: 0 0 0px 1000px #ffffff inset;
+    box-shadow: 0 0 0px 1000px #ffffff inset;
     transition: background-color 5000s ease-in-out 0s;
   }
 `;
@@ -514,9 +524,9 @@ interface ErrorInputContainerProps {
 }
 
 const PasswordInputContainer = styled(InputContainer)<ErrorInputContainerProps>`
-  margin-top: 24px;
+  margin-top: 16px;
   border: ${(props) =>
-    props.showError ? '1px solid #F14A4A' : '1px solid #373737'};
+    props.showError ? '1px solid #F14A4A' : '1px solid #E2E1E7'};
 `;
 
 // const ResetWrapper = styled('div')`
@@ -533,9 +543,9 @@ const DivisorWrapper = styled('div')`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  color: #7a7a7a;
+  color: #cccccc;
   align-items: center;
-  margin: 63px 0;
+  margin: 40px 0;
   p {
     font-size: 14px;
     line-height: 25px;
@@ -546,13 +556,13 @@ const DivisorWrapper = styled('div')`
 
 const Line = styled('div')`
   width: 200px;
-  border-top: 1px solid #7a7a7a;
+  border-top: 1px solid #cccccc;
 `;
 
 const Button = styled('button')`
-  width: 400px;
+  width: 380px;
   height: 54px;
-  border-radius: 10px;
+  border-radius: 12px;
   cursor: pointer;
 `;
 
@@ -567,21 +577,21 @@ const GoogleLoginButton = styled(Button)`
   align-items: center;
   justify-content: center;
   gap: 24px;
-  background: #131314;
-  border: 1px solid #8e918f;
-  margin-bottom: 20px;
+  background: #ffffff;
+  border: 1px solid #e2e1e7;
+  margin-bottom: 16px;
   p {
     font-weight: 500;
-    font-size: 16px;
-    color: #bfbfbf;
+    font-size: 14px;
+    color: #afadb4;
     margin: 0;
   }
 `;
 
 const LoginButton = styled(Button)`
-  background: #1d74f5;
+  background: #5b29c7;
   border: none;
-  margin-bottom: 14px;
+  margin-bottom: 30px;
   input {
     background: transparent;
     border: none;
