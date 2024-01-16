@@ -20,7 +20,7 @@ import mySvg from './loginBackground.svg';
 import Footer from '../../Footer';
 
 const ERROR_MESSAGE =
-  '아이디 또는 비밀번호를 잘못 입력했습니다. 입력하신 내용을 다시 확인해주세요.';
+  '아이디 또는 비밀번호를 잘못 입력했습니다. 입력하신 내용을 다시 확인해 주세요.';
 
 const my_custom_param = new URL(window.location.href).searchParams.get(
   'my_custom_param'
@@ -484,7 +484,7 @@ const InputContainer = styled('div')<ErrorInputContainerProps>`
 
   &:focus-within {
     border: ${(props) =>
-      props.showError ? '1px solid #F14A4A' : '1px solid #D5D4D8'};
+      props.showError ? '1px solid #F14A4A' : '1px solid #5b29c7'};
   }
 
   input {
@@ -498,7 +498,7 @@ const InputContainer = styled('div')<ErrorInputContainerProps>`
   input::placeholder {
     size: 14px;
     font-style: normal;
-    color: #D5D4D8;
+    color: #d5d4d8;
   }
 
   input:focus {
@@ -578,7 +578,7 @@ const GoogleLoginButton = styled(Button)`
   justify-content: center;
   gap: 24px;
   background: #ffffff;
-  border: 1px solid #D5D4D8;
+  border: 1px solid #d5d4d8;
   margin-bottom: 16px;
   p {
     font-weight: 500;
@@ -604,8 +604,9 @@ const LoginButton = styled(Button)`
 
 const ErrorText = styled('div')`
   color: #f14a4a;
-  font-size: 12px;
-  line-height: 24px;
+  font-size: 11px;
+  line-height: 16px;
   position: absolute;
   bottom: -30px;
+  left: 10px;
 `;
