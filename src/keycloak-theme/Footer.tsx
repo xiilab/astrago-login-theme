@@ -36,6 +36,7 @@ const Wrapper = styled('footer')`
 const Section = styled('section')`
   span {
     display: block;
+    text-align: center;
   }
   font-size: 11px;
   color: #90919e;

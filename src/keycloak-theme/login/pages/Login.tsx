@@ -387,7 +387,6 @@ export default function Login(
 const FooterWrapper = styled('div')`
   position: absolute;
   bottom: 0;
-  left: 76px;
 `;
 
 const Wrapper = styled('div')`
@@ -398,7 +397,7 @@ const Wrapper = styled('div')`
 
 const BackgroundWrapper = styled('div')`
   flex-grow: 1;
-  min-width: 1500px;
+  min-width: 1300px;
 `;
 
 const BackgroundContainer = styled('div')`
@@ -434,7 +433,7 @@ const Container = styled('div')`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  min-width: 532px;
+  min-width: 620px;
 
   #kc-registration {
     font-size: 14px;
@@ -498,7 +497,7 @@ const InputContainer = styled('div')<ErrorInputContainerProps>`
   input::placeholder {
     size: 14px;
     font-style: normal;
-    color: #d5d4d8;
+    color: #90919E;
   }
 
   input:focus {
