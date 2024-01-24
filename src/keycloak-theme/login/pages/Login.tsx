@@ -397,7 +397,7 @@ const Wrapper = styled('div')`
 
 const BackgroundWrapper = styled('div')`
   flex-grow: 1;
-  min-width: 1300px;
+  min-width: 1000px;
 `;
 
 const BackgroundContainer = styled('div')`
@@ -497,7 +497,7 @@ const InputContainer = styled('div')<ErrorInputContainerProps>`
   input::placeholder {
     size: 14px;
     font-style: normal;
-    color: #90919E;
+    color: #90919e;
   }
 
   input:focus {
