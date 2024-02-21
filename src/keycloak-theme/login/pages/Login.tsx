@@ -406,7 +406,7 @@ const BackgroundContainer = styled('div')`
   justify-content: center;
   align-items: center;
   color: #ffffff;
-  gap: 19px;
+  gap: 15px;
   height: 100%;
 `;
 
