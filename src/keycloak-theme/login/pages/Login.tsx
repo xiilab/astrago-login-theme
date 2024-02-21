@@ -366,11 +366,7 @@ export default function Login(
           }}
         >
           <BackgroundContainer data-sy="BackgroundContainer">
-            {/* <LogoTitle>ASTRAGO.ai</LogoTitle> */}
-            <LogoTitle>
-              <WhiteLogo />
-            </LogoTitle>
-
+            <WhiteLogo />
             <LogoContent>
               <span>astrago.ai는 우주와 별을 뜻하는 ‘Astra’처럼</span>
               <span>
