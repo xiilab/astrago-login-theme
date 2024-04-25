@@ -41,7 +41,6 @@ const { OidcProvider } = createOidcProvider({
   publicUrl: process.env.PUBLIC_URL,
 });
 
-
 export default function App() {
   return (
     <OidcProvider>
