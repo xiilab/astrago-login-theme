@@ -92,6 +92,10 @@ export default function Login(
 
     formElement.submit();
   });
+  const baseUrl = window.location.origin;
+  const currentUrl = new URL(baseUrl);
+  currentUrl.port = '30080';
+  const newUrl = currentUrl.toString();
 
   return (
     <>
@@ -111,7 +115,7 @@ export default function Login(
                     Don't have account?
                     {/* <a tabIndex={6} href={url.registrationUrl}> */}
                     {/* TODO 키클락 서버와 연동으로 회원가입 페이지로 지정 */}
-                    <a tabIndex={6} href={'/register'}>
+                    <a tabIndex={6} href={`${newUrl}register`}>
                       Create an account
                     </a>
                   </span>
