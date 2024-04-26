@@ -111,7 +111,7 @@ export default function Login(
                     Don't have account?
                     {/* <a tabIndex={6} href={url.registrationUrl}> */}
                     {/* TODO 키클락 서버와 연동으로 회원가입 페이지로 지정 */}
-                    <a tabIndex={6} href={'http://10.61.3.12:30080/register'}>
+                    <a tabIndex={6} href={'/register'}>
                       Create an account
                     </a>
                   </span>
