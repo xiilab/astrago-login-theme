@@ -74,7 +74,7 @@ export default function Login(
   });
   const baseUrl = window.location.origin;
   const currentUrl = new URL(baseUrl);
-  currentUrl.port = '30080';
+  currentUrl.port = '';
   const newUrl = currentUrl.toString();
 
   return (
