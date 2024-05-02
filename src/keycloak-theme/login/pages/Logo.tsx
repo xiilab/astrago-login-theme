@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 const Logo = () => {
   return (
@@ -8,19 +8,12 @@ const Logo = () => {
       viewBox="0 0 310 42"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      xmlnsXlink="http://www.w3.org/1999/xlink"
-    >
+      xmlnsXlink="http://www.w3.org/1999/xlink">
       <path
         d="M305.236 25.8716C307.866 25.8716 309.999 23.7024 309.999 21.0266C309.999 18.3508 307.866 16.1816 305.236 16.1816C302.605 16.1816 300.473 18.3508 300.473 21.0266C300.473 23.7024 302.605 25.8716 305.236 25.8716Z"
         fill="white"
       />
-      <rect
-        x="271.667"
-        y="7.94141"
-        width="25.822"
-        height="25.9919"
-        fill="url(#pattern0)"
-      />
+      <rect x="271.667" y="7.94141" width="25.822" height="25.9919" fill="url(#pattern0)" />
       <path
         d="M285.619 0C282.044 0 278.681 0.923397 275.745 2.55359C278.356 1.2996 281.248 0.569998 284.33 0.569998C295.425 0.569998 304.414 9.71277 304.414 20.9987C304.414 32.2847 295.425 41.4275 284.33 41.4275C281.259 41.4275 278.356 40.7093 275.745 39.4439C278.681 41.0741 282.044 41.9975 285.619 41.9975C297.028 41.9975 306.274 32.5925 306.274 20.9873C306.274 9.38217 297.028 0 285.619 0Z"
         fill="white"
@@ -58,16 +51,8 @@ const Logo = () => {
         fill="white"
       />
       <defs>
-        <pattern
-          id="pattern0"
-          patternContentUnits="objectBoundingBox"
-          width="1"
-          height="1"
-        >
-          <use
-            xlinkHref="#image0_1266_3614"
-            transform="scale(0.0105263 0.0108696)"
-          />
+        <pattern id="pattern0" patternContentUnits="objectBoundingBox" width="1" height="1">
+          <use xlinkHref="#image0_1266_3614" transform="scale(0.0105263 0.0108696)" />
         </pattern>
         <image
           id="image0_1266_3614"

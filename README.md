@@ -23,14 +23,14 @@ yarn # install dependencies (it's like npm install)
 
 yarn storybook # Start Storybook
                # This is by far the best way to develop your theme
-               # This enable to quickly see your pages in isolation and in different states.  
+               # This enable to quickly see your pages in isolation and in different states.
                # You can create stories even for pages that you haven't explicitly overloaded. See src/keycloak-theme/login/pages/LoginResetPassword.stories.tsx
                # See Keycloakify's storybook for if you need a starting point for your stories: https://github.com/keycloakify/keycloakify/tree/main/stories
 
 yarn start # See the Hello World app
            # Uncomment line 97 of src/keycloak-theme/login/kcContext where it reads: `mockPageId: "login.ftl"`, reload https://localhost:3000
            # You can now develop your Login pages. (Don't forget to comment it back when you're done)
-          
+
 # Install mvn (Maven) if not already done. On mac it's 'brew install maven', on Ubuntu/Debian it's 'sudo apt-get install maven'
 
 yarn build-keycloak-theme # Actually build the theme
@@ -38,7 +38,7 @@ yarn build-keycloak-theme # Actually build the theme
                           # your theme on a real Keycloak instance.
 
 npx eject-keycloak-page # Prompt that let you select the pages you want to customize
-                        # This CLI tools is not guaranty to work, you can always copy pase pages 
+                        # This CLI tools is not guaranty to work, you can always copy pase pages
                         # from the Keycloakify repo.
 
 npx initialize-email-theme # For initializing your email theme
@@ -51,11 +51,13 @@ npx download-builtin-keycloak-theme # For downloading the default theme (as a re
 # 개발 진행
 
 ```
-nvm use lts/gallium 
+nvm use lts/gallium
 yarn install
 yarn start
 ```
+
 - ./src/keycloak-theme/login/kcContext.ts 의 파일 수정 : 103 줄
+
 ```
 export const { kcContext } = getKcContext({
   // Uncomment to test the login page for development.
@@ -64,40 +66,38 @@ export const { kcContext } = getKcContext({
 });
 ```
 
-
 # The CI workflow
 
--   You need to manually allow GitHub Action to push on your repository.  For this reason the initial setup will fail.  You need to enabled permission and re-run failed job: [see video](https://user-images.githubusercontent.com/6702424/213480604-0aac0ea7-487f-491d-94ae-df245b2c7ee8.mov).  
--   This CI is configured to publish [the app](https://starter.keycloakify.dev) on [GitHub Pages](https://github.com/codegouvfr/keycloakify-starter/blob/3617a71deb1a6544c3584aa8d6d2241647abd48c/.github/workflows/ci.yaml#L51-L76) and on [DockerHub](https://github.com/codegouvfr/keycloakify-starter/blob/3617a71deb1a6544c3584aa8d6d2241647abd48c/.github/workflows/ci.yaml#L78-L123) (as a Ngnix based docker image). In practice you probably want one or the other but not both... or neither if you are just building a theme (and not a theme + an app).  
-    If you want to enable the CI to publish on DockerHub on your behalf go to repository `Settings` tab, then `Secrets` you will need to add two new secrets:
-    `DOCKERHUB_TOKEN`, you Dockerhub authorization token.  
-    `DOCKERHUB_USERNAME`, Your Dockerhub username.
-    We deploy the demo app at [starter.keycloakify.dev](https://starter.keycloakify.dev) using GitHub page on the branch `gh-pages` (you have to enable it).  
-    To configure your own domain name please refer to [this documentation](https://docs.gitlanding.dev/using-a-custom-domain-name).
--   To release **don't create a tag manually**, the CI do it for you. Just update the `package.json`'s version field and push.
--   The `.jar` files that bundle the Keycloak theme will be attached as an asset with every GitHub release. [Example](https://github.com/InseeFrLab/keycloakify-starter/releases/tag/v0.1.0). The permalink to download the latest version is: `https://github.com/USER/PROJECT/releases/latest/download/keycloak-theme.jar`.
-    For this demo repo it's [here](https://github.com/codegouvfr/keycloakify-starter/releases/latest/download/keycloak-theme.jar)
--   The CI publishes the app docker image on DockerHub. `<org>/<repo>:main` for each **commit** on `main`, `<org>/<repo>:<feature-branch-name>` for each **pull-request** on `main`
-    and when **releasing a new version**: `<org>/<repo>:latest` and `<org>/<repo>:X.Y.Z`
-    [See on DockerHub](https://hub.docker.com/r/codegouvfr/keycloakify-starter)
+- You need to manually allow GitHub Action to push on your repository. For this reason the initial setup will fail. You need to enabled permission and re-run failed job: [see video](https://user-images.githubusercontent.com/6702424/213480604-0aac0ea7-487f-491d-94ae-df245b2c7ee8.mov).
+- This CI is configured to publish [the app](https://starter.keycloakify.dev) on [GitHub Pages](https://github.com/codegouvfr/keycloakify-starter/blob/3617a71deb1a6544c3584aa8d6d2241647abd48c/.github/workflows/ci.yaml#L51-L76) and on [DockerHub](https://github.com/codegouvfr/keycloakify-starter/blob/3617a71deb1a6544c3584aa8d6d2241647abd48c/.github/workflows/ci.yaml#L78-L123) (as a Ngnix based docker image). In practice you probably want one or the other but not both... or neither if you are just building a theme (and not a theme + an app).  
+  If you want to enable the CI to publish on DockerHub on your behalf go to repository `Settings` tab, then `Secrets` you will need to add two new secrets:
+  `DOCKERHUB_TOKEN`, you Dockerhub authorization token.  
+  `DOCKERHUB_USERNAME`, Your Dockerhub username.
+  We deploy the demo app at [starter.keycloakify.dev](https://starter.keycloakify.dev) using GitHub page on the branch `gh-pages` (you have to enable it).  
+  To configure your own domain name please refer to [this documentation](https://docs.gitlanding.dev/using-a-custom-domain-name).
+- To release **don't create a tag manually**, the CI do it for you. Just update the `package.json`'s version field and push.
+- The `.jar` files that bundle the Keycloak theme will be attached as an asset with every GitHub release. [Example](https://github.com/InseeFrLab/keycloakify-starter/releases/tag/v0.1.0). The permalink to download the latest version is: `https://github.com/USER/PROJECT/releases/latest/download/keycloak-theme.jar`.
+  For this demo repo it's [here](https://github.com/codegouvfr/keycloakify-starter/releases/latest/download/keycloak-theme.jar)
+- The CI publishes the app docker image on DockerHub. `<org>/<repo>:main` for each **commit** on `main`, `<org>/<repo>:<feature-branch-name>` for each **pull-request** on `main`
+  and when **releasing a new version**: `<org>/<repo>:latest` and `<org>/<repo>:X.Y.Z`
+  [See on DockerHub](https://hub.docker.com/r/codegouvfr/keycloakify-starter)
 
-![image](https://user-images.githubusercontent.com/6702424/229296422-9d522707-114e-4282-93f7-01ca38c3a1e0.png)  
+![image](https://user-images.githubusercontent.com/6702424/229296422-9d522707-114e-4282-93f7-01ca38c3a1e0.png)
 
 ![image](https://user-images.githubusercontent.com/6702424/229296556-a69f2dc9-4653-475c-9c89-d53cf33dc05a.png)
 
+# The storybook
 
-# The storybook  
-
-![image](https://user-images.githubusercontent.com/6702424/232350420-1921af90-d33e-492e-9296-0083298a84fa.png)  
+![image](https://user-images.githubusercontent.com/6702424/232350420-1921af90-d33e-492e-9296-0083298a84fa.png)
 
 ```bash
 yarn
 yarn storybook
 ```
 
-# Docker  
+# Docker
 
-Instructions for building and running the react app (`src/App`) that is collocated with our Keycloak theme. 
+Instructions for building and running the react app (`src/App`) that is collocated with our Keycloak theme.
 
 ```bash
 docker build -f Dockerfile -t keycloakify/keycloakify-starter:main .
@@ -108,8 +108,8 @@ docker run -it -dp 8083:80 keycloakify/keycloakify-starter:main
 # Standalone keycloak theme
 
 If you are only looking to create a keycloak theme, you can run theses few commands
-after clicking ![image](https://user-images.githubusercontent.com/6702424/98155461-92395e80-1ed6-11eb-93b2-98c64453043f.png) to refactor the template 
-and remove unnecessary files.  
+after clicking ![image](https://user-images.githubusercontent.com/6702424/98155461-92395e80-1ed6-11eb-93b2-98c64453043f.png) to refactor the template
+and remove unnecessary files.
 
 ```bash
 rm -r src/App
@@ -187,7 +187,7 @@ jobs:
     steps:
     - uses: garronej/ts-ci@v2.1.0
       id: step1
-      with: 
+      with:
         action_name: is_package_json_version_upgraded
         branch: \${{ github.head_ref || github.ref }}
 
@@ -222,4 +222,4 @@ jobs:
 EOF
 ```
 
-You can also remove `oidc-spa`, `powerhooks` and `tsafe` from your dependencies.  
+You can also remove `oidc-spa`, `powerhooks` and `tsafe` from your dependencies.

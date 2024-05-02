@@ -28,8 +28,7 @@ export default function Template(props: TemplateProps<KcContext, I18n>) {
 
   const { getClassName } = useGetClassName({ doUseDefaultCss, classes });
 
-  const { msg, changeLocale, labelBySupportedLanguageTag, currentLanguageTag } =
-    i18n;
+  const { msg, changeLocale, labelBySupportedLanguageTag, currentLanguageTag } = i18n;
 
   const { realm, locale, auth, url, message, isAppInitiatedAction } = kcContext;
 
@@ -65,9 +64,8 @@ export default function Template(props: TemplateProps<KcContext, I18n>) {
           <div
             className={clsx(
               // getClassName('kcFormCardClass'),
-              displayWide && getClassName('kcFormCardAccountClass')
-            )}
-          >
+              displayWide && getClassName('kcFormCardAccountClass'),
+            )}>
             {/* <header className={getClassName('kcFormHeaderClass')}>
               {realm.internationalizationEnabled &&
                 (assert(locale !== undefined), true) &&
@@ -211,54 +209,38 @@ export default function Template(props: TemplateProps<KcContext, I18n>) {
                     </div>
                   )} */}
                 {children}
-                {auth !== undefined &&
-                  auth.showTryAnotherWayLink &&
-                  showAnotherWayIfPresent && (
-                    <form
-                      id="kc-select-try-another-way-form"
-                      action={url.loginAction}
-                      method="post"
+                {auth !== undefined && auth.showTryAnotherWayLink && showAnotherWayIfPresent && (
+                  <form
+                    id="kc-select-try-another-way-form"
+                    action={url.loginAction}
+                    method="post"
+                    className={clsx(displayWide && getClassName('kcContentWrapperClass'))}>
+                    <div
                       className={clsx(
-                        displayWide && getClassName('kcContentWrapperClass')
-                      )}
-                    >
-                      <div
-                        className={clsx(
-                          displayWide && [
-                            getClassName('kcFormSocialAccountContentClass'),
-                            getClassName('kcFormSocialAccountClass'),
-                          ]
-                        )}
-                      >
-                        <div className={getClassName('kcFormGroupClass')}>
-                          <input
-                            type="hidden"
-                            name="tryAnotherWay"
-                            value="on"
-                          />
-                          {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-                          <a
-                            href="#"
-                            id="try-another-way"
-                            onClick={() => {
-                              document.forms[
-                                'kc-select-try-another-way-form' as never
-                              ].submit();
-                              return false;
-                            }}
-                          >
-                            {msg('doTryAnotherWay')}
-                          </a>
-                        </div>
+                        displayWide && [
+                          getClassName('kcFormSocialAccountContentClass'),
+                          getClassName('kcFormSocialAccountClass'),
+                        ],
+                      )}>
+                      <div className={getClassName('kcFormGroupClass')}>
+                        <input type="hidden" name="tryAnotherWay" value="on" />
+                        {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+                        <a
+                          href="#"
+                          id="try-another-way"
+                          onClick={() => {
+                            document.forms['kc-select-try-another-way-form' as never].submit();
+                            return false;
+                          }}>
+                          {msg('doTryAnotherWay')}
+                        </a>
                       </div>
-                    </form>
-                  )}
+                    </div>
+                  </form>
+                )}
                 {displayInfo && (
                   <div id="kc-info" className={getClassName('kcSignUpClass')}>
-                    <div
-                      id="kc-info-wrapper"
-                      className={getClassName('kcInfoAreaWrapperClass')}
-                    >
+                    <div id="kc-info-wrapper" className={getClassName('kcInfoAreaWrapperClass')}>
                       {infoNode}
                     </div>
                   </div>

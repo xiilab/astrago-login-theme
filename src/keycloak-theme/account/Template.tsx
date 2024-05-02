@@ -13,8 +13,7 @@ export default function Template(props: TemplateProps<KcContext, I18n>) {
 
   const { getClassName } = useGetClassName({ doUseDefaultCss, classes });
 
-  const { msg, changeLocale, labelBySupportedLanguageTag, currentLanguageTag } =
-    i18n;
+  const { msg, changeLocale, labelBySupportedLanguageTag, currentLanguageTag } = i18n;
 
   const { locale, url, features, realm, message, referrer } = kcContext;
 
@@ -58,10 +57,7 @@ export default function Template(props: TemplateProps<KcContext, I18n>) {
                           {locale.supported.map(({ languageTag }) => (
                             <li key={languageTag} className="kc-dropdown-item">
                               {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-                              <a
-                                href="#"
-                                onClick={() => changeLocale(languageTag)}
-                              >
+                              <a href="#" onClick={() => changeLocale(languageTag)}>
                                 {labelBySupportedLanguageTag[languageTag]}
                               </a>
                             </li>
@@ -127,12 +123,8 @@ export default function Template(props: TemplateProps<KcContext, I18n>) {
         <div className="col-sm-9 content-area">
           {message !== undefined && (
             <div className={clsx('alert', `alert-${message.type}`)}>
-              {message.type === 'success' && (
-                <span className="pficon pficon-ok"></span>
-              )}
-              {message.type === 'error' && (
-                <span className="pficon pficon-error-circle-o"></span>
-              )}
+              {message.type === 'success' && <span className="pficon pficon-ok"></span>}
+              {message.type === 'error' && <span className="pficon pficon-error-circle-o"></span>}
               <span className="kc-feedback-text">{message.summary}</span>
             </div>
           )}

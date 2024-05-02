@@ -22,5 +22,5 @@ createRoot(document.getElementById('root')).render(
         return <App />;
       })()}
     </Suspense>
-  </StrictMode>
+  </StrictMode>,
 );

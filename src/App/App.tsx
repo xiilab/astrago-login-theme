@@ -56,9 +56,7 @@ function ContextualizedApp() {
     <div className="App">
       <header className="App-header">
         {oidc.isUserLoggedIn ? (
-          <AuthenticatedRoute
-            logout={() => oidc.logout({ redirectTo: 'home' })}
-          />
+          <AuthenticatedRoute logout={() => oidc.logout({ redirectTo: 'home' })} />
         ) : (
           <button
             onClick={() =>
@@ -66,8 +64,7 @@ function ContextualizedApp() {
                 doesCurrentHrefRequiresAuth: false,
                 //extraQueryParams: { kc_idp_hint: "google" }
               })
-            }
-          >
+            }>
             Login
           </button>
         )}
@@ -95,9 +92,7 @@ function AuthenticatedRoute(props: { logout: () => void }) {
   return (
     <>
       <h1>Hello {user.name} !</h1>
-      <a href={buildAccountUrl({ locale: 'en' })}>
-        Link to your Keycloak account
-      </a>
+      <a href={buildAccountUrl({ locale: 'en' })}>Link to your Keycloak account</a>
       <button onClick={logout}>Logout</button>
       <pre style={{ textAlign: 'left' }}>{JSON.stringify(user, null, 2)}</pre>
     </>
@@ -107,10 +102,7 @@ function AuthenticatedRoute(props: { logout: () => void }) {
 function useUser() {
   const { oidc } = useOidc();
 
-  assert(
-    oidc.isUserLoggedIn,
-    'This hook can only be used when the user is logged in'
-  );
+  assert(oidc.isUserLoggedIn, 'This hook can only be used when the user is logged in');
 
   const { idToken } = oidc.getTokens();
 
@@ -129,7 +121,7 @@ function useUser() {
         // See https://docs.keycloakify.dev/realtime-input-validation#getting-your-custom-user-attribute-to-be-included-in-the-jwt
         favorite_pet: 'cat' | 'dog' | 'bird';
       }>(idToken),
-    [idToken]
+    [idToken],
   );
 
   return { user };
