@@ -246,10 +246,10 @@ export default function Login(
                         <Line />
                       </DivisorWrapper>
 
-                      <GoogleLoginButton>
+                      {/* <GoogleLoginButton>
                         <GoogleLogoIcon />
                         <p>Login of Google</p>
-                      </GoogleLoginButton>
+                      </GoogleLoginButton> */}
                       <div id="kc-form-buttons" className={getClassName('kcFormGroupClass')}>
                         <input
                           type="hidden"
