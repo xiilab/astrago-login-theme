@@ -14,6 +14,8 @@ import { ReactComponent as VisibilityIcon } from './icons/remove_red_eye_white.s
 import { ReactComponent as GoogleLogoIcon } from './icons/google_logo.svg';
 import { ReactComponent as WhiteLogo } from './WhiteLogo.svg';
 import { ReactComponent as BlackLogo } from './BlackLogo.svg';
+import { ReactComponent as SeoulTechLogo } from './seoultech_logo_black.svg';
+
 // import { ReactComponent as BackgroundImg } from './loginBackground.svg';
 import mySvg from './loginBackground.svg';
 
@@ -125,6 +127,7 @@ export default function Login(
             <Section>
               {/* <Title>ASTRAGO</Title> */}
               <Title>
+                <SeoulTechLogo />
                 <BlackLogo />
               </Title>
               <SubTitle>Login to your Account</SubTitle>
@@ -449,6 +452,10 @@ const Section = styled('div')`
 `;
 
 const Title = styled('div')`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
   text-align: center;
 `;
 
