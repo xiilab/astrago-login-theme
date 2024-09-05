@@ -328,7 +328,7 @@ export default function Login(
             <WhiteLogo />
             <LogoContent>
               <span>
-                astrago는 자원 최적화 기술을 활용하여 GPU 서버의 활용도를 극대화하는 솔루션입니다.
+                AstraGo는 자원 최적화 기술을 활용하여 GPU 서버의 활용도를 극대화하는 솔루션입니다.
               </span>
               <span>
                 이를 통해 학습 시간을 단축하여 사용자의 프로젝트 계획을 더욱 향상시킵니다.
