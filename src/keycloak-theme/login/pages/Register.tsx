@@ -155,7 +155,8 @@ export default function Register(
                     )}
                   </InputContainer>
                   <GuideText>
-                    영문자, 숫자로 10자 이내로 기입해 주세요. (특수문자, 한글 입력 불가)
+                    영문자, 숫자로 10자 이내로 기입해 주세요. (특수문자, 한글
+                    입력 불가)
                   </GuideText>
 
                   <InputContainer>
@@ -221,7 +222,8 @@ export default function Register(
                         </div>
                       </InputContainer>
                       <GuideText>
-                        영문 대소문자, 솟자, 특수문자 중 2가지 이상 10~16자 이내로 기입해 주세요.
+                        영문 대소문자, 솟자, 특수문자 중 2가지 이상 10~16자
+                        이내로 기입해 주세요.
                       </GuideText>
                       <InputContainer>
                         <div
@@ -294,7 +296,9 @@ export default function Register(
                     </div>
                   )}
                   <div className={getClassName('kcFormGroupClass')}>
-                    <div id="kc-form-buttons" className={getClassName('kcFormButtonsClass')}>
+                    <div
+                      id="kc-form-buttons"
+                      className={getClassName('kcFormButtonsClass')}>
                       <RegisterButton>
                         <input
                           className={clsx(
@@ -308,8 +312,11 @@ export default function Register(
                         />
                       </RegisterButton>
                     </div>
-                    <div id="kc-form-options" className={getClassName('kcFormOptionsClass')}>
-                      <div className={getClassName('kcFormOptionsWrapperClass')}>
+                    <div
+                      id="kc-form-options"
+                      className={getClassName('kcFormOptionsClass')}>
+                      <div
+                        className={getClassName('kcFormOptionsWrapperClass')}>
                         {/* <a href={url.loginUrl}>{msg('backToLogin')}</a> */}
                         <LoginUrlText>
                           <p>Were you a member?</p>
@@ -336,10 +343,12 @@ export default function Register(
             <WhiteLogo />
             <LogoContent>
               <span>
-                astrago는 자원 최적화 기술을 활용하여 GPU 서버의 활용도를 극대화하는 솔루션입니다.
+                AstraGo는 자원 최적화 기술을 활용하여 GPU 서버의 활용도를
+                극대화하는 솔루션입니다.
               </span>
               <span>
-                이를 통해 학습 시간을 단축하여 사용자의 프로젝트 계획을 더욱 향상시킵니다.
+                이를 통해 학습 시간을 단축하여 사용자의 프로젝트 계획을 더욱
+                향상시킵니다.
               </span>
             </LogoContent>
           </BackgroundContainer>
@@ -434,7 +443,8 @@ const FormContainer = styled('div')`
 
 const InputContainer = styled('div')<ErrorInputContainerProps>`
   background-color: #ffffff;
-  border: ${(props) => (props.showError ? '1px solid #F14A4A' : '1px solid #D5D4D8')};
+  border: ${(props) =>
+    props.showError ? '1px solid #F14A4A' : '1px solid #D5D4D8'};
   height: 48px;
   border-radius: 8px;
   display: flex;
@@ -445,7 +455,8 @@ const InputContainer = styled('div')<ErrorInputContainerProps>`
   transition: all 0.5s ease;
 
   &:focus-within {
-    border: ${(props) => (props.showError ? '1px solid #F14A4A' : '1px solid #5b29c7')};
+    border: ${(props) =>
+      props.showError ? '1px solid #F14A4A' : '1px solid #5b29c7'};
   }
 
   input {
