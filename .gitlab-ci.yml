@@ -1,6 +1,6 @@
 stages:
   - build
-#   - release
+  - release
 
 variables:
   NODE_VERSION: "18.18.2"
