@@ -21,6 +21,7 @@ build:
   artifacts:
     paths:
       - build_keycloak/target/keycloak-theme.jar
+    expire_in: 1 h  # 1시간 후 자동 삭제
 
 release:
   stage: release
@@ -41,7 +42,7 @@ release:
         --form "file=@build_keycloak/target/keycloak-theme.jar" \
         "http://10.61.3.134/api/v4/projects/$CI_PROJECT_ID/uploads" > response.json
 
-      ASSET_URL=$(cat response.json | grep -oP '(?<="url":")[^"]+')
+      ASSET_URL=$(sed -n 's/.*"url":"\([^"]*\)".*/\1/p' response.json)
 
       curl --request POST \
         --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
