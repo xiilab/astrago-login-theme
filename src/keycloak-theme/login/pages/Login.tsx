@@ -1,4 +1,4 @@
-import { useState, type FormEventHandler } from 'react';
+import { useState, useEffect, type FormEventHandler } from 'react';
 import { clsx } from 'keycloakify/tools/clsx';
 import { useConstCallback } from 'keycloakify/tools/useConstCallback';
 import type { PageProps } from 'keycloakify/login/pages/PageProps';
@@ -76,6 +76,16 @@ export default function Login(
   const currentUrl = new URL(baseUrl);
   currentUrl.port = '30080';
   const newUrl = currentUrl.toString();
+  // 페이지가 포커싱 될 때 마다 새로고침 => 재로그인 방지
+  useEffect(() => {
+    const handleFocus = () => {
+      window.location.reload();
+    };
+    window.addEventListener('focus', handleFocus);
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+    };
+  }, []);
 
   return (
     <>
