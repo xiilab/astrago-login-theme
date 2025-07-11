@@ -44,6 +44,8 @@ export default function Login(
 
   const { msg, msgStr } = i18n;
 
+  console.log(message);
+
   const [isLoginButtonDisabled, setIsLoginButtonDisabled] = useState(false);
   const [passwordType, setPasswordType] = useState({
     type: 'password',
