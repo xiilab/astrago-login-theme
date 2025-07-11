@@ -22,7 +22,9 @@ import Footer from '../../Footer';
 const ERROR_MESSAGE =
   '아이디 또는 비밀번호를 잘못 입력했습니다. 입력하신 내용을 다시 확인해 주세요.';
 
-const my_custom_param = new URL(window.location.href).searchParams.get('my_custom_param');
+const my_custom_param = new URL(window.location.href).searchParams.get(
+  'my_custom_param',
+);
 if (my_custom_param !== null) {
   console.log('my_custom_param:', my_custom_param);
 }
@@ -32,22 +34,38 @@ export default function Login(
     displayMessage?: boolean;
   },
 ) {
-  const { kcContext, i18n, doUseDefaultCss, Template, classes, displayMessage = true } = props;
+  const {
+    kcContext,
+    i18n,
+    doUseDefaultCss,
+    Template,
+    classes,
+    displayMessage = true,
+  } = props;
 
   const { getClassName } = useGetClassName({
     doUseDefaultCss,
     classes,
   });
 
-  const { social, realm, url, usernameHidden, login, auth, registrationDisabled, message, client } =
-    kcContext;
+  const {
+    social,
+    realm,
+    url,
+    usernameHidden,
+    login,
+    auth,
+    registrationDisabled,
+    message,
+    client,
+  } = kcContext;
 
   const { msg, msgStr } = i18n;
-  console.log("====props====");
+  console.log('====props====');
   console.log(props);
-  console.log("====message====");
+  console.log('====message====');
   console.log(message);
-  console.log("====kcContext====");
+  console.log('====kcContext====');
   console.log(kcContext);
 
   const [isLoginButtonDisabled, setIsLoginButtonDisabled] = useState(false);
@@ -74,7 +92,9 @@ export default function Login(
 
     //NOTE: Even if we login with email Keycloak expect username and password in
     //the POST request.
-    formElement.querySelector("input[name='email']")?.setAttribute('name', 'username');
+    formElement
+      .querySelector("input[name='email']")
+      ?.setAttribute('name', 'username');
 
     formElement.submit();
   });
@@ -83,15 +103,15 @@ export default function Login(
   currentUrl.port = '30080';
   const newUrl = currentUrl.toString();
   // 페이지가 포커싱 될 때 마다 새로고침 => 재로그인 방지
-  useEffect(() => {
-    const handleFocus = () => {
-      window.location.reload();
-    };
-    window.addEventListener('focus', handleFocus);
-    return () => {
-      window.removeEventListener('focus', handleFocus);
-    };
-  }, []);
+  // useEffect(() => {
+  //   const handleFocus = () => {
+  //     window.location.reload();
+  //   };
+  //   window.addEventListener('focus', handleFocus);
+  //   return () => {
+  //     window.removeEventListener('focus', handleFocus);
+  //   };
+  // }, []);
 
   return (
     <>
@@ -166,7 +186,10 @@ export default function Login(
                             >
                               {msg(label)}
                             </label> */}
-                                <InputContainer showError={displayMessage && message !== undefined}>
+                                <InputContainer
+                                  showError={
+                                    displayMessage && message !== undefined
+                                  }>
                                   <MailIcon />
                                   <input
                                     tabIndex={1}
@@ -206,11 +229,19 @@ export default function Login(
                               placeholder="Password"
                             />
                             <VisibleButton onClick={handlePasswordType}>
-                              {passwordType.visible ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                              {passwordType.visible ? (
+                                <VisibilityIcon />
+                              ) : (
+                                <VisibilityOffIcon />
+                              )}
                             </VisibleButton>
                           </PasswordInputContainer>
                           {displayMessage && message !== undefined && (
-                            <div className={clsx('alert', `alert-${message.type}`)}>
+                            <div
+                              className={clsx(
+                                'alert',
+                                `alert-${message.type}`,
+                              )}>
                               <ErrorText
                                 className="kc-feedback-text"
                                 dangerouslySetInnerHTML={{
@@ -266,7 +297,9 @@ export default function Login(
                         <GoogleLogoIcon />
                         <p>Login of Google</p>
                       </GoogleLoginButton> */}
-                      <div id="kc-form-buttons" className={getClassName('kcFormGroupClass')}>
+                      <div
+                        id="kc-form-buttons"
+                        className={getClassName('kcFormGroupClass')}>
                         <input
                           type="hidden"
                           id="id-hidden-input"
@@ -314,7 +347,9 @@ export default function Login(
                       {social.providers.map((p) => (
                         <li
                           key={p.providerId}
-                          className={getClassName('kcFormSocialAccountListLinkClass')}>
+                          className={getClassName(
+                            'kcFormSocialAccountListLinkClass',
+                          )}>
                           <a
                             href={p.loginUrl}
                             id={`zocial-${p.alias}`}
@@ -344,10 +379,12 @@ export default function Login(
             <WhiteLogo />
             <LogoContent>
               <span>
-                AstraGo는 자원 최적화 기술을 활용하여 GPU 서버의 활용도를 극대화하는 솔루션입니다.
+                AstraGo는 자원 최적화 기술을 활용하여 GPU 서버의 활용도를
+                극대화하는 솔루션입니다.
               </span>
               <span>
-                이를 통해 학습 시간을 단축하여 사용자의 프로젝트 계획을 더욱 향상시킵니다.
+                이를 통해 학습 시간을 단축하여 사용자의 프로젝트 계획을 더욱
+                향상시킵니다.
               </span>
             </LogoContent>
           </BackgroundContainer>
@@ -442,7 +479,8 @@ const SubTitle = styled('div')`
 
 const InputContainer = styled('div')<ErrorInputContainerProps>`
   background-color: #ffffff;
-  border: ${(props) => (props.showError ? '1px solid #F14A4A' : '1px solid #D5D4D8')};
+  border: ${(props) =>
+    props.showError ? '1px solid #F14A4A' : '1px solid #D5D4D8'};
   height: 48px;
   border-radius: 8px;
   display: flex;
@@ -453,7 +491,8 @@ const InputContainer = styled('div')<ErrorInputContainerProps>`
   transition: all 0.5s ease;
 
   &:focus-within {
-    border: ${(props) => (props.showError ? '1px solid #F14A4A' : '1px solid #5b29c7')};
+    border: ${(props) =>
+      props.showError ? '1px solid #F14A4A' : '1px solid #5b29c7'};
   }
 
   input {
@@ -494,7 +533,8 @@ interface ErrorInputContainerProps {
 
 const PasswordInputContainer = styled(InputContainer)<ErrorInputContainerProps>`
   margin-top: 16px;
-  border: ${(props) => (props.showError ? '1px solid #F14A4A' : '1px solid #E2E1E7')};
+  border: ${(props) =>
+    props.showError ? '1px solid #F14A4A' : '1px solid #E2E1E7'};
 `;
 
 // const ResetWrapper = styled('div')`
