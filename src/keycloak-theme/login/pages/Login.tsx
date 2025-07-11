@@ -43,6 +43,12 @@ export default function Login(
     kcContext;
 
   const { msg, msgStr } = i18n;
+  console.log("====props====");
+  console.log(props);
+  console.log("====message====");
+  console.log(message);
+  console.log("====kcContext====");
+  console.log(kcContext);
 
   const [isLoginButtonDisabled, setIsLoginButtonDisabled] = useState(false);
   const [passwordType, setPasswordType] = useState({
