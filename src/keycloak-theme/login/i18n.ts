@@ -435,7 +435,7 @@ export const { useI18n } = createUseI18n({
     locale_th: 'ไทย',
     locale_tr: 'Türkçe',
     'locale_zh-CN': '中文简体',
-    // backToApplication: '&laquo; 지원서로 돌아가기',
+    backToApplication: '&laquo; 지원서로 돌아가기',
     missingParameterMessage: '누락된 매개변수: {0}',
     clientNotFoundMessage: '클라이언트를 찾을 수 없습니다.',
     clientDisabledMessage: '클라이언트가 비활성화되었습니다.',
