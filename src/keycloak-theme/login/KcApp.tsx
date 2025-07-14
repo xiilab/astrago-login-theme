@@ -66,12 +66,12 @@ export default function KcApp(props: { kcContext: KcContext }) {
             return (
               <MyExtraPage2 {...{ kcContext, i18n, Template, classes }} doUseDefaultCss={true} />
             );
-          // We choose to use the custom Template for the Info page to remove back to application links
+          // We choose to use the default Template for the Info page to use basic Keycloak theme
           case 'info.ftl':
             return (
               <Info
                 {...{ kcContext, i18n, classes }}
-                Template={Template}
+                Template={DefaultTemplate}
                 doUseDefaultCss={true}
               />
             );
