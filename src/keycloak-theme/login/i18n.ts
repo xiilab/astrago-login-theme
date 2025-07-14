@@ -50,11 +50,13 @@ export const { useI18n } = createUseI18n({
     loginTotpTitle: '모바일 인증기 설정',
     loginProfileTitle: '계정 정보 업데이트',
     loginIdpReviewProfileTitle: '계정 정보 업데이트',
-    loginTimeout: '로그인 시도 시간이 초과되었습니다. 로그인이 처음부터 시작됩니다.',
+    loginTimeout:
+      '로그인 시도 시간이 초과되었습니다. 로그인이 처음부터 시작됩니다.',
     reauthenticate: '계속하려면 재인증하세요.',
     oauthGrantTitle: '{0}에 대한 액세스 권한 부여',
     oauthGrantTitleHtml: '{0}',
-    oauthGrantInformation: '{0}이 데이터를 처리하는 방법을 알아보고 {0}을 신뢰하는지 확인하세요.',
+    oauthGrantInformation:
+      '{0}이 데이터를 처리하는 방법을 알아보고 {0}을 신뢰하는지 확인하세요.',
     oauthGrantReview: '당신은',
     oauthGrantTos: '서비스 약관.',
     oauthGrantPolicy: '개인 정보 정책.',
@@ -74,7 +76,8 @@ export const { useI18n } = createUseI18n({
     displayUnsupported: '요청한 디스플레이 유형이 지원되지 않습니다.',
     browserRequired: '로그인하려면 브라우저가 필요합니다',
     browserContinue: '로그인을 완료하려면 브라우저가 필요합니다.',
-    browserContinuePrompt: '브라우저를 열고 계속 로그인하시겠습니까? [예/아니요]:',
+    browserContinuePrompt:
+      '브라우저를 열고 계속 로그인하시겠습니까? [예/아니요]:',
     browserContinueAnswer: '예',
     usb: 'USB',
     nfc: 'NFC',
@@ -129,14 +132,17 @@ export const { useI18n } = createUseI18n({
     samlRoleListScopeConsentText: '내 역할',
     rolesScopeConsentText: '사용자 역할',
     restartLoginTooltip: '로그인 다시 시작',
-    loginTotpIntro: '이 계정에 액세스하려면 일회용 비밀번호 생성기를 설정해야 합니다.',
+    loginTotpIntro:
+      '이 계정에 액세스하려면 일회용 비밀번호 생성기를 설정해야 합니다.',
     loginTotpStep1: '모바일에 다음 애플리케이션 중 하나를 설치하세요.',
     loginTotpStep2: '애플리케이션을 열고 바코드를 스캔하세요.',
     loginTotpStep3:
       '애플리케이션에서 제공한 일회용 코드를 입력하고 제출을 클릭하여 설정을 완료하세요.',
-    loginTotpStep3DeviceName: 'OTP 장치를 관리하는 데 도움이 되는 장치 이름을 제공하세요.',
+    loginTotpStep3DeviceName:
+      'OTP 장치를 관리하는 데 도움이 되는 장치 이름을 제공하세요.',
     loginTotpManualStep2: '애플리케이션을 열고 다음 키를 입력하세요.',
-    loginTotpManualStep3: '애플리케이션에서 설정을 허용하는 경우 다음 구성 값을 사용하십시오.',
+    loginTotpManualStep3:
+      '애플리케이션에서 설정을 허용하는 경우 다음 구성 값을 사용하십시오.',
     loginTotpUnableToScan: '스캔할 수 없나요?',
     loginTotpScanBarcode: '바코드를 스캔하시겠습니까?',
     loginCredential: '신임장',
@@ -156,12 +162,14 @@ export const { useI18n } = createUseI18n({
     oauthGrantRequest: '이러한 액세스 권한을 부여합니까?',
     inResource: '에',
     oauth2DeviceVerificationTitle: '장치 로그인',
-    verifyOAuth2DeviceUserCode: '기기에서 제공한 코드를 입력하고 제출을 클릭하세요.',
+    verifyOAuth2DeviceUserCode:
+      '기기에서 제공한 코드를 입력하고 제출을 클릭하세요.',
     oauth2DeviceInvalidUserCodeMessage: '잘못된 코드, 다시 시도하십시오.',
     oauth2DeviceExpiredUserCodeMessage:
       '코드가 만료되었습니다. 기기로 돌아가서 다시 연결해 보세요.',
     oauth2DeviceVerificationCompleteHeader: '장치 로그인 성공',
-    oauth2DeviceVerificationCompleteMessage: '이 브라우저 창을 닫고 장치로 돌아갈 수 있습니다.',
+    oauth2DeviceVerificationCompleteMessage:
+      '이 브라우저 창을 닫고 장치로 돌아갈 수 있습니다.',
     oauth2DeviceVerificationFailedHeader: '장치 로그인 실패',
     oauth2DeviceVerificationFailedMessage:
       '이 브라우저 창을 닫고 장치로 돌아가서 다시 연결해 보세요.',
@@ -226,9 +234,11 @@ export const { useI18n } = createUseI18n({
     accountTemporarilyDisabledMessage:
       '계정이 일시적으로 비활성화되었습니다. 관리자에게 문의하거나 나중에 다시 시도하세요.',
     expiredCodeMessage: '로그인 시간이 초과되었습니다. 다시 로그인해 주세요.',
-    expiredActionMessage: '작업이 만료되었습니다. 계속해서 로그를 작성해 주세요',
+    expiredActionMessage:
+      '작업이 만료되었습니다. 계속해서 로그를 작성해 주세요',
     expiredActionTokenNoSessionMessage: '작업이 만료되었습니다.',
-    expiredActionTokenSessionExistsMessage: '작업이 만료되었습니다. 다시 시작해주세요.',
+    expiredActionTokenSessionExistsMessage:
+      '작업이 만료되었습니다. 다시 시작해주세요.',
     sessionLimitExceeded: '세션이 너무 많습니다.',
     missingFirstNameMessage: '이름을 지정해 주세요.',
     missingLastNameMessage: '성을 지정해 주세요.',
@@ -257,7 +267,8 @@ export const { useI18n } = createUseI18n({
     'error-invalid-date': '잘못된 날짜.',
     'error-user-attribute-read-only': '이 필드는 읽기 전용입니다.',
     'error-username-invalid-character': '값에 잘못된 문자가 포함되어 있습니다.',
-    'error-person-name-invalid-character': '값에 잘못된 문자가 포함되어 있습니다.',
+    'error-person-name-invalid-character':
+      '값에 잘못된 문자가 포함되어 있습니다.',
     'error-reset-otp-missing-id': 'OTP 구성을 선택하세요.',
     invalidPasswordExistingMessage: '기존 비밀번호가 잘못되었습니다.',
     invalidPasswordBlacklistedMessage:
@@ -275,41 +286,55 @@ export const { useI18n } = createUseI18n({
     confirmLinkIdpTitle: '계정이 이미 존재합니다.',
     federatedIdentityConfirmLinkMessage:
       '{0} {1}의 사용자가 이미 존재합니다. 어떻게 계속하시겠습니까?',
-    federatedIdentityConfirmReauthenticateMessage: '귀하의 계정을 {0}에 연결하려면 인증하세요',
-    nestedFirstBrokerFlowMessage: '{0} 사용자 {1}은(는) 알려진 사용자와 연결되어 있지 않습니다.',
+    federatedIdentityConfirmReauthenticateMessage:
+      '귀하의 계정을 {0}에 연결하려면 인증하세요',
+    nestedFirstBrokerFlowMessage:
+      '{0} 사용자 {1}은(는) 알려진 사용자와 연결되어 있지 않습니다.',
     confirmLinkIdpReviewProfile: '프로필 검토',
     confirmLinkIdpContinue: '기존 계정에 추가',
-    configureTotpMessage: '계정을 활성화하려면 모바일 인증기를 설정해야 합니다.',
-    configureBackupCodesMessage: '계정을 활성화하려면 백업 코드를 설정해야 합니다.',
-    updateProfileMessage: '계정을 활성화하려면 사용자 프로필을 업데이트해야 합니다.',
+    configureTotpMessage:
+      '계정을 활성화하려면 모바일 인증기를 설정해야 합니다.',
+    configureBackupCodesMessage:
+      '계정을 활성화하려면 백업 코드를 설정해야 합니다.',
+    updateProfileMessage:
+      '계정을 활성화하려면 사용자 프로필을 업데이트해야 합니다.',
     updatePasswordMessage: '계정을 활성화하려면 비밀번호를 변경해야 합니다.',
-    updateEmailMessage: '계정을 활성화하려면 이메일 주소를 업데이트해야 합니다.',
+    updateEmailMessage:
+      '계정을 활성화하려면 이메일 주소를 업데이트해야 합니다.',
     resetPasswordMessage: '비밀번호를 변경해야 합니다.',
     verifyEmailMessage: '계정을 활성화하려면 이메일 주소를 확인해야 합니다.',
-    linkIdpMessage: '귀하의 계정을 {0}과(와) 연결하려면 이메일 주소를 확인해야 합니다.',
+    linkIdpMessage:
+      '귀하의 계정을 {0}과(와) 연결하려면 이메일 주소를 확인해야 합니다.',
     emailSentMessage: '곧 추가 지침이 포함된 이메일을 받게 됩니다.',
-    emailSendErrorMessage: '이메일을 보내지 못했습니다. 나중에 다시 시도해 주세요.',
+    emailSendErrorMessage:
+      '이메일을 보내지 못했습니다. 나중에 다시 시도해 주세요.',
     accountUpdatedMessage: '계정이 업데이트되었습니다.',
     accountPasswordUpdatedMessage: '귀하의 비밀번호가 업데이트되었습니다.',
     delegationCompleteHeader: '로그인 성공',
-    delegationCompleteMessage: '이 브라우저 창을 닫고 콘솔 애플리케이션으로 돌아갈 수 있습니다.',
+    delegationCompleteMessage:
+      '이 브라우저 창을 닫고 콘솔 애플리케이션으로 돌아갈 수 있습니다.',
     delegationFailedHeader: '로그인 실패',
     delegationFailedMessage:
       '이 브라우저 창을 닫고 콘솔 애플리케이션으로 돌아가서 다시 로그인해 보세요.',
     noAccessMessage: '접근 거부',
     invalidPasswordMinLengthMessage: '잘못된 비밀번호: 최소 길이 {0}.',
     invalidPasswordMaxLengthMessage: '잘못된 비밀번호: 최대 길이는 {0}입니다.',
-    invalidPasswordMinDigitsMessage: '잘못된 비밀번호: 최소 {0}자리 숫자를 포함해야 합니다.',
+    invalidPasswordMinDigitsMessage:
+      '잘못된 비밀번호: 최소 {0}자리 숫자를 포함해야 합니다.',
     invalidPasswordMinLowerCaseCharsMessage:
       '잘못된 비밀번호: 최소 {0}개의 소문자를 포함해야 합니다.',
     invalidPasswordMinUpperCaseCharsMessage:
       '잘못된 비밀번호: 대문자 {0}자 이상을 포함해야 합니다.',
     invalidPasswordMinSpecialCharsMessage:
       '잘못된 비밀번호: 최소 {0}개의 특수 문자를 포함해야 합니다.',
-    invalidPasswordNotUsernameMessage: '잘못된 비밀번호: 사용자 이름과 달라야 합니다.',
-    invalidPasswordNotEmailMessage: '잘못된 비밀번호: 이메일과 동일해서는 안됩니다.',
-    invalidPasswordRegexPatternMessage: '잘못된 비밀번호: 정규식 패턴과 일치하지 않습니다.',
-    invalidPasswordHistoryMessage: '잘못된 비밀번호: 마지막 {0} 비밀번호와 동일하면 안 됩니다.',
+    invalidPasswordNotUsernameMessage:
+      '잘못된 비밀번호: 사용자 이름과 달라야 합니다.',
+    invalidPasswordNotEmailMessage:
+      '잘못된 비밀번호: 이메일과 동일해서는 안됩니다.',
+    invalidPasswordRegexPatternMessage:
+      '잘못된 비밀번호: 정규식 패턴과 일치하지 않습니다.',
+    invalidPasswordHistoryMessage:
+      '잘못된 비밀번호: 마지막 {0} 비밀번호와 동일하면 안 됩니다.',
     invalidPasswordGenericMessage:
       '잘못된 비밀번호: 새 비밀번호가 비밀번호 정책과 일치하지 않습니다.',
     failedToProcessResponseMessage: '응답을 처리하지 못했습니다.',
@@ -320,7 +345,8 @@ export const { useI18n } = createUseI18n({
     failedLogout: '로그아웃 실패',
     unknownLoginRequesterMessage: '알 수 없는 로그인 요청자',
     loginRequesterNotEnabledMessage: '로그인 요청자가 활성화되지 않았습니다.',
-    bearerOnlyMessage: 'Bearer 전용 애플리케이션은 브라우저 로그인을 시작할 수 없습니다.',
+    bearerOnlyMessage:
+      'Bearer 전용 애플리케이션은 브라우저 로그인을 시작할 수 없습니다.',
     standardFlowDisabledMessage:
       '클라이언트는 주어진 response_type으로 브라우저 로그인을 시작할 수 없습니다. 클라이언트에 대해 표준 흐름이 비활성화되었습니다.',
     implicitFlowDisabledMessage:
@@ -340,29 +366,38 @@ export const { useI18n } = createUseI18n({
       'ID 공급자로부터 토큰을 검색하는 중에 예기치 않은 오류가 발생했습니다.',
     unexpectedErrorHandlingResponseMessage:
       'ID 공급자의 응답을 처리하는 중에 예기치 않은 오류가 발생했습니다.',
-    identityProviderAuthenticationFailedMessage: '인증 실패. ID 공급자로 인증할 수 없습니다.',
-    couldNotSendAuthenticationRequestMessage: 'ID 공급자에게 인증 요청을 보낼 수 없습니다.',
+    identityProviderAuthenticationFailedMessage:
+      '인증 실패. ID 공급자로 인증할 수 없습니다.',
+    couldNotSendAuthenticationRequestMessage:
+      'ID 공급자에게 인증 요청을 보낼 수 없습니다.',
     unexpectedErrorHandlingRequestMessage:
       'ID 공급자에 대한 인증 요청을 처리하는 중에 예기치 않은 오류가 발생했습니다.',
     invalidAccessCodeMessage: '잘못된 액세스 코드입니다.',
     sessionNotActiveMessage: '세션이 활성화되지 않았습니다.',
-    invalidCodeMessage: '오류가 발생했습니다. 애플리케이션을 통해 다시 로그인해 주세요.',
+    invalidCodeMessage:
+      '오류가 발생했습니다. 애플리케이션을 통해 다시 로그인해 주세요.',
     cookieNotFoundMessage:
       '쿠키를 찾을 수 없습니다. 귀하의 브라우저에서 쿠키가 활성화되어 있는지 확인하십시오.',
-    insufficientLevelOfAuthentication: '요청한 인증 수준이 충족되지 않았습니다.',
+    insufficientLevelOfAuthentication:
+      '요청한 인증 수준이 충족되지 않았습니다.',
     identityProviderUnexpectedErrorMessage:
       'ID 공급자로 인증할 때 예기치 않은 오류가 발생했습니다.',
-    identityProviderMissingStateMessage: 'ID 공급자의 응답에 상태 매개변수가 누락되었습니다.',
+    identityProviderMissingStateMessage:
+      'ID 공급자의 응답에 상태 매개변수가 누락되었습니다.',
     identityProviderMissingCodeOrErrorMessage:
       'ID 공급자의 응답에 코드 또는 오류 매개변수가 누락되었습니다.',
-    identityProviderInvalidResponseMessage: 'ID 공급자의 응답이 잘못되었습니다.',
-    identityProviderInvalidSignatureMessage: 'ID 공급자의 응답에 잘못된 서명이 있습니다.',
-    identityProviderNotFoundMessage: '해당 식별자가 있는 ID 공급자를 찾을 수 없습니다.',
+    identityProviderInvalidResponseMessage:
+      'ID 공급자의 응답이 잘못되었습니다.',
+    identityProviderInvalidSignatureMessage:
+      'ID 공급자의 응답에 잘못된 서명이 있습니다.',
+    identityProviderNotFoundMessage:
+      '해당 식별자가 있는 ID 공급자를 찾을 수 없습니다.',
     identityProviderLinkSuccess:
       '이메일을 성공적으로 확인했습니다. 원래 브라우저로 돌아가서 로그인을 계속하세요.',
     staleCodeMessage:
       '이 페이지는 더 이상 유효하지 않습니다. 애플리케이션으로 돌아가서 다시 로그인하세요.',
-    realmSupportsNoCredentialsMessage: '영역은 자격 증명 유형을 지원하지 않습니다.',
+    realmSupportsNoCredentialsMessage:
+      '영역은 자격 증명 유형을 지원하지 않습니다.',
     credentialSetupRequired: '로그할 수 없습니다. 자격 증명 설정이 필요합니다.',
     identityProviderNotUniqueMessage:
       'Realm은 여러 ID 공급자를 지원합니다. 인증에 어떤 ID 공급자를 사용해야 하는지 결정할 수 없습니다.',
@@ -371,7 +406,8 @@ export const { useI18n } = createUseI18n({
       '클릭하신 링크는 오래된 링크이므로 더 이상 유효하지 않습니다. 어쩌면 이미 이메일을 확인했을 수도 있습니다.',
     identityProviderAlreadyLinkedMessage:
       '{0}에서 반환한 제휴 ID는 이미 다른 사용자에게 연결되어 있습니다.',
-    confirmAccountLinking: 'ID 공급업체 {1}의 {0} 계정을 귀하의 계정과 연결하는지 확인하세요.',
+    confirmAccountLinking:
+      'ID 공급업체 {1}의 {0} 계정을 귀하의 계정과 연결하는지 확인하세요.',
     confirmEmailAddressVerification: '이메일 주소 {0}의 유효성을 확인하세요.',
     confirmExecutionOfActions: '다음 작업을 수행합니다.',
     locale_ar: 'عربي',
@@ -398,7 +434,7 @@ export const { useI18n } = createUseI18n({
     locale_th: 'ไทย',
     locale_tr: 'Türkçe',
     'locale_zh-CN': '中文简体',
-    backToApplication: '&laquo; 지원서로 돌아가기',
+    // backToApplication: '&laquo; 지원서로 돌아가기',
     missingParameterMessage: '누락된 매개변수: {0}',
     clientNotFoundMessage: '클라이언트를 찾을 수 없습니다.',
     clientDisabledMessage: '클라이언트가 비활성화되었습니다.',
@@ -416,7 +452,8 @@ export const { useI18n } = createUseI18n({
     'requiredAction.UPDATE_PROFILE': '프로필 업데이트',
     'requiredAction.VERIFY_EMAIL': '이메일 확인',
     'requiredAction.CONFIGURE_RECOVERY_AUTHN_CODES': '복구 코드 생성',
-    'requiredAction.webauthn-register-passwordless': 'Webauthn 비밀번호 없이 등록',
+    'requiredAction.webauthn-register-passwordless':
+      'Webauthn 비밀번호 없이 등록',
     invalidTokenRequiredActions: '링크에 포함된 필수 조치가 유효하지 않습니다.',
     doX509Login: '다음 계정으로 로그인됩니다:',
     clientCertificate: 'X509 클라이언트 인증서:',
@@ -442,16 +479,19 @@ export const { useI18n } = createUseI18n({
     'saml.post-form.message': '리디렉션 중입니다. 잠시 기다려 주세요.',
     'saml.post-form.js-disabled':
       '자바스크립트가 비활성화되었습니다. 활성화하는 것이 좋습니다. 계속하려면 아래 버튼을 클릭하세요.',
-    'saml.artifactResolutionServiceInvalidResponse': '아티팩트를 해결할 수 없습니다.',
+    'saml.artifactResolutionServiceInvalidResponse':
+      '아티팩트를 해결할 수 없습니다.',
     'otp-display-name': '인증자 신청',
     'otp-help-text': '인증신청에서 인증번호를 입력하세요.',
     'otp-reset-description': '어떤 OTP 구성을 제거해야 합니까?',
     'password-display-name': '비밀번호',
     'password-help-text': '비밀번호를 입력하여 로그인하세요.',
     'auth-username-form-display-name': '사용자 이름',
-    'auth-username-form-help-text': '사용자 이름을 입력하여 로그인을 시작하세요',
+    'auth-username-form-help-text':
+      '사용자 이름을 입력하여 로그인을 시작하세요',
     'auth-username-password-form-display-name': '사용자 이름과 비밀번호',
-    'auth-username-password-form-help-text': '사용자 이름과 비밀번호를 입력하여 로그인하세요.',
+    'auth-username-password-form-help-text':
+      '사용자 이름과 비밀번호를 입력하여 로그인하세요.',
     'auth-recovery-authn-code-form-display-name': '복구 인증 코드',
     'auth-recovery-authn-code-form-help-text':
       '이전에 생성된 목록에서 복구 인증 코드를 입력하세요.',
@@ -468,18 +508,22 @@ export const { useI18n } = createUseI18n({
     'recovery-codes-download': '다운로드',
     'recovery-codes-copy': '복사',
     'recovery-codes-copied': '복사됨',
-    'recovery-codes-confirmation-message': '이 코드를 안전한 곳에 저장해 두었어요',
+    'recovery-codes-confirmation-message':
+      '이 코드를 안전한 곳에 저장해 두었어요',
     'recovery-codes-action-complete': '설정 완료',
     'recovery-codes-action-cancel': '설정 취소',
-    'recovery-codes-download-file-header': '복구 코드를 안전한 곳에 보관하세요.',
+    'recovery-codes-download-file-header':
+      '복구 코드를 안전한 곳에 보관하세요.',
     'recovery-codes-download-file-description':
       '복구 코드는 귀하가 귀하의 계정에 액세스할 수 없는 경우 귀하의 계정에 로그인할 수 있도록 해주는 일회용 비밀번호입니다.',
-    'recovery-codes-download-file-date': '이 코드는 다음 날짜에 생성되었습니다.',
+    'recovery-codes-download-file-date':
+      '이 코드는 다음 날짜에 생성되었습니다.',
     'recovery-codes-label-default': '복구 코드',
     'webauthn-display-name': '보안 키',
     'webauthn-help-text': '보안 키를 사용하여 로그인하세요.',
     'webauthn-passwordless-display-name': '보안 키',
-    'webauthn-passwordless-help-text': '비밀번호 없이 로그인하려면 보안 키를 사용하세요.',
+    'webauthn-passwordless-help-text':
+      '비밀번호 없이 로그인하려면 보안 키를 사용하세요.',
     'webauthn-login-title': '보안키 로그인',
     'webauthn-registration-title': '보안키 등록',
     'webauthn-available-authenticators': '사용 가능한 보안 키',
@@ -490,10 +534,14 @@ export const { useI18n } = createUseI18n({
     'webauthn-error-title': '보안 키 오류',
     'webauthn-error-registration': '보안 키를 등록하지 못했습니다.<br/> {0}',
     'webauthn-error-api-get': '보안 키로 인증하지 못했습니다.<br/> {0}',
-    'webauthn-error-different-user': '최초 인증된 사용자는 보안키로 인증된 사용자가 아닙니다.',
-    'webauthn-error-auth-verification': '보안 키 인증 결과가 잘못되었습니다.<br/> {0}',
-    'webauthn-error-register-verification': '보안키 등록 결과가 잘못되었습니다.<br/> {0}',
-    'webauthn-error-user-not-found': '보안 키로 인증된 알 수 없는 사용자입니다.',
+    'webauthn-error-different-user':
+      '최초 인증된 사용자는 보안키로 인증된 사용자가 아닙니다.',
+    'webauthn-error-auth-verification':
+      '보안 키 인증 결과가 잘못되었습니다.<br/> {0}',
+    'webauthn-error-register-verification':
+      '보안키 등록 결과가 잘못되었습니다.<br/> {0}',
+    'webauthn-error-user-not-found':
+      '보안 키로 인증된 알 수 없는 사용자입니다.',
     'identity-provider-redirector': '다른 ID 공급자와 연결',
     'identity-provider-login-label': '또는 다음으로 로그인하세요.',
     'idp-email-verification-display-name': '이메일 확인',
@@ -510,13 +558,15 @@ export const { useI18n } = createUseI18n({
     accountUnusable: '이 계정으로는 이후에 애플리케이션을 사용할 수 없습니다.',
     userDeletedSuccessfully: '사용자가 삭제되었습니다.',
     'access-denied': '접근 불가',
-    'access-denied-when-idp-auth': '{0}으로 인증하는 동안 액세스가 거부되었습니다.',
+    'access-denied-when-idp-auth':
+      '{0}으로 인증하는 동안 액세스가 거부되었습니다.',
     'frontchannel-logout.title': '로그 아웃하다',
     'frontchannel-logout.message': '다음 앱에서 로그아웃 중입니다.',
     logoutConfirmTitle: '로그 아웃하다',
     logoutConfirmHeader: '로그아웃하시겠습니까?',
     doLogout: '로그 아웃',
-    readOnlyUsernameMessage: '사용자 이름은 읽기 전용이므로 업데이트할 수 없습니다.',
+    readOnlyUsernameMessage:
+      '사용자 이름은 읽기 전용이므로 업데이트할 수 없습니다.',
     alphanumericalCharsOnly: '',
   },
 });
