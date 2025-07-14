@@ -18,11 +18,11 @@ import { ReactComponent as BlackLogo } from './BlackLogo.svg';
 import mySvg from './loginBackground.svg';
 
 import Footer from '../../Footer';
+import { setCookie, getCookie, deleteCookie } from './shared/cookieUtils';
 
-const ERROR_MESSAGE =
-  '아이디 또는 비밀번호를 잘못 입력했습니다. 입력하신 내용을 다시 확인해 주세요.';
-
-const my_custom_param = new URL(window.location.href).searchParams.get('my_custom_param');
+const my_custom_param = new URL(window.location.href).searchParams.get(
+  'my_custom_param',
+);
 if (my_custom_param !== null) {
   console.log('my_custom_param:', my_custom_param);
 }
@@ -32,22 +32,38 @@ export default function Login(
     displayMessage?: boolean;
   },
 ) {
-  const { kcContext, i18n, doUseDefaultCss, Template, classes, displayMessage = true } = props;
+  const {
+    kcContext,
+    i18n,
+    doUseDefaultCss,
+    Template,
+    classes,
+    displayMessage = true,
+  } = props;
 
   const { getClassName } = useGetClassName({
     doUseDefaultCss,
     classes,
   });
 
-  const { social, realm, url, usernameHidden, login, auth, registrationDisabled, message, client } =
-    kcContext;
+  const {
+    social,
+    realm,
+    url,
+    usernameHidden,
+    login,
+    auth,
+    registrationDisabled,
+    message,
+    client,
+  } = kcContext;
 
   const { msg, msgStr } = i18n;
-  console.log("====props====");
+  console.log('====props====');
   console.log(props);
-  console.log("====message====");
+  console.log('====message====');
   console.log(message);
-  console.log("====kcContext====");
+  console.log('====kcContext====');
   console.log(kcContext);
 
   const [isLoginButtonDisabled, setIsLoginButtonDisabled] = useState(false);
@@ -55,7 +71,64 @@ export default function Login(
     type: 'password',
     visible: false,
   });
+  // validation 메시지 상태 추가
+  const [validationMessage, setValidationMessage] = useState<
+    string | undefined
+  >(undefined);
 
+  // ===== onSubmit 함수 수정 =====
+  const onSubmit = useConstCallback<FormEventHandler<HTMLFormElement>>((e) => {
+    e.preventDefault();
+
+    setIsLoginButtonDisabled(true);
+
+    const formElement = e.target as HTMLFormElement;
+    const emailInput = formElement.querySelector(
+      "input[name='email']",
+    ) as HTMLInputElement;
+    const username = emailInput?.value || '';
+
+    // 비밀번호 공백 체크
+    const passwordInput = formElement.querySelector(
+      "input[name='password']",
+    ) as HTMLInputElement;
+    if (!passwordInput || passwordInput.value.trim() === '') {
+      setIsLoginButtonDisabled(false);
+      setValidationMessage('비밀번호를 입력해 주세요.');
+      passwordInput?.focus();
+      return;
+    }
+
+    // 쿠키에서 실패 정보 확인
+    const failInfo = getCookie(`login_fail_${username}`);
+    if (failInfo) {
+      try {
+        const { count, until } = JSON.parse(failInfo);
+        const now = Date.now();
+        if (count >= 5 && now < until) {
+          setValidationMessage(
+            '해당 계정은 임시로 제한되었습니다. 5분 후 다시 시도해 주세요.',
+          );
+          setIsLoginButtonDisabled(false);
+          return;
+        }
+      } catch (e) {
+        // 쿠키 파싱 오류 시 무시
+      }
+    }
+
+    //NOTE: Even if we login with email Keycloak expect username and password in
+    //the POST request.
+    formElement
+      .querySelector("input[name='email']")
+      ?.setAttribute('name', 'username');
+
+    setValidationMessage(undefined); // 로그인 시도 전 메시지 초기화
+    formElement.submit();
+  });
+  // ===== onSubmit 함수 끝 =====
+
+  // handlePasswordType 함수 복원
   const handlePasswordType = () => {
     setPasswordType(() => {
       if (!passwordType.visible) {
@@ -64,34 +137,68 @@ export default function Login(
       return { type: 'password', visible: false };
     });
   };
-
-  const onSubmit = useConstCallback<FormEventHandler<HTMLFormElement>>((e) => {
-    e.preventDefault();
-
-    setIsLoginButtonDisabled(true);
-
-    const formElement = e.target as HTMLFormElement;
-
-    //NOTE: Even if we login with email Keycloak expect username and password in
-    //the POST request.
-    formElement.querySelector("input[name='email']")?.setAttribute('name', 'username');
-
-    formElement.submit();
-  });
   const baseUrl = window.location.origin;
   const currentUrl = new URL(baseUrl);
   currentUrl.port = '30080';
   const newUrl = currentUrl.toString();
-  // 페이지가 포커싱 될 때 마다 새로고침 => 재로그인 방지
+
+  // kcContext.message.summary가 존재하는 경우 message 상태 업데이트 및 실패 횟수 관리
   useEffect(() => {
-    const handleFocus = () => {
-      window.location.reload();
-    };
-    window.addEventListener('focus', handleFocus);
-    return () => {
-      window.removeEventListener('focus', handleFocus);
-    };
-  }, []);
+    if (message?.summary) {
+      setValidationMessage(message.summary);
+
+      // 실패한 계정명 추출
+      const form = document.getElementById(
+        'kc-form-login',
+      ) as HTMLFormElement | null;
+      let emailInput = form?.querySelector(
+        "input[name='email']",
+      ) as HTMLInputElement | null;
+      if (!emailInput) {
+        // 이미 name이 username으로 바뀌었을 수 있음
+        emailInput = form?.querySelector(
+          "input[name='username']",
+        ) as HTMLInputElement | null;
+      }
+      const username = emailInput?.value || login.username || '';
+
+      if (username) {
+        const failInfo = getCookie(`login_fail_${username}`);
+        let count = 1;
+        let until = 0;
+        const now = Date.now();
+        if (failInfo) {
+          try {
+            const parsed = JSON.parse(failInfo);
+            count = parsed.count + 1;
+            until = parsed.until;
+          } catch (e) {
+            // 쿠키 파싱 오류 시 무시
+          }
+        }
+        if (count >= 5) {
+          until = now + 5 * 60 * 1000; // 5분 제한
+          setCookie(
+            `login_fail_${username}`,
+            JSON.stringify({ count, until }),
+            5,
+          );
+        } else {
+          setCookie(
+            `login_fail_${username}`,
+            JSON.stringify({ count, until: 0 }),
+            5,
+          );
+        }
+      }
+    } else {
+      // 로그인 성공 시 쿠키 삭제
+      const username = login.username || '';
+      if (username) {
+        deleteCookie(`login_fail_${username}`);
+      }
+    }
+  }, [message]);
 
   return (
     <>
@@ -166,7 +273,10 @@ export default function Login(
                             >
                               {msg(label)}
                             </label> */}
-                                <InputContainer showError={displayMessage && message !== undefined}>
+                                <InputContainer
+                                  showError={
+                                    displayMessage && message !== undefined
+                                  }>
                                   <MailIcon />
                                   <input
                                     tabIndex={1}
@@ -206,19 +316,32 @@ export default function Login(
                               placeholder="Password"
                             />
                             <VisibleButton onClick={handlePasswordType}>
-                              {passwordType.visible ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                              {passwordType.visible ? (
+                                <VisibilityIcon />
+                              ) : (
+                                <VisibilityOffIcon />
+                              )}
                             </VisibleButton>
                           </PasswordInputContainer>
-                          {displayMessage && message !== undefined && (
-                            <div className={clsx('alert', `alert-${message.type}`)}>
-                              <ErrorText
-                                className="kc-feedback-text"
-                                dangerouslySetInnerHTML={{
-                                  __html: ERROR_MESSAGE,
-                                }}
-                              />
-                            </div>
-                          )}
+                          {displayMessage &&
+                            (validationMessage !== undefined ||
+                              message !== undefined) && (
+                              <div
+                                className={clsx(
+                                  'alert',
+                                  `alert-${message?.type}`,
+                                )}>
+                                <ErrorText
+                                  className="kc-feedback-text"
+                                  dangerouslySetInnerHTML={{
+                                    __html:
+                                      validationMessage ||
+                                      message?.summary ||
+                                      '',
+                                  }}
+                                />
+                              </div>
+                            )}
                         </PasswordInputWrapper>
                       </div>
 
@@ -266,7 +389,9 @@ export default function Login(
                         <GoogleLogoIcon />
                         <p>Login of Google</p>
                       </GoogleLoginButton> */}
-                      <div id="kc-form-buttons" className={getClassName('kcFormGroupClass')}>
+                      <div
+                        id="kc-form-buttons"
+                        className={getClassName('kcFormGroupClass')}>
                         <input
                           type="hidden"
                           id="id-hidden-input"
@@ -314,7 +439,9 @@ export default function Login(
                       {social.providers.map((p) => (
                         <li
                           key={p.providerId}
-                          className={getClassName('kcFormSocialAccountListLinkClass')}>
+                          className={getClassName(
+                            'kcFormSocialAccountListLinkClass',
+                          )}>
                           <a
                             href={p.loginUrl}
                             id={`zocial-${p.alias}`}
@@ -344,10 +471,12 @@ export default function Login(
             <WhiteLogo />
             <LogoContent>
               <span>
-                AstraGo는 자원 최적화 기술을 활용하여 GPU 서버의 활용도를 극대화하는 솔루션입니다.
+                AstraGo는 자원 최적화 기술을 활용하여 GPU 서버의 활용도를
+                극대화하는 솔루션입니다.
               </span>
               <span>
-                이를 통해 학습 시간을 단축하여 사용자의 프로젝트 계획을 더욱 향상시킵니다.
+                이를 통해 학습 시간을 단축하여 사용자의 프로젝트 계획을 더욱
+                향상시킵니다.
               </span>
             </LogoContent>
           </BackgroundContainer>
@@ -442,7 +571,8 @@ const SubTitle = styled('div')`
 
 const InputContainer = styled('div')<ErrorInputContainerProps>`
   background-color: #ffffff;
-  border: ${(props) => (props.showError ? '1px solid #F14A4A' : '1px solid #D5D4D8')};
+  border: ${(props) =>
+    props.showError ? '1px solid #F14A4A' : '1px solid #D5D4D8'};
   height: 48px;
   border-radius: 8px;
   display: flex;
@@ -453,7 +583,8 @@ const InputContainer = styled('div')<ErrorInputContainerProps>`
   transition: all 0.5s ease;
 
   &:focus-within {
-    border: ${(props) => (props.showError ? '1px solid #F14A4A' : '1px solid #5b29c7')};
+    border: ${(props) =>
+      props.showError ? '1px solid #F14A4A' : '1px solid #5b29c7'};
   }
 
   input {
@@ -494,7 +625,8 @@ interface ErrorInputContainerProps {
 
 const PasswordInputContainer = styled(InputContainer)<ErrorInputContainerProps>`
   margin-top: 16px;
-  border: ${(props) => (props.showError ? '1px solid #F14A4A' : '1px solid #E2E1E7')};
+  border: ${(props) =>
+    props.showError ? '1px solid #F14A4A' : '1px solid #E2E1E7'};
 `;
 
 // const ResetWrapper = styled('div')`

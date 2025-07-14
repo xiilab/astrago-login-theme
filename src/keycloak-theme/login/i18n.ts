@@ -225,7 +225,8 @@ export const { useI18n } = createUseI18n({
     'client_realm-management': '영역 관리',
     client_broker: '브로커',
     requiredFields: '필수 입력 사항',
-    invalidUserMessage: '사용자 이름 또는 비밀번호가 잘못되었습니다.',
+    invalidUserMessage:
+      '아이디 또는 비밀번호를 잘못 입력했습니다. 입력하신 내용을 다시 확인해 주세요.',
     invalidUsernameMessage: '잘못된 사용자 이름.',
     invalidUsernameOrEmailMessage: '사용자 이름이나 이메일이 잘못되었습니다.',
     invalidPasswordMessage: '유효하지 않은 비밀번호.',
