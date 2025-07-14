@@ -59,12 +59,6 @@ export default function Login(
   } = kcContext;
 
   const { msg, msgStr } = i18n;
-  console.log('====props====');
-  console.log(props);
-  console.log('====message====');
-  console.log(message);
-  console.log('====kcContext====');
-  console.log(kcContext);
 
   const [isLoginButtonDisabled, setIsLoginButtonDisabled] = useState(false);
   const [passwordType, setPasswordType] = useState({
@@ -107,7 +101,7 @@ export default function Login(
         const now = Date.now();
         if (count >= 5 && now < until) {
           setValidationMessage(
-            '해당 계정은 임시로 제한되었습니다. 5분 후 다시 시도해 주세요.',
+            '계정이 일시적으로 비활성화되었습니다. 나중에 다시 시도하세요.',
           );
           setIsLoginButtonDisabled(false);
           return;
