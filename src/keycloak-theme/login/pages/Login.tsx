@@ -101,7 +101,7 @@ export default function Login(
         const now = Date.now();
         if (count >= 5 && now < until) {
           setValidationMessage(
-            '계정이 일시적으로 비활성화되었습니다. 나중에 다시 시도하세요.',
+            '보안 정책으로 이 기기에서 로그인 시도가 제한되었습니다. 5분 후 다시 시도하세요.',
           );
           setIsLoginButtonDisabled(false);
           return;
