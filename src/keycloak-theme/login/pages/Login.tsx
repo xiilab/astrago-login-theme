@@ -131,10 +131,6 @@ export default function Login(
       return { type: 'password', visible: false };
     });
   };
-  const baseUrl = window.location.origin;
-  const currentUrl = new URL(baseUrl);
-  currentUrl.port = '30080';
-  const newUrl = currentUrl.toString();
 
   // kcContext.message.summary가 존재하는 경우 message 상태 업데이트 및 실패 횟수 관리
   useEffect(() => {
@@ -212,7 +208,7 @@ export default function Login(
                     Don't have account?
                     {/* <a tabIndex={6} href={url.registrationUrl}> */}
                     {/* TODO 키클락 서버와 연동으로 회원가입 페이지로 지정 */}
-                    <a tabIndex={6} href={`${newUrl}register`}>
+                    <a tabIndex={6} href={`${window.location.origin}/register`}>
                       Create an account
                     </a>
                   </span>
