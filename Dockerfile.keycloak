@@ -1,18 +1,14 @@
 # Use the same base image as astrago-deployment
-FROM bitnami/keycloak:latest
+FROM bitnami/keycloak:22.0.5-debian-11-r2
 
-# Install wget for downloading JAR file
+# Switch to root for file operations
 USER root
-RUN apt-get update && apt-get install -y wget && rm -rf /var/lib/apt/lists/*
 
-# Set environment variables
-ENV THEME_VERSION=${THEME_VERSION:-latest}
-ENV THEME_URL="https://github.com/xiilab/uyuni-login-theme/releases/download/v${THEME_VERSION}/keycloak-theme.jar"
+# Copy the built JAR file directly
+COPY build_keycloak/target/keycloak-theme.jar /opt/bitnami/keycloak/providers/keycloak-theme.jar
 
-# Download the theme JAR file
-RUN mkdir -p /opt/bitnami/keycloak/providers/ && \
-    wget -O /opt/bitnami/keycloak/providers/keycloak-theme.jar "${THEME_URL}" && \
-    chown -R 1001:1001 /opt/bitnami/keycloak/providers/keycloak-theme.jar
+# Set proper permissions
+RUN chown -R 1001:1001 /opt/bitnami/keycloak/providers/keycloak-theme.jar
 
 # Switch back to non-root user
 USER 1001
