@@ -140,10 +140,9 @@ jobs:
           ref: feature/keycloak-astrago-theme
       
       - name: Update theme version in common values
-        uses: mikefarah/yq@master
-        with:
-          cmd: |
-            yq eval ".keycloak.themeVersion = \"${{ needs.build.outputs.version }}\"" -i environments/common/values.yaml
+        run: |
+          VERSION="${{ needs.build.outputs.version }}"
+          yq eval ".keycloak.themeVersion = \"$VERSION\"" -i environments/common/values.yaml
       
       - name: Commit and push changes
         run: |
