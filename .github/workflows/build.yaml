@@ -71,8 +71,6 @@ jobs:
           VERSION=$(git rev-parse --short=4 HEAD)
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "Using version: $VERSION"
-        outputs:
-          version: ${{ steps.version.outputs.version }}
       
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
@@ -140,12 +138,6 @@ jobs:
           token: ${{ secrets.TOKEN }}
           repository: 'xiilab/astrago-deployment'
           ref: feature/keycloak-astrago-theme
-      
-      - name: Update keycloak image tag in dev values
-        uses: mikefarah/yq@master
-        with:
-          cmd: |
-            yq eval ".keycloak.image.tag = \"${{ needs.build.outputs.version }}\"" -i environments/dev/values.yaml
       
       - name: Update theme version in common values
         uses: mikefarah/yq@master
