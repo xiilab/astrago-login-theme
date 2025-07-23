@@ -6,7 +6,6 @@ const Footer = () => {
   return (
     <Wrapper>
       <Section>
-      <span>AstraGo 2.0</span>
         <span>도움말 ｜개인정보처리방침 ｜이용약관</span>
         <span>
           (주)씨이랩｜대표이사 : 이우영 ｜사업자등록번호 : 119-86-31534
