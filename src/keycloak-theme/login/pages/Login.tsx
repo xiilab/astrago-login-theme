@@ -12,7 +12,7 @@ import { ReactComponent as LockIcon } from './icons/lock_outline.svg';
 import { ReactComponent as VisibilityOffIcon } from './icons/visibility_off_white.svg';
 import { ReactComponent as VisibilityIcon } from './icons/remove_red_eye_white.svg';
 import { ReactComponent as GoogleLogoIcon } from './icons/google_logo.svg';
-import { ReactComponent as WhiteLogo } from './WhiteLogo.svg';
+// import { ReactComponent as WhiteLogo } from './WhiteLogo.svg';
 import { ReactComponent as BlackLogo } from './BlackLogo.svg';
 import microsoftLogo from './microsoft_logo.png';
 // import { ReactComponent as BackgroundImg } from './loginBackground.svg';
@@ -58,8 +58,6 @@ export default function Login(
     message,
     client,
   } = kcContext;
-
-  console.log('kcContext:', kcContext);
 
   const { msg, msgStr } = i18n;
 
@@ -201,28 +199,10 @@ export default function Login(
             {...{ kcContext, i18n, doUseDefaultCss, classes }}
             displayInfo={social.displayInfo}
             displayWide={realm.password && social.providers !== undefined}
-            headerNode={msg('doLogIn')}
-            infoNode={
-              realm.password &&
-              realm.registrationAllowed &&
-              !registrationDisabled && (
-                <div id="kc-registration">
-                  <span>
-                    Don't have account?
-                    {/* <a tabIndex={6} href={url.registrationUrl}> */}
-                    {/* TODO 키클락 서버와 연동으로 회원가입 페이지로 지정 */}
-                    <a tabIndex={6} href={`${window.location.origin}/register`}>
-                      Create an account
-                    </a>
-                  </span>
-                </div>
-              )
-            }>
+            headerNode={msg('doLogIn')}>
             <Section>
               {/* <Title>ASTRAGO</Title> */}
-              <Title>
-                <BlackLogo />
-              </Title>
+              <Title>DooGPU</Title>
               <SubTitle>Login to your Account</SubTitle>
               <div
                 id="kc-form"
@@ -476,21 +456,11 @@ export default function Login(
           data-sy="BackgroundWrapper"
           style={{
             backgroundSize: 'cover',
-            backgroundImage: `url(${mySvg})`,
+            backgroundImage: `url(images/background.png)`,
             backgroundPosition: 'center',
           }}>
           <BackgroundContainer data-sy="BackgroundContainer">
-            <WhiteLogo />
-            <LogoContent>
-              <span>
-                AstraGo는 자원 최적화 기술을 활용하여 GPU 서버의 활용도를
-                극대화하는 솔루션입니다.
-              </span>
-              <span>
-                이를 통해 학습 시간을 단축하여 사용자의 프로젝트 계획을 더욱
-                향상시킵니다.
-              </span>
-            </LogoContent>
+            <img src="images/white-logo.png" alt="logo" />
           </BackgroundContainer>
         </BackgroundWrapper>
       </Wrapper>
@@ -566,6 +536,7 @@ const Wrapper = styled('div')`
 const BackgroundWrapper = styled('div')`
   flex-grow: 1;
   min-width: 1000px;
+  position: relative;
 `;
 
 const BackgroundContainer = styled('div')`
@@ -576,6 +547,15 @@ const BackgroundContainer = styled('div')`
   color: #ffffff;
   gap: 15px;
   height: 100%;
+  position: absolute;
+  top: 35%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  & img {
+    width: 100%;
+    height: 80px;
+  }
 `;
 
 const LogoTitle = styled('div')`
@@ -623,17 +603,22 @@ const Section = styled('div')`
   width: 380px;
 `;
 
-const Title = styled('div')`
+const Title = styled('h1')`
   text-align: center;
+  font-size: 56px;
+  font-weight: 700;
+  color: #005eb8;
+  margin: 0;
+  font-family: 'Work Sans', sans-serif;
 `;
 
 const SubTitle = styled('div')`
-  color: #5b29c7;
-  font-size: 14px;
+  color: #005eb8;
+  font-size: 18px;
   font-weight: 700;
   text-align: center;
   line-height: 25px;
-  margin: 32px 0 34px 0;
+  margin: 15px 0 34px 0;
 `;
 
 const InputContainer = styled('div')<ErrorInputContainerProps>`
@@ -763,7 +748,7 @@ const LoginButtonWrapper = styled('div')`
 `;
 
 const LoginButton = styled(Button)`
-  background: #5b29c7;
+  background: #005eb8;
   border: none;
   input {
     background: transparent;

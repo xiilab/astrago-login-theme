@@ -6,30 +6,14 @@ const Footer = () => {
   return (
     <Wrapper>
       <Section>
-        <span>도움말 ｜개인정보처리방침 ｜이용약관</span>
-        <span>
-          (주)씨이랩｜대표이사 : 이우영 ｜사업자등록번호 : 119-86-31534
-        </span>
-        {/* <span>서울시 강남구 언주로 617, 3,4층 (우)06107</span> */}
+        <img src="images/slogan.png" alt="slogan" />
       </Section>
-      {/* <Section>
-        <RightLayout>
-          <div>
-            <span>Connect with any device.</span>
-            <span>Copyright © Xiilab. All Rights Reserved.</span>
-          </div>
-          <LocaleSelectBox>
-            <LangIcon />
-            <span>KOR</span>
-          </LocaleSelectBox>
-        </RightLayout>
-      </Section> */}
     </Wrapper>
   );
 };
 
 const Wrapper = styled('footer')`
-  margin-bottom: 26px;
+  margin-bottom: 50px;
   box-sizing: border-box;
 `;
 
@@ -44,6 +28,12 @@ const Section = styled('section')`
   line-height: 22px;
   letter-spacing: -2%;
   max-height: 80px;
+
+  & img {
+    width: 420px;
+    height: 40px;
+  }
+  padding: 0 100px;
 `;
 
 // const RightLayout = styled('div')`
