@@ -14,6 +14,7 @@ import { ReactComponent as VisibilityIcon } from './icons/remove_red_eye_white.s
 import { ReactComponent as GoogleLogoIcon } from './icons/google_logo.svg';
 import { ReactComponent as WhiteLogo } from './WhiteLogo.svg';
 import { ReactComponent as BlackLogo } from './BlackLogo.svg';
+import microsoftLogo from './microsoft_logo.png';
 // import { ReactComponent as BackgroundImg } from './loginBackground.svg';
 import mySvg from './loginBackground.svg';
 
@@ -57,6 +58,8 @@ export default function Login(
     message,
     client,
   } = kcContext;
+
+  console.log('kcContext:', kcContext);
 
   const { msg, msgStr } = i18n;
 
@@ -392,57 +395,76 @@ export default function Login(
                               }
                             : {})}
                         />
-                        <LoginButton>
-                          <input
-                            tabIndex={4}
-                            // className={clsx(
-                            // getClassName('kcButtonClass'),
-                            // getClassName('kcButtonPrimaryClass'),
-                            // getClassName('kcButtonBlockClass'),
-                            // getClassName('kcButtonLargeClass')
-                            // )}
-                            name="login"
-                            id="kc-login"
-                            type="submit"
-                            // value={msgStr('doLogIn')}
-                            value="LOG IN"
-                            disabled={isLoginButtonDisabled}
-                          />
-                        </LoginButton>
+                        <LoginButtonWrapper>
+                          <LoginButton>
+                            <input
+                              tabIndex={4}
+                              // className={clsx(
+                              // getClassName('kcButtonClass'),
+                              // getClassName('kcButtonPrimaryClass'),
+                              // getClassName('kcButtonBlockClass'),
+                              // getClassName('kcButtonLargeClass')
+                              // )}
+                              name="login"
+                              id="kc-login"
+                              type="submit"
+                              // value={msgStr('doLogIn')}
+                              value="LOG IN"
+                              disabled={isLoginButtonDisabled}
+                            />
+                          </LoginButton>
+                          {realm.password && social.providers !== undefined && (
+                            <div
+                              id="kc-social-providers"
+                              className={clsx(
+                                getClassName('kcFormSocialAccountContentClass'),
+                                getClassName('kcFormSocialAccountClass'),
+                              )}>
+                              <ul
+                                className={clsx(
+                                  getClassName('kcFormSocialAccountListClass'),
+                                  social.providers.length > 4 &&
+                                    getClassName(
+                                      'kcFormSocialAccountDoubleListClass',
+                                    ),
+                                )}>
+                                {social.providers.map((p) => (
+                                  <li
+                                    key={p.providerId}
+                                    className={getClassName(
+                                      'kcFormSocialAccountListLinkClass',
+                                    )}>
+                                    <a
+                                      href={p.loginUrl}
+                                      id={`zocial-${p.alias}`}
+                                      className={clsx('zocial', p.providerId)}>
+                                      <span>{p.displayName}</span>
+                                    </a>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                          {/* 임시로 추가된 소셜 로그인 버튼, 추후 삭제 필요 */}
+                          <div
+                            id="kc-social-providers"
+                            className="kcFormSocialAccountContentClass col-xs-12 col-sm-6 kcFormSocialAccountClass login-pf-social-section">
+                            <ul className="kcFormSocialAccountListClass login-pf-social list-unstyled login-pf-social-all">
+                              <li className="kcFormSocialAccountListLinkClass login-pf-social-link">
+                                <a
+                                  href="/auth/realms/astrago/broker/azuread/login?client_id=astrago-client&tab_id=zJEx9rladzM&session_code=7HEag5tm3ZTAmbDQiILFEur36PXuhMMaYQ_fI7edBXY"
+                                  id="zocial-azuread"
+                                  className="zocial oidc">
+                                  <span>azuread</span>
+                                </a>
+                              </li>
+                            </ul>
+                          </div>
+                        </LoginButtonWrapper>
                       </div>
                     </form>
                   )}
                 </div>
-                {realm.password && social.providers !== undefined && (
-                  <div
-                    id="kc-social-providers"
-                    className={clsx(
-                      getClassName('kcFormSocialAccountContentClass'),
-                      getClassName('kcFormSocialAccountClass'),
-                    )}>
-                    <ul
-                      className={clsx(
-                        getClassName('kcFormSocialAccountListClass'),
-                        social.providers.length > 4 &&
-                          getClassName('kcFormSocialAccountDoubleListClass'),
-                      )}>
-                      {social.providers.map((p) => (
-                        <li
-                          key={p.providerId}
-                          className={getClassName(
-                            'kcFormSocialAccountListLinkClass',
-                          )}>
-                          <a
-                            href={p.loginUrl}
-                            id={`zocial-${p.alias}`}
-                            className={clsx('zocial', p.providerId)}>
-                            <span>{p.displayName}</span>
-                          </a>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
               </div>
             </Section>
           </Template>
@@ -484,6 +506,61 @@ const Wrapper = styled('div')`
   display: flex;
   flex-direction: row;
   width: 100%;
+
+  & .kcFormSocialAccountListClass {
+    list-style: none;
+  }
+
+  /* 동적으로 생성되는 Azure AD 로그인 버튼 스타일 */
+  #zocial-azuread {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    background: #ffffff !important;
+    border: 1px solid #d5d4d8 !important;
+    border-radius: 8px !important;
+    padding: 12px 16px !important;
+    text-decoration: none !important;
+    color: #17171f !important;
+    font-weight: 500 !important;
+    font-size: 14px !important;
+    transition: all 0.2s ease !important;
+    position: relative !important;
+
+    &:hover {
+      background: #f8f8f8 !important;
+      border-color: #5b29c7 !important;
+    }
+
+    /* Microsoft 로고 이미지를 :before 가상 요소로 추가 */
+    &:before {
+      content: '';
+      width: 18px;
+      height: 18px;
+      background-image: url(${microsoftLogo});
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      flex-shrink: 0;
+      display: inline-block;
+    }
+
+    /* 기존 텍스트를 숨기고 새로운 텍스트 표시 */
+    span {
+      color: #17171f !important;
+      font-weight: 500 !important;
+      display: none !important;
+    }
+
+    /* 새로운 텍스트를 :after 가상 요소로 추가 */
+    &:after {
+      content: 'Azure Login' !important;
+      color: #17171f !important;
+      font-weight: 700 !important;
+      font-size: 16px !important;
+    }
+  }
 `;
 
 const BackgroundWrapper = styled('div')`
@@ -678,10 +755,16 @@ const GoogleLoginButton = styled(Button)`
   }
 `;
 
+const LoginButtonWrapper = styled('div')`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 30px;
+`;
+
 const LoginButton = styled(Button)`
   background: #5b29c7;
   border: none;
-  margin-bottom: 30px;
   input {
     background: transparent;
     border: none;
