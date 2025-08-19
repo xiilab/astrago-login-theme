@@ -2,8 +2,8 @@ name: 배포
 on:
   push:
     # Pattern matched against refs/tags
-    tags:
-      - '**' # Push events to matching v*, i.e. v1.0, v20.15.10
+    branches:
+      - feature/keycloak-astrago-theme # Push events to matching v*, i.e. v1.0, v20.15.10
 
 jobs:
   build:
