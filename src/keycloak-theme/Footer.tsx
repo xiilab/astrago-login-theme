@@ -8,13 +8,20 @@ const Footer = () => {
       <Section>
         <img src="images/slogan.png" alt="slogan" />
       </Section>
+      <Section>
+        본 시스템은 두산 담당자 및 인가된 사용자만 사용할 수 있으며, 불법
+        사용시에는 법령에 의해 민/형사상의 제제를 받을 수가 있습니다. 시스템
+        사용은 관리자에 의해 모니터링 되고 있습니다.
+      </Section>
     </Wrapper>
   );
 };
 
 const Wrapper = styled('footer')`
-  margin-bottom: 50px;
+  height: 128px;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
 `;
 
 const Section = styled('section')`
@@ -23,7 +30,7 @@ const Section = styled('section')`
     text-align: center;
   }
   font-size: 11px;
-  color: #90919e;
+  color: #000;
   font-weight: 300;
   line-height: 22px;
   letter-spacing: -2%;
