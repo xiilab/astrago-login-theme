@@ -12,7 +12,7 @@ import { ReactComponent as LockIcon } from './icons/lock_outline.svg';
 import { ReactComponent as VisibilityOffIcon } from './icons/visibility_off_white.svg';
 import { ReactComponent as VisibilityIcon } from './icons/remove_red_eye_white.svg';
 import microsoftLogo from './microsoft_logo.png';
-import background from '../assets/test2.svg';
+import background from '../assets/login-background.svg';
 import logo from './white-logo.png';
 import Footer from '../../Footer';
 import { setCookie, getCookie, deleteCookie } from './shared/cookieUtils';
@@ -422,7 +422,7 @@ export default function Login(
                             </div>
                           )}
                           {/* 임시로 추가된 소셜 로그인 버튼, 추후 삭제 필요 */}
-                          <div
+                          {/* <div
                             id="kc-social-providers"
                             className="kcFormSocialAccountContentClass col-xs-12 col-sm-6 kcFormSocialAccountClass login-pf-social-section">
                             <ul className="kcFormSocialAccountListClass login-pf-social list-unstyled login-pf-social-all">
@@ -435,7 +435,7 @@ export default function Login(
                                 </a>
                               </li>
                             </ul>
-                          </div>
+                          </div> */}
                         </LoginButtonWrapper>
                       </div>
                     </form>
