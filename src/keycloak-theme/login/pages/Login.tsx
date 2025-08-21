@@ -12,7 +12,7 @@ import { ReactComponent as LockIcon } from './icons/lock_outline.svg';
 import { ReactComponent as VisibilityOffIcon } from './icons/visibility_off_white.svg';
 import { ReactComponent as VisibilityIcon } from './icons/remove_red_eye_white.svg';
 import microsoftLogo from './microsoft_logo.png';
-import background from './background.png';
+import background from '../assets/test2.svg';
 import logo from './white-logo.png';
 import Footer from '../../Footer';
 import { setCookie, getCookie, deleteCookie } from './shared/cookieUtils';
@@ -448,9 +448,15 @@ export default function Login(
             <Footer></Footer>
           </FooterWrapper>
         </Container>
-        <BackgroundWrapper data-sy="BackgroundWrapper">
+        <BackgroundWrapper
+          data-sy="BackgroundWrapper"
+          style={{
+            backgroundSize: 'cover',
+            backgroundImage: `url(${background})`,
+            backgroundPosition: 'center',
+          }}>
           <BackgroundContainer data-sy="BackgroundContainer">
-            <div></div>
+            <img src={logo} alt="logo" />
           </BackgroundContainer>
         </BackgroundWrapper>
       </Wrapper>
@@ -527,10 +533,6 @@ const BackgroundWrapper = styled('div')`
   flex-grow: 1;
   min-width: 1000px;
   position: relative;
-  background-image: url(${background});
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
 `;
 
 const BackgroundContainer = styled('div')`
@@ -545,15 +547,10 @@ const BackgroundContainer = styled('div')`
   top: 35%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 100%;
 
-  & div {
+  & img {
     width: 100%;
     height: 80px;
-    background-image: url(${logo});
-    background-size: contain;
-    background-position: center;
-    background-repeat: no-repeat;
   }
 `;
 
