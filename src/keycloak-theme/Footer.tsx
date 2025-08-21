@@ -1,12 +1,12 @@
 import styled from '@emotion/styled';
 
-import { ReactComponent as LangIcon } from './login/pages/icons/language_FILL0.svg';
+import slogan from './login/pages/slogan.png';
 
 const Footer = () => {
   return (
     <Wrapper>
       <Section>
-        <img src="images/slogan.png" alt="slogan" />
+        <img src={slogan} alt="slogan" />
       </Section>
       <Section>
         본 시스템은 두산 담당자 및 인가된 사용자만 사용할 수 있으며, 불법

@@ -11,13 +11,9 @@ import { ReactComponent as MailIcon } from './icons/mail_outline.svg';
 import { ReactComponent as LockIcon } from './icons/lock_outline.svg';
 import { ReactComponent as VisibilityOffIcon } from './icons/visibility_off_white.svg';
 import { ReactComponent as VisibilityIcon } from './icons/remove_red_eye_white.svg';
-import { ReactComponent as GoogleLogoIcon } from './icons/google_logo.svg';
-// import { ReactComponent as WhiteLogo } from './WhiteLogo.svg';
-import { ReactComponent as BlackLogo } from './BlackLogo.svg';
 import microsoftLogo from './microsoft_logo.png';
-// import { ReactComponent as BackgroundImg } from './loginBackground.svg';
-import mySvg from './loginBackground.svg';
-
+import background from './background.png';
+import logo from './white-logo.png';
 import Footer from '../../Footer';
 import { setCookie, getCookie, deleteCookie } from './shared/cookieUtils';
 
@@ -456,11 +452,11 @@ export default function Login(
           data-sy="BackgroundWrapper"
           style={{
             backgroundSize: 'cover',
-            backgroundImage: `url(images/background.png)`,
+            backgroundImage: `url(${background})`,
             backgroundPosition: 'center',
           }}>
           <BackgroundContainer data-sy="BackgroundContainer">
-            <img src="images/white-logo.png" alt="logo" />
+            <img src={logo} alt="logo" />
           </BackgroundContainer>
         </BackgroundWrapper>
       </Wrapper>
