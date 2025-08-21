@@ -448,15 +448,9 @@ export default function Login(
             <Footer></Footer>
           </FooterWrapper>
         </Container>
-        <BackgroundWrapper
-          data-sy="BackgroundWrapper"
-          style={{
-            backgroundSize: 'cover',
-            backgroundImage: `url(${background})`,
-            backgroundPosition: 'center',
-          }}>
+        <BackgroundWrapper data-sy="BackgroundWrapper">
           <BackgroundContainer data-sy="BackgroundContainer">
-            <img src={logo} alt="logo" />
+            <div></div>
           </BackgroundContainer>
         </BackgroundWrapper>
       </Wrapper>
@@ -533,6 +527,10 @@ const BackgroundWrapper = styled('div')`
   flex-grow: 1;
   min-width: 1000px;
   position: relative;
+  background-image: url(${background});
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 `;
 
 const BackgroundContainer = styled('div')`
@@ -547,10 +545,15 @@ const BackgroundContainer = styled('div')`
   top: 35%;
   left: 50%;
   transform: translate(-50%, -50%);
+  width: 100%;
 
-  & img {
+  & div {
     width: 100%;
     height: 80px;
+    background-image: url(${logo});
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
   }
 `;
 
