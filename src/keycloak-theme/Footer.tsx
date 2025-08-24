@@ -6,7 +6,7 @@ const Footer = () => {
   return (
     <Wrapper>
       <Section>
-        <div></div>
+        <img src={slogan} alt="slogan" />
       </Section>
       <Section>
         본 시스템은 두산 담당자 및 인가된 사용자만 사용할 수 있으며, 불법
@@ -36,13 +36,9 @@ const Section = styled('section')`
   letter-spacing: -2%;
   max-height: 80px;
 
-  & div {
+  & img {
     width: 420px;
     height: 40px;
-    background-image: url(${slogan});
-    background-size: contain;
-    background-position: center;
-    background-repeat: no-repeat;
   }
 
   padding: 0 100px;
