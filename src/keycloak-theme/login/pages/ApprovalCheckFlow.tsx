@@ -1,31 +1,42 @@
-import { useState, type FormEventHandler } from 'react';
-import { useConstCallback } from 'keycloakify/tools/useConstCallback';
+import { useEffect } from 'react';
 import type { PageProps } from 'keycloakify/login/pages/PageProps';
-import type { KcContext } from '../kcContext';
 import type { I18n } from '../i18n';
 import styled from '@emotion/styled';
 
 import Footer from '../../Footer';
 
-export default function ApprovalCheckFlow(
-  props: PageProps<
-    Extract<KcContext, { pageId: 'approval_check_flow.ftl' }>,
-    I18n
-  >,
-) {
+export default function ApprovalCheckFlow(props: PageProps<any, I18n>) {
   const { kcContext, i18n, doUseDefaultCss, Template, classes } = props;
 
-  console.log(kcContext);
+  console.log('ApprovalCheckFlow kcContext:', kcContext);
 
-  const [isSubmitButtonDisabled, setIsSubmitButtonDisabled] = useState(false);
+  // URL 파라미터에서 승인 상태 확인
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const approvalStatus = urlParams.get('approvalYN');
+    const redirectUrl = urlParams.get('redirect_uri');
+    const clientId = urlParams.get('client_id');
 
-  const onSubmit = useConstCallback<FormEventHandler<HTMLFormElement>>((e) => {
-    e.preventDefault();
-    setIsSubmitButtonDisabled(true);
+    console.log('URL params:', { approvalStatus, redirectUrl, clientId });
+    console.log('Current URL:', window.location.href);
 
-    const formElement = e.target as HTMLFormElement;
-    formElement.submit();
-  });
+    // 승인 상태에 따른 처리
+    if (approvalStatus === 'Y') {
+      // 승인 완료 시 리다이렉션
+      if (redirectUrl) {
+        window.location.href = redirectUrl;
+      } else if (clientId) {
+        // 기본 리다이렉션 URL 생성
+        const baseUrl = window.location.origin;
+        window.location.href = `${baseUrl}/auth/realms/astrago/account`;
+      }
+    }
+  }, []);
+
+  const handleBackToLogin = () => {
+    // 로그인 페이지로 돌아가기
+    window.location.href = '/auth/realms/astrago/login';
+  };
 
   return (
     <>
@@ -66,8 +77,8 @@ export default function ApprovalCheckFlow(
                         </ContactTitle>
                       </ContactInfo>
                       <BackButtonWrapper>
-                        <BackButton onClick={() => window.history.back()}>
-                          이전
+                        <BackButton onClick={handleBackToLogin}>
+                          로그인으로 돌아가기
                         </BackButton>
                       </BackButtonWrapper>
                     </ApprovalPendingContent>
@@ -145,65 +156,6 @@ const ContactTitle = styled('div')`
   font-size: 14px;
   font-weight: 600;
   margin-bottom: 8px;
-`;
-
-const ApprovalApprovedContent = styled('div')`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: 40px 20px;
-`;
-
-const ApprovedIcon = styled('div')`
-  font-size: 48px;
-  margin-bottom: 24px;
-`;
-
-const ApprovedTitle = styled('div')`
-  color: #28a745;
-  font-size: 18px;
-  font-weight: 700;
-  margin-bottom: 16px;
-`;
-
-const ApprovedMessage = styled('div')`
-  color: #17171f;
-  font-size: 14px;
-  line-height: 20px;
-  margin-bottom: 32px;
-`;
-
-const SubmitButtonWrapper = styled('div')`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 32px;
-`;
-
-const SubmitButton = styled('button')`
-  width: 380px;
-  height: 54px;
-  border-radius: 12px;
-  background: #5b29c7;
-  border: none;
-  cursor: pointer;
-
-  input {
-    background: transparent;
-    border: none;
-    color: #ffffff;
-    font-weight: 700;
-    font-size: 16px;
-    cursor: pointer;
-    width: 100%;
-    height: 100%;
-  }
-
-  input:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
 `;
 
 const BackButtonWrapper = styled('div')`

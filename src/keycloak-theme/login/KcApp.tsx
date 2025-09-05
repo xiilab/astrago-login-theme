@@ -91,6 +91,21 @@ export default function KcApp(props: { kcContext: KcContext }) {
             );
           // We choose to use the default Template for the Info page to use basic Keycloak theme
           case 'info.ftl':
+            // URL 파라미터로 승인 체크 플로우인지 확인
+            const urlParams = new URLSearchParams(window.location.search);
+            const isApprovalFlow =
+              urlParams.get('approvalYN') !== null ||
+              window.location.pathname.includes('post-broker-login');
+
+            if (isApprovalFlow) {
+              return (
+                <ApprovalCheckFlow
+                  {...{ kcContext, i18n, Template, classes }}
+                  doUseDefaultCss={true}
+                />
+              );
+            }
+
             return (
               <Info
                 {...{ kcContext, i18n, classes }}

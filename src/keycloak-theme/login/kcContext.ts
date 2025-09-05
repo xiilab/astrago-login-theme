@@ -33,9 +33,26 @@ export const { getKcContext } = createGetKcContext<KcContextExtension>({
       pageId: 'my-extra-page-2.ftl',
       someCustomValue: 'foo bar baz',
     },
+    // Approval Check Flow - 승인 대기 상태 (N)
     {
       pageId: 'approval_check_flow.ftl',
       approvalYN: 'N',
+      locale: {
+        currentLanguageTag: 'ko',
+      },
+    },
+    // Approval Check Flow - 승인 완료 상태 (Y)
+    {
+      pageId: 'approval_check_flow.ftl',
+      approvalYN: 'Y',
+      locale: {
+        currentLanguageTag: 'ko',
+      },
+    },
+    // Info 페이지를 통한 Approval Check Flow 테스트
+    {
+      pageId: 'info.ftl',
+      messageHeader: '승인 대기',
       locale: {
         currentLanguageTag: 'ko',
       },
@@ -109,11 +126,28 @@ export const { getKcContext } = createGetKcContext<KcContextExtension>({
 });
 
 export const { kcContext } = getKcContext({
-  // Uncomment to test the login page for development.
-  // mockPageId: 'login.ftl',
+  // ========================================
+  // 테스트 설정 가이드
+  // ========================================
+  // 1. 로그인 페이지 테스트
+  mockPageId: 'login.ftl',
+  // 2. Approval Check Flow 직접 테스트
+  //    - 승인 대기 상태 (approvalYN: 'N') 테스트
+  //    - 승인 완료 상태 (approvalYN: 'Y') 테스트
   // mockPageId: 'approval_check_flow.ftl',
+  // 3. Info 페이지를 통한 Approval Check Flow 테스트
+  //    - 실제 키클락 환경에서 post-broker-login 리다이렉션 시뮬레이션
+  //    - URL 파라미터 기반 조건부 렌더링 테스트
+  // mockPageId: 'info.ftl',
+  // 4. 다른 페이지 테스트
   // mockPageId: 'idp-review-user-profile.ftl',
   // mockPageId: 'register.ftl',
+  // ========================================
+  // 테스트 방법:
+  // 1. 위의 주석을 해제하여 원하는 페이지 테스트
+  // 2. 브라우저에서 개발 서버 실행 후 확인
+  // 3. ApprovalCheckFlow 컴포넌트의 콘솔 로그 확인
+  // ========================================
 });
 
 export type KcContext = NonNullable<
