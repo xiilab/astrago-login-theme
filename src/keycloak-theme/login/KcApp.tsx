@@ -16,6 +16,7 @@ const MyExtraPage1 = lazy(() => import('./pages/MyExtraPage1'));
 const MyExtraPage2 = lazy(() => import('./pages/MyExtraPage2'));
 const Info = lazy(() => import('./pages/Info'));
 const IdpReviewUserProfile = lazy(() => import('./pages/IdpReviewUserProfile'));
+const ApprovalCheckFlow = lazy(() => import('./pages/ApprovalCheckFlow'));
 
 // This is like adding classes to theme.properties
 // https://github.com/keycloak/keycloak/blob/11.0.3/themes/src/main/resources/theme/keycloak/login/theme.properties
@@ -100,6 +101,13 @@ export default function KcApp(props: { kcContext: KcContext }) {
           case 'idp-review-user-profile.ftl':
             return (
               <IdpReviewUserProfile
+                {...{ kcContext, i18n, Template, classes }}
+                doUseDefaultCss={true}
+              />
+            );
+          case 'approval_check_flow.ftl':
+            return (
+              <ApprovalCheckFlow
                 {...{ kcContext, i18n, Template, classes }}
                 doUseDefaultCss={true}
               />

@@ -43,25 +43,17 @@ export default function Login(
     classes,
   });
 
-  const {
-    social,
-    realm,
-    url,
-    usernameHidden,
-    login,
-    auth,
-    registrationDisabled,
-    message,
-    client,
-  } = kcContext;
+  const { social, realm, url, usernameHidden, login, auth, message } =
+    kcContext;
 
-  const { msg, msgStr } = i18n;
+  const { msg } = i18n;
 
   const [isLoginButtonDisabled, setIsLoginButtonDisabled] = useState(false);
   const [passwordType, setPasswordType] = useState({
     type: 'password',
     visible: false,
   });
+  const [isAdmin, setIsAdmin] = useState(false);
   // validation 메시지 상태 추가
   const [validationMessage, setValidationMessage] = useState<
     string | undefined
@@ -185,7 +177,7 @@ export default function Login(
         deleteCookie(`login_fail_${username}`);
       }
     }
-  }, [message]);
+  }, [message, login.username]);
 
   return (
     <>
@@ -217,212 +209,130 @@ export default function Login(
                       ],
                   )}>
                   {realm.password && (
-                    <form
-                      id="kc-form-login"
-                      onSubmit={onSubmit}
-                      action={url.loginAction}
-                      method="post">
-                      <div className={getClassName('kcFormGroupClass')}>
-                        {!usernameHidden &&
-                          (() => {
-                            const label = !realm.loginWithEmailAllowed
-                              ? 'username'
-                              : realm.registrationEmailAsUsername
-                                ? 'email'
-                                : 'usernameOrEmail';
+                    <>
+                      {isAdmin ? (
+                        <form
+                          id="kc-form-login"
+                          onSubmit={onSubmit}
+                          action={url.loginAction}
+                          method="post">
+                          <div className={getClassName('kcFormGroupClass')}>
+                            {!usernameHidden &&
+                              (() => {
+                                const label = !realm.loginWithEmailAllowed
+                                  ? 'username'
+                                  : realm.registrationEmailAsUsername
+                                    ? 'email'
+                                    : 'usernameOrEmail';
 
-                            const autoCompleteHelper: typeof label =
-                              label === 'usernameOrEmail' ? 'username' : label;
+                                const autoCompleteHelper: typeof label =
+                                  label === 'usernameOrEmail'
+                                    ? 'username'
+                                    : label;
 
-                            return (
-                              <>
-                                {/* <label
-                              htmlFor={autoCompleteHelper}
-                              className={getClassName('kcLabelClass')}
-                            >
-                              {msg(label)}
-                            </label> */}
-                                <InputContainer
-                                  showError={
-                                    displayMessage && message !== undefined
-                                  }>
-                                  <MailIcon />
-                                  <input
-                                    tabIndex={1}
-                                    id={autoCompleteHelper}
-                                    className={getClassName('kcInputClass')}
-                                    //NOTE: This is used by Google Chrome auto fill so we use it to tell
-                                    //the browser how to pre fill the form but before submit we put it back
-                                    //to username because it is what keycloak expects.
-                                    name={autoCompleteHelper}
-                                    defaultValue={login.username}
-                                    placeholder="E-mail"
-                                    type="text"
-                                    autoFocus={true}
-                                  />
-                                </InputContainer>
-                              </>
-                            );
-                          })()}
-                      </div>
-                      <div className={getClassName('kcFormGroupClass')}>
-                        {/* <label
-                      htmlFor="password"
-                      className={getClassName('kcLabelClass')}
-                    >
-                      {msg('password')}
-                    </label> */}
-                        <PasswordInputWrapper>
-                          <PasswordInputContainer
-                            showError={displayMessage && message !== undefined}>
-                            <LockIcon />
-                            <input
-                              tabIndex={2}
-                              id="password"
-                              className={getClassName('kcInputClass')}
-                              name="password"
-                              type={passwordType.type}
-                              placeholder="Password"
-                            />
-                            <VisibleButton onClick={handlePasswordType}>
-                              {passwordType.visible ? (
-                                <VisibilityIcon />
-                              ) : (
-                                <VisibilityOffIcon />
-                              )}
-                            </VisibleButton>
-                          </PasswordInputContainer>
-                          {displayMessage &&
-                            (validationMessage !== undefined ||
-                              message !== undefined) && (
-                              <div
-                                className={clsx(
-                                  'alert',
-                                  `alert-${message?.type}`,
-                                )}>
-                                <ErrorText
-                                  className="kc-feedback-text"
-                                  dangerouslySetInnerHTML={{
-                                    __html:
-                                      validationMessage ||
-                                      message?.summary ||
-                                      '',
-                                  }}
+                                return (
+                                  <>
+                                    <InputContainer
+                                      showError={
+                                        displayMessage && message !== undefined
+                                      }>
+                                      <MailIcon />
+                                      <input
+                                        tabIndex={1}
+                                        id={autoCompleteHelper}
+                                        className={getClassName('kcInputClass')}
+                                        name={autoCompleteHelper}
+                                        defaultValue={login.username}
+                                        placeholder="E-mail"
+                                        type="text"
+                                        autoFocus={true}
+                                      />
+                                    </InputContainer>
+                                  </>
+                                );
+                              })()}
+                          </div>
+                          <div
+                            className={getClassName('kcFormGroupClass')}
+                            style={{ marginBottom: 16 }}>
+                            <PasswordInputWrapper>
+                              <PasswordInputContainer
+                                showError={
+                                  displayMessage && message !== undefined
+                                }>
+                                <LockIcon />
+                                <input
+                                  tabIndex={2}
+                                  id="password"
+                                  className={getClassName('kcInputClass')}
+                                  name="password"
+                                  type={passwordType.type}
+                                  placeholder="Password"
                                 />
-                              </div>
-                            )}
-                        </PasswordInputWrapper>
-                      </div>
-
-                      {/* <div
-                    className={clsx(
-                      getClassName('kcFormGroupClass'),
-                      getClassName('kcFormSettingClass')
-                    )}
-                  > */}
-                      {/* <div id="kc-form-options">
-                      {realm.rememberMe && !usernameHidden && (
-                        <div className="checkbox">
-                          <label>
+                                <VisibleButton onClick={handlePasswordType}>
+                                  {passwordType.visible ? (
+                                    <VisibilityIcon />
+                                  ) : (
+                                    <VisibilityOffIcon />
+                                  )}
+                                </VisibleButton>
+                              </PasswordInputContainer>
+                              {displayMessage &&
+                                (validationMessage !== undefined ||
+                                  message !== undefined) && (
+                                  <div
+                                    className={clsx(
+                                      'alert',
+                                      `alert-${message?.type}`,
+                                    )}>
+                                    <ErrorText
+                                      className="kc-feedback-text"
+                                      dangerouslySetInnerHTML={{
+                                        __html:
+                                          validationMessage ||
+                                          message?.summary ||
+                                          '',
+                                      }}
+                                    />
+                                  </div>
+                                )}
+                            </PasswordInputWrapper>
+                          </div>
+                          <div
+                            id="kc-form-buttons"
+                            className={getClassName('kcFormGroupClass')}>
                             <input
-                              tabIndex={3}
-                              id="rememberMe"
-                              name="rememberMe"
-                              type="checkbox"
-                              {...(login.rememberMe === 'on'
+                              type="hidden"
+                              id="id-hidden-input"
+                              name="credentialId"
+                              {...(auth?.selectedCredential !== undefined
                                 ? {
-                                    checked: true,
+                                    value: auth.selectedCredential,
                                   }
                                 : {})}
                             />
-                            {msg('rememberMe')}
-                          </label>
-                        </div>
-                      )}
-                    </div> */}
-                      {/* <ResetWrapper>
-                      {realm.resetPasswordAllowed && (
-                        <a tabIndex={5} href={url.loginResetCredentialsUrl}>
-                          Find Password
-                        </a>
-                      )}
-                    </ResetWrapper> */}
-                      {/* </div> */}
-                      <DivisorWrapper>
-                        <Line />
-                        <p>or</p>
-                        <Line />
-                      </DivisorWrapper>
-
-                      {/* <GoogleLoginButton>
-                        <GoogleLogoIcon />
-                        <p>Login of Google</p>
-                      </GoogleLoginButton> */}
-                      <div
-                        id="kc-form-buttons"
-                        className={getClassName('kcFormGroupClass')}>
-                        <input
-                          type="hidden"
-                          id="id-hidden-input"
-                          name="credentialId"
-                          {...(auth?.selectedCredential !== undefined
-                            ? {
-                                value: auth.selectedCredential,
-                              }
-                            : {})}
-                        />
-                        <LoginButtonWrapper>
-                          <LoginButton>
-                            <input
-                              tabIndex={4}
-                              // className={clsx(
-                              // getClassName('kcButtonClass'),
-                              // getClassName('kcButtonPrimaryClass'),
-                              // getClassName('kcButtonBlockClass'),
-                              // getClassName('kcButtonLargeClass')
-                              // )}
-                              name="login"
-                              id="kc-login"
-                              type="submit"
-                              // value={msgStr('doLogIn')}
-                              value="LOG IN"
-                              disabled={isLoginButtonDisabled}
-                            />
-                          </LoginButton>
-                          {realm.password && social.providers !== undefined && (
-                            <div
-                              id="kc-social-providers"
-                              className={clsx(
-                                getClassName('kcFormSocialAccountContentClass'),
-                                getClassName('kcFormSocialAccountClass'),
-                              )}>
-                              <ul
-                                className={clsx(
-                                  getClassName('kcFormSocialAccountListClass'),
-                                  social.providers.length > 4 &&
-                                    getClassName(
-                                      'kcFormSocialAccountDoubleListClass',
-                                    ),
-                                )}>
-                                {social.providers.map((p) => (
-                                  <li
-                                    key={p.providerId}
-                                    className={getClassName(
-                                      'kcFormSocialAccountListLinkClass',
-                                    )}>
-                                    <a
-                                      href={p.loginUrl}
-                                      id={`zocial-${p.alias}`}
-                                      className={clsx('zocial', p.providerId)}>
-                                      <span>{p.displayName}</span>
-                                    </a>
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-                          )}
-                          {/* 임시로 추가된 소셜 로그인 버튼, 추후 삭제 필요 */}
-                          {/* <div
+                            <LoginButtonWrapper>
+                              <LoginButton>
+                                <input
+                                  tabIndex={4}
+                                  name="login"
+                                  id="kc-login"
+                                  type="submit"
+                                  value="LOG IN"
+                                  disabled={isLoginButtonDisabled}
+                                />
+                              </LoginButton>
+                            </LoginButtonWrapper>
+                            {/* 일반 모드로 전환 링크 */}
+                            <AdminModeLink onClick={() => setIsAdmin(false)}>
+                              일반 모드로 전환
+                            </AdminModeLink>
+                          </div>
+                        </form>
+                      ) : (
+                        <div>
+                          {/* Azure Login 버튼 */}
+                          <div
                             id="kc-social-providers"
                             className="kcFormSocialAccountContentClass col-xs-12 col-sm-6 kcFormSocialAccountClass login-pf-social-section">
                             <ul className="kcFormSocialAccountListClass login-pf-social list-unstyled login-pf-social-all">
@@ -435,10 +345,14 @@ export default function Login(
                                 </a>
                               </li>
                             </ul>
-                          </div> */}
-                        </LoginButtonWrapper>
-                      </div>
-                    </form>
+                          </div>
+                          {/* 관리자 모드 전환 링크 */}
+                          <AdminModeLink onClick={() => setIsAdmin(true)}>
+                            관리자 모드로 전환
+                          </AdminModeLink>
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
               </div>
@@ -552,22 +466,6 @@ const BackgroundContainer = styled('div')`
     width: 100%;
     height: 80px;
   }
-`;
-
-const LogoTitle = styled('div')`
-  font-weight: 700;
-  font-size: 50px;
-  text-align: center;
-`;
-
-const LogoContent = styled('div')`
-  span {
-    display: block;
-    line-height: 28px;
-  }
-  font-weight: 500;
-  font-size: 16px;
-  text-align: center;
 `;
 
 const Container = styled('div')`
@@ -687,26 +585,6 @@ const PasswordInputContainer = styled(InputContainer)<ErrorInputContainerProps>`
 //   }
 // `;
 
-const DivisorWrapper = styled('div')`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  color: #cccccc;
-  align-items: center;
-  margin: 40px 0;
-  p {
-    font-size: 14px;
-    line-height: 25px;
-    text-align: center;
-    width: 54px;
-  }
-`;
-
-const Line = styled('div')`
-  width: 200px;
-  border-top: 1px solid #cccccc;
-`;
-
 const Button = styled('button')`
   width: 380px;
   height: 54px;
@@ -720,39 +598,47 @@ const VisibleButton = styled('div')`
   border: none;
   height: 18px;
 `;
-const GoogleLoginButton = styled(Button)`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 24px;
-  background: #ffffff;
-  border: 1px solid #d5d4d8;
-  margin-bottom: 16px;
-  p {
-    font-weight: 500;
-    font-size: 14px;
-    color: #afadb4;
-    margin: 0;
-  }
-`;
 
 const LoginButtonWrapper = styled('div')`
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-bottom: 30px;
+  margin-bottom: 14px;
+`;
+
+const AdminModeLink = styled('button')`
+  background: transparent;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  color: #005eb8;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  margin-top: 10px;
+  padding: 0;
+
+  &:hover {
+    color: #003d7a;
+  }
 `;
 
 const LoginButton = styled(Button)`
   background: #005eb8;
   border: none;
-  input {
+  input,
+  button {
     background: transparent;
     border: none;
     color: #ffffff;
     font-weight: 700;
     font-size: 16px;
     cursor: pointer;
+    width: 100%;
+    height: 100%;
   }
 `;
 

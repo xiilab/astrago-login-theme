@@ -29,6 +29,9 @@ const Section = styled('section')`
     display: block;
     text-align: center;
   }
+  display: flex;
+  justify-content: center;
+  align-items: center;
   font-size: 11px;
   color: #000;
   font-weight: 300;
