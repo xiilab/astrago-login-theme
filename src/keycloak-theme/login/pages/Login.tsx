@@ -324,33 +324,65 @@ export default function Login(
                               </LoginButton>
                             </LoginButtonWrapper>
                             {/* 일반 모드로 전환 링크 */}
-                            <AdminModeLink onClick={() => setIsAdmin(false)}>
-                              일반 모드로 전환
-                            </AdminModeLink>
+                            <ModeWrapper>
+                              <AdminModeLink onClick={() => setIsAdmin(false)}>
+                                일반 모드로 전환
+                              </AdminModeLink>
+                            </ModeWrapper>
                           </div>
                         </form>
                       ) : (
-                        <div>
-                          {/* Azure Login 버튼 */}
-                          <div
-                            id="kc-social-providers"
-                            className="kcFormSocialAccountContentClass col-xs-12 col-sm-6 kcFormSocialAccountClass login-pf-social-section">
-                            <ul className="kcFormSocialAccountListClass login-pf-social list-unstyled login-pf-social-all">
-                              <li className="kcFormSocialAccountListLinkClass login-pf-social-link">
-                                <a
-                                  href="/auth/realms/astrago/broker/azuread/login?client_id=astrago-client&tab_id=zJEx9rladzM&session_code=7HEag5tm3ZTAmbDQiILFEur36PXuhMMaYQ_fI7edBXY"
-                                  id="zocial-azuread"
-                                  className="zocial oidc">
-                                  <span>azuread</span>
-                                </a>
-                              </li>
-                            </ul>
+                        <>
+                          <div>
+                            {/* Azure Login 버튼 */}
+                            {realm.password &&
+                              social.providers !== undefined && (
+                                <div
+                                  id="kc-social-providers"
+                                  className={clsx(
+                                    getClassName(
+                                      'kcFormSocialAccountContentClass',
+                                    ),
+                                    getClassName('kcFormSocialAccountClass'),
+                                  )}>
+                                  <ul
+                                    className={clsx(
+                                      getClassName(
+                                        'kcFormSocialAccountListClass',
+                                      ),
+                                      social.providers.length > 4 &&
+                                        getClassName(
+                                          'kcFormSocialAccountDoubleListClass',
+                                        ),
+                                    )}>
+                                    {social.providers.map((p) => (
+                                      <li
+                                        key={p.providerId}
+                                        className={getClassName(
+                                          'kcFormSocialAccountListLinkClass',
+                                        )}>
+                                        <a
+                                          href={p.loginUrl}
+                                          id={`zocial-${p.alias}`}
+                                          className={clsx(
+                                            'zocial',
+                                            p.providerId,
+                                          )}>
+                                          <span>{p.displayName}</span>
+                                        </a>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              )}
                           </div>
                           {/* 관리자 모드 전환 링크 */}
-                          <AdminModeLink onClick={() => setIsAdmin(true)}>
-                            관리자 모드로 전환
-                          </AdminModeLink>
-                        </div>
+                          <ModeWrapper>
+                            <AdminModeLink onClick={() => setIsAdmin(true)}>
+                              관리자 모드로 전환
+                            </AdminModeLink>
+                          </ModeWrapper>
+                        </>
                       )}
                     </>
                   )}
@@ -530,7 +562,7 @@ const InputContainer = styled('div')<ErrorInputContainerProps>`
 
   &:focus-within {
     border: ${(props) =>
-      props.showError ? '1px solid #F14A4A' : '1px solid #5b29c7'};
+      props.showError ? '1px solid #F14A4A' : '1px solid #005EB8'};
   }
 
   input {
@@ -606,9 +638,15 @@ const LoginButtonWrapper = styled('div')`
   margin-bottom: 14px;
 `;
 
+const ModeWrapper = styled('div')`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+`;
+
 const AdminModeLink = styled('button')`
   background: transparent;
-  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -618,7 +656,6 @@ const AdminModeLink = styled('button')`
   font-weight: 500;
   cursor: pointer;
   text-decoration: none;
-  margin-top: 10px;
   padding: 0;
 
   &:hover {
