@@ -16,7 +16,7 @@ const MyExtraPage1 = lazy(() => import('./pages/MyExtraPage1'));
 const MyExtraPage2 = lazy(() => import('./pages/MyExtraPage2'));
 const Info = lazy(() => import('./pages/Info'));
 const IdpReviewUserProfile = lazy(() => import('./pages/IdpReviewUserProfile'));
-const ApprovalCheckFlow = lazy(() => import('./pages/ApprovalCheckFlow'));
+// const ApprovalCheckFlow = lazy(() => import('./pages/ApprovalCheckFlow'));
 
 // This is like adding classes to theme.properties
 // https://github.com/keycloak/keycloak/blob/11.0.3/themes/src/main/resources/theme/keycloak/login/theme.properties
@@ -91,21 +91,6 @@ export default function KcApp(props: { kcContext: KcContext }) {
             );
           // We choose to use the default Template for the Info page to use basic Keycloak theme
           case 'info.ftl':
-            // URL 파라미터로 승인 체크 플로우인지 확인
-            const urlParams = new URLSearchParams(window.location.search);
-            const isApprovalFlow =
-              urlParams.get('approvalYN') !== null ||
-              window.location.pathname.includes('post-broker-login');
-
-            if (isApprovalFlow) {
-              return (
-                <ApprovalCheckFlow
-                  {...{ kcContext, i18n, Template, classes }}
-                  doUseDefaultCss={true}
-                />
-              );
-            }
-
             return (
               <Info
                 {...{ kcContext, i18n, classes }}
@@ -116,13 +101,6 @@ export default function KcApp(props: { kcContext: KcContext }) {
           case 'idp-review-user-profile.ftl':
             return (
               <IdpReviewUserProfile
-                {...{ kcContext, i18n, Template, classes }}
-                doUseDefaultCss={true}
-              />
-            );
-          case 'approval_check_flow.ftl':
-            return (
-              <ApprovalCheckFlow
                 {...{ kcContext, i18n, Template, classes }}
                 doUseDefaultCss={true}
               />

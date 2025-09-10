@@ -377,6 +377,20 @@ export default function Login(
                               )}
                           </div>
                           {/* 관리자 모드 전환 링크 */}
+                          {/* <div
+                            id="kc-social-providers"
+                            className="kcFormSocialAccountContentClass col-xs-12 col-sm-6 kcFormSocialAccountClass login-pf-social-section">
+                            <ul className="kcFormSocialAccountListClass login-pf-social list-unstyled login-pf-social-all">
+                              <li className="kcFormSocialAccountListLinkClass login-pf-social-link">
+                                <a
+                                  href="/auth/realms/astrago/broker/azuread/login?client_id=astrago-client&tab_id=zJEx9rladzM&session_code=7HEag5tm3ZTAmbDQiILFEur36PXuhMMaYQ_fI7edBXY"
+                                  id="zocial-azuread"
+                                  className="zocial oidc">
+                                  <span>azuread</span>
+                                </a>
+                              </li>
+                            </ul>
+                          </div> */}
                           <ModeWrapper>
                             <AdminModeLink onClick={() => setIsAdmin(true)}>
                               관리자 모드로 전환

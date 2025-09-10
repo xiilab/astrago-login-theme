@@ -16,9 +16,30 @@ export default function ApprovalCheckFlow(props: PageProps<any, I18n>) {
     const approvalStatus = urlParams.get('approvalYN');
     const redirectUrl = urlParams.get('redirect_uri');
     const clientId = urlParams.get('client_id');
+    const sessionCode = urlParams.get('session_code');
+    const tabId = urlParams.get('tab_id');
 
-    console.log('URL params:', { approvalStatus, redirectUrl, clientId });
+    console.log('URL params:', {
+      approvalStatus,
+      redirectUrl,
+      clientId,
+      sessionCode,
+      tabId,
+    });
     console.log('Current URL:', window.location.href);
+    console.log('Pathname:', window.location.pathname);
+
+    // 개발 환경에서 직접 접근 시 처리
+    if (window.location.pathname.includes('post-broker-login')) {
+      console.log('Post Broker Login 경로 감지됨');
+
+      // 세션이 없는 경우 로그인 페이지로 리다이렉션
+      if (!sessionCode && !tabId) {
+        console.log('세션 정보가 없어 로그인 페이지로 리다이렉션');
+        window.location.href = '/auth/realms/astrago/login';
+        return;
+      }
+    }
 
     // 승인 상태에 따른 처리
     if (approvalStatus === 'Y') {
