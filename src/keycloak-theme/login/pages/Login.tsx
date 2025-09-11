@@ -53,7 +53,7 @@ export default function Login(
     type: 'password',
     visible: false,
   });
-  const [isAdmin, setIsAdmin] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
   // validation 메시지 상태 추가
   const [validationMessage, setValidationMessage] = useState<
     string | undefined
@@ -217,8 +217,7 @@ export default function Login(
                           action={url.loginAction}
                           method="post">
                           <div className={getClassName('kcFormGroupClass')}>
-                            {!usernameHidden &&
-                              (() => {
+                            {(() => {
                                 const label = !realm.loginWithEmailAllowed
                                   ? 'username'
                                   : realm.registrationEmailAsUsername
