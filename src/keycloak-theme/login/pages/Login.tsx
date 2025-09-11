@@ -376,7 +376,6 @@ export default function Login(
                                 </div>
                               )}
                           </div>
-                          {/* 관리자 모드 전환 링크는 하단으로 이동 */}
                         </>
                       )}
                     </>
@@ -421,52 +420,41 @@ const Wrapper = styled('div')`
     list-style: none;
   }
 
-  /* 동적으로 생성되는 Azure AD 로그인 버튼 스타일 */
+  /* 동적으로 생성되는 Azure AD 로그인 버튼 스타일 - LOG IN 버튼과 동일한 스타일 */
   #zocial-azuread {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    gap: 8px !important;
-    background: #ffffff !important;
-    border: 1px solid #d5d4d8 !important;
-    border-radius: 8px !important;
-    padding: 12px 16px !important;
+    width: 380px !important;
+    height: 54px !important;
+    background: #005eb8 !important;
+    border: none !important;
+    border-radius: 12px !important;
     text-decoration: none !important;
-    color: #17171f !important;
-    font-weight: 500 !important;
-    font-size: 14px !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    font-size: 16px !important;
+    cursor: pointer !important;
     transition: all 0.2s ease !important;
-    position: relative !important;
 
     &:hover {
-      background: #f8f8f8 !important;
-      border-color: #5b29c7 !important;
+      background: #004a9a !important;
     }
 
-    /* Microsoft 로고 이미지를 :before 가상 요소로 추가 */
+    /* Microsoft 로고 제거 */
     &:before {
-      content: '';
-      width: 18px;
-      height: 18px;
-      background-image: url(${microsoftLogo});
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: center;
-      flex-shrink: 0;
-      display: inline-block;
+      display: none !important;
     }
 
     /* 기존 텍스트를 숨기고 새로운 텍스트 표시 */
     span {
-      color: #17171f !important;
-      font-weight: 500 !important;
       display: none !important;
     }
 
-    /* 새로운 텍스트를 :after 가상 요소로 추가 */
+    /* Azure Login 텍스트를 :after 가상 요소로 추가 */
     &:after {
       content: 'Azure Login' !important;
-      color: #17171f !important;
+      color: #ffffff !important;
       font-weight: 700 !important;
       font-size: 16px !important;
     }
@@ -525,6 +513,7 @@ const Container = styled('div')`
 const Section = styled('div')`
   margin: 0 auto;
   width: 380px;
+  margin-bottom: 160px;
 `;
 
 const Title = styled('h1')`

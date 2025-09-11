@@ -62,8 +62,8 @@ const AdminSection = styled('section')`
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 4px 0;
-  margin-top: 4px;
+  padding: 0;
+  margin-top: 2px;
 `;
 
 const AdminModeButton = styled('button')`
