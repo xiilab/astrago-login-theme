@@ -53,7 +53,7 @@ export default function Login(
     type: 'password',
     visible: false,
   });
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(true);
   // validation 메시지 상태 추가
   const [validationMessage, setValidationMessage] = useState<
     string | undefined
@@ -323,12 +323,6 @@ export default function Login(
                                 />
                               </LoginButton>
                             </LoginButtonWrapper>
-                            {/* 일반 모드로 전환 링크 */}
-                            <ModeWrapper>
-                              <AdminModeLink onClick={() => setIsAdmin(false)}>
-                                일반 모드로 전환
-                              </AdminModeLink>
-                            </ModeWrapper>
                           </div>
                         </form>
                       ) : (
@@ -388,6 +382,8 @@ export default function Login(
             <Footer 
               showAdminButton={!isAdmin}
               onAdminClick={() => setIsAdmin(true)}
+              showGeneralButton={isAdmin}
+              onGeneralClick={() => setIsAdmin(false)}
             />
           </FooterWrapper>
         </Container>

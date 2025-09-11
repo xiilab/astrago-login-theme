@@ -5,9 +5,11 @@ import slogan from './login/pages/slogan.png';
 interface FooterProps {
   showAdminButton?: boolean;
   onAdminClick?: () => void;
+  showGeneralButton?: boolean;
+  onGeneralClick?: () => void;
 }
 
-const Footer = ({ showAdminButton = false, onAdminClick }: FooterProps) => {
+const Footer = ({ showAdminButton = false, onAdminClick, showGeneralButton = false, onGeneralClick }: FooterProps) => {
   return (
     <Wrapper>
       <Section>
@@ -22,6 +24,13 @@ const Footer = ({ showAdminButton = false, onAdminClick }: FooterProps) => {
         <AdminSection>
           <AdminModeButton onClick={onAdminClick}>
             관리자 전용 로그인
+          </AdminModeButton>
+        </AdminSection>
+      )}
+      {showGeneralButton && (
+        <AdminSection>
+          <AdminModeButton onClick={onGeneralClick}>
+            일반 전용 로그인
           </AdminModeButton>
         </AdminSection>
       )}

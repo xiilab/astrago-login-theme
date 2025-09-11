@@ -18,16 +18,24 @@ export default function Info(props: PageProps<Extract<KcContext, { pageId: 'info
     console.log('Info.tsx Debug - messageHeader:', messageHeader);
     console.log('Info.tsx Debug - message?.summary:', message?.summary);
 
-    // 승인 관련 메시지 감지
+    // 승인 관련 메시지 감지 (URL 감지 포함)
     const messageText = message?.summary || messageHeader || '';
+    const currentUrl = window.location.href;
     console.log('Info.tsx Debug - messageText:', messageText);
+    console.log('Info.tsx Debug - currentUrl:', currentUrl);
+    
+    // post-broker-login URL이면 승인 플로우로 간주
+    const isPostBrokerLogin = currentUrl.includes('post-broker-login') || 
+                             currentUrl.includes('login-actions');
     
     const isApprovalPending = messageText.includes('승인 대기') || 
                              messageText.includes('거부되었습니다') ||
                              messageText.includes('approval') ||
                              messageText.includes('pending') ||
                              messageText.includes('계정 승인') ||
-                             messageText.includes('승인');
+                             messageText.includes('승인') ||
+                             isPostBrokerLogin; // post-broker-login이면 승인 대기로 처리
+                             
     const isApprovalRequired = messageText.includes('승인 신청이 필요') ||
                               messageText.includes('ServiceNow');
                               
