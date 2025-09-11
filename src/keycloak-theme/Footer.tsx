@@ -2,7 +2,12 @@ import styled from '@emotion/styled';
 
 import slogan from './login/pages/slogan.png';
 
-const Footer = () => {
+interface FooterProps {
+  showAdminButton?: boolean;
+  onAdminClick?: () => void;
+}
+
+const Footer = ({ showAdminButton = false, onAdminClick }: FooterProps) => {
   return (
     <Wrapper>
       <Section>
@@ -13,6 +18,13 @@ const Footer = () => {
         사용시에는 법령에 의해 민/형사상의 제제를 받을 수가 있습니다. 시스템
         사용은 관리자에 의해 모니터링 되고 있습니다.
       </Section>
+      {showAdminButton && (
+        <AdminSection>
+          <AdminModeButton onClick={onAdminClick}>
+            관리자 전용 로그인
+          </AdminModeButton>
+        </AdminSection>
+      )}
     </Wrapper>
   );
 };
@@ -45,6 +57,31 @@ const Section = styled('section')`
   }
 
   padding: 0 100px;
+`;
+
+const AdminSection = styled('section')`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4px 0;
+`;
+
+const AdminModeButton = styled('button')`
+  background: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  color: #005eb8;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  padding: 0;
+
+  &:hover {
+    color: #003d7a;
+  }
 `;
 
 // const RightLayout = styled('div')`
