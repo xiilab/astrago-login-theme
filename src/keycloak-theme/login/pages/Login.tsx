@@ -451,9 +451,9 @@ const Wrapper = styled('div')`
       display: none !important;
     }
 
-    /* Azure Login 텍스트를 :after 가상 요소로 추가 */
+    /* LOG IN 텍스트를 :after 가상 요소로 추가 */
     &:after {
-      content: 'Azure Login' !important;
+      content: 'LOG IN' !important;
       color: #ffffff !important;
       font-weight: 700 !important;
       font-size: 16px !important;

@@ -15,6 +15,7 @@ const Terms = lazy(() => import('./pages/Terms'));
 const MyExtraPage1 = lazy(() => import('./pages/MyExtraPage1'));
 const MyExtraPage2 = lazy(() => import('./pages/MyExtraPage2'));
 const Info = lazy(() => import('./pages/Info'));
+const Error = lazy(() => import('./pages/Error'));
 const IdpReviewUserProfile = lazy(() => import('./pages/IdpReviewUserProfile'));
 // const ApprovalCheckFlow = lazy(() => import('./pages/ApprovalCheckFlow'));
 
@@ -89,12 +90,20 @@ export default function KcApp(props: { kcContext: KcContext }) {
                 doUseDefaultCss={true}
               />
             );
-          // We choose to use the default Template for the Info page to use basic Keycloak theme
+          // Use custom Template for the Info page to show DooGPU branding
           case 'info.ftl':
             return (
               <Info
                 {...{ kcContext, i18n, classes }}
-                Template={DefaultTemplate}
+                Template={Template}
+                doUseDefaultCss={true}
+              />
+            );
+          case 'error.ftl':
+            return (
+              <Error
+                {...{ kcContext, i18n, classes }}
+                Template={Template}
                 doUseDefaultCss={true}
               />
             );
