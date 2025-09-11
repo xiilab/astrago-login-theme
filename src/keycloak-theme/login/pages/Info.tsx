@@ -36,7 +36,7 @@ export default function Info(props: PageProps<Extract<KcContext, { pageId: 'info
 
     const handleBackToLogin = () => {
         // Keycloak에서 제공하는 로그인 URL 사용
-        window.location.href = url.loginUrl || url.loginAction || '/auth/realms/astrago/protocol/openid-connect/auth';
+        window.location.href = url.loginUrl || url.loginAction || '/auth/realms/astrago/login';
     };
 
     // 승인 관련 메시지인 경우 커스텀 UI 표시

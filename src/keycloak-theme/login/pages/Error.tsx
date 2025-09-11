@@ -9,7 +9,7 @@ export default function Error(props: PageProps<Extract<KcContext, { pageId: 'err
 
     const handleBackToLogin = () => {
         // Keycloak에서 제공하는 로그인 URL 사용
-        window.location.href = url.loginUrl || url.loginAction || '/auth/realms/astrago/protocol/openid-connect/auth';
+        window.location.href = url.loginUrl || url.loginAction || '/auth/realms/astrago/login';
     };
 
     return (

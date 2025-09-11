@@ -35,10 +35,10 @@ export default function Template(props: TemplateProps<KcContext, I18n>) {
   const { isReady } = usePrepareTemplate({
     doFetchDefaultThemeResources: doUseDefaultCss,
     styles: [
-      `${url.resourcesCommonPath}/node_modules/patternfly/dist/css/patternfly.min.css`,
-      `${url.resourcesCommonPath}/node_modules/patternfly/dist/css/patternfly-additions.min.css`,
-      `${url.resourcesCommonPath}/lib/zocial/zocial.css`,
-      `${url.resourcesPath}/css/login.css`,
+      // `${url.resourcesCommonPath}/node_modules/patternfly/dist/css/patternfly.min.css`,
+      // `${url.resourcesCommonPath}/node_modules/patternfly/dist/css/patternfly-additions.min.css`,
+      // `${url.resourcesCommonPath}/lib/zocial/zocial.css`,
+      // `${url.resourcesPath}/css/login.css`,
     ],
     htmlClassName: getClassName('kcHtmlClass'),
     bodyClassName: getClassName('kcBodyClass'),
@@ -51,25 +51,15 @@ export default function Template(props: TemplateProps<KcContext, I18n>) {
   return (
     <Container>
       <div className={getClassName('kcLoginClass')}>
-        <div id="kc-header" className={getClassName("kcHeaderClass")} style={{
-            textAlign: 'center',
-            padding: '30px 0 10px 0',
-            marginBottom: '0px'
-        }}>
+        {/* <div id="kc-header" className={getClassName("kcHeaderClass")}>
                 <div 
                     id="kc-header-wrapper" 
                     className={getClassName("kcHeaderWrapperClass")}
-                    style={{ 
-                        fontFamily: '"Work Sans"',
-                        fontSize: '32px',
-                        fontWeight: '600',
-                        color: 'white',
-                        textShadow: '0 2px 4px rgba(0,0,0,0.3)'
-                    }}
+                    style={{ "fontFamily": '"Work Sans"' }}
                 >
-                    DooGPU
+                    {msg("loginTitleHtml", realm.displayNameHtml)}
                 </div>
-            </div>
+            </div> */}
         <Wrapper>
           <div
             className={clsx(
@@ -265,26 +255,11 @@ export default function Template(props: TemplateProps<KcContext, I18n>) {
 }
 
 const Container = styled('div')`
-  background: linear-gradient(135deg, #003f7f 0%, #005eb8 50%, #0078d4 100%);
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
 `;
 
 const Wrapper = styled('div')`
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  min-height: calc(100vh - 120px);
-  padding: 20px;
-  margin-top: 20px;
-  
-  > div {
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    padding: 30px;
-    min-width: 400px;
-    max-width: 500px;
-  }
+  margin: 0 auto;
+  width: 462px;
 `;

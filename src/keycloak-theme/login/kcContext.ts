@@ -5,7 +5,7 @@ export type KcContextExtension =
   | { pageId: 'login.ftl'; extraThemeProperties: { foo: string } }
   | { pageId: 'my-extra-page-1.ftl' }
   | { pageId: 'my-extra-page-2.ftl'; someCustomValue: string }
-  // | { pageId: 'approval_check_flow.ftl'; approvalYN: 'Y' | 'N' }
+  | { pageId: 'approval_check_flow.ftl'; approvalYN: 'Y' | 'N' }
   // NOTE: register.ftl is deprecated in favor of register-user-profile.ftl
   // but let's say we use it anyway and have this plugin enabled: https://github.com/micedre/keycloak-mail-whitelisting
   // keycloak-mail-whitelisting define the non standard ftl global authorizedMailDomains, we declare it here.
