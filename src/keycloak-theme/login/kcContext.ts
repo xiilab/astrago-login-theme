@@ -126,6 +126,7 @@ export const { kcContext } = getKcContext({
   // 4. 다른 페이지 테스트
   // mockPageId: 'idp-review-user-profile.ftl',
   // mockPageId: 'register.ftl',
+  mockPageId: 'error.ftl',
   // ========================================
   // 403 Forbidden 오류 해결 방법:
   // 1. 개발 환경에서는 위의 mockPageId를 사용하여 테스트
