@@ -50,7 +50,6 @@ const Section = styled('section')`
   line-height: 22px;
   letter-spacing: -2%;
   max-height: 80px;
-
   & img {
     width: 420px;
     height: 40px;
@@ -64,6 +63,7 @@ const AdminSection = styled('section')`
   justify-content: center;
   align-items: center;
   padding: 4px 0;
+  margin-top: 4px;
 `;
 
 const AdminModeButton = styled('button')`
