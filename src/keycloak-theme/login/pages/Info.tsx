@@ -12,14 +12,27 @@ export default function Info(props: PageProps<Extract<KcContext, { pageId: 'info
     // 간단하게 현재 접속한 origin으로 돌아가기
     const targetUrl = window.location.origin;
 
+    // 디버깅을 위한 메시지 로깅
+    console.log('Info.tsx Debug - kcContext:', kcContext);
+    console.log('Info.tsx Debug - message:', message);
+    console.log('Info.tsx Debug - messageHeader:', messageHeader);
+    console.log('Info.tsx Debug - message?.summary:', message?.summary);
+
     // 승인 관련 메시지 감지
     const messageText = message?.summary || messageHeader || '';
+    console.log('Info.tsx Debug - messageText:', messageText);
+    
     const isApprovalPending = messageText.includes('승인 대기') || 
                              messageText.includes('거부되었습니다') ||
                              messageText.includes('approval') ||
-                             messageText.includes('pending');
+                             messageText.includes('pending') ||
+                             messageText.includes('계정 승인') ||
+                             messageText.includes('승인');
     const isApprovalRequired = messageText.includes('승인 신청이 필요') ||
                               messageText.includes('ServiceNow');
+                              
+    console.log('Info.tsx Debug - isApprovalPending:', isApprovalPending);
+    console.log('Info.tsx Debug - isApprovalRequired:', isApprovalRequired);
 
     const handleBackToLogin = () => {
         window.location.href = '/auth/realms/astrago/login';
