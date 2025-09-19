@@ -1,5 +1,5 @@
 # Use the same base image as astrago-deployment
-FROM bitnami/keycloak:22.0.5-debian-11-r2
+FROM bitnamilegacy/keycloak:22.0.5-debian-11-r2
 
 # Switch to root for file operations
 USER root
