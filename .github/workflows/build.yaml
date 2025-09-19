@@ -82,27 +82,129 @@ jobs:
           tags: |
             xiilab/astrago-keycloak-theme:${{ steps.version.outputs.version }}
 
-  # update_astrago_deployment:
-  #   needs: build
-  #   name: Update astrago-deployment files
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout astrago-deployment
-  #       uses: actions/checkout@v3
-  #       with:
-  #         token: ${{ secrets.TOKEN }}
-  #         repository: 'xiilab/astrago-deployment'
-  #         ref: feature/keycloak-astrago-theme
+  update_astrago_deployment:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    name: Update astrago-deployment files
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout astrago-deployment
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.TOKEN }}
+          repository: 'xiilab/astrago-deployment'
+          ref: release
       
-  #     - name: Update theme version in common values
-  #       run: |
-  #         VERSION="${{ needs.build.outputs.version }}"
-  #         yq eval ".keycloak.themeVersion = \"$VERSION\"" -i environments/common/values.yaml
+      - name: Update theme version in common values
+        run: |
+          VERSION="${{ needs.build.outputs.version }}"
+          yq eval ".keycloak.image.tag = \"$VERSION\"" -i environments/prod/values.yaml
       
-  #     - name: Commit and push changes
-  #       run: |
-  #         git config --global user.email "action@github.com"
-  #         git config --global user.name "GitHub Action"
-  #         git add environments/
-  #         git commit -m "Update keycloak theme to ${{ needs.build.outputs.version }}"
-  #         git push
+      - name: Commit and push changes
+        run: |
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
+          git add environments/
+          git commit -m "Update keycloak theme to ${{ needs.build.outputs.version }}"
+          git push
+
+
+  notify_slack:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [build, update_astrago_deployment]
+    runs-on: ubuntu-latest
+    permissions:
+      actions: 'read'
+    steps:
+      - name: Send Slack Notification
+        run: |
+          STATUS="${{ needs.build.result == 'success' && needs.update_astrago_deployment.result == 'success' && '✅ Success' || '❌ Failed' }}"
+          IMAGE_TAG="${{ needs.build.outputs.version }}"
+          COMMIT_MSG=$(echo "${{ github.event.head_commit.message }}" | head -1)
+
+          # 성공/실패에 따른 색상 설정
+          if [[ "${{ needs.build.result }}" == "success" && "${{ needs.update_astrago_deployment.result }}" == "success" ]]; then
+            COLOR="#36a64f"
+            STATUS_EMOJI="✅"
+            STATUS_TEXT="Success"
+          else
+            COLOR="#ff0000"
+            STATUS_EMOJI="❌"
+            STATUS_TEXT="Failed"
+          fi
+
+          curl -X POST -H 'Content-type: application/json' \
+            --data "{
+              \"channel\": \"#_astrago_deploy\",
+              \"username\": \"Astrago Keycloak Theme Deploy\",
+              \"icon_emoji\": \":art:\",
+              \"text\": \"🎨 Keycloak Theme Deployment ${STATUS_TEXT} - ${{ github.ref_name }}\",
+              \"blocks\": [
+                {
+                  \"type\": \"header\",
+                  \"text\": {
+                    \"type\": \"plain_text\",
+                    \"text\": \"${STATUS_EMOJI} Keycloak Theme Deployment ${STATUS_TEXT}\"
+                  }
+                },
+                {
+                  \"type\": \"section\",
+                  \"fields\": [
+                    {
+                      \"type\": \"mrkdwn\",
+                      \"text\": \"*Version Tag:*\\n${{ github.ref_name }}\"
+                    },
+                    {
+                      \"type\": \"mrkdwn\",
+                      \"text\": \"*Status:*\\n${STATUS_EMOJI} ${STATUS_TEXT}\"
+                    },
+                    {
+                      \"type\": \"mrkdwn\",
+                      \"text\": \"*Docker Image:*\\nxiilab/astrago-keycloak-theme:${IMAGE_TAG}\"
+                    },
+                    {
+                      \"type\": \"mrkdwn\",
+                      \"text\": \"*Released by:*\\n${{ github.actor }}\"
+                    }
+                  ]
+                },
+                {
+                  \"type\": \"section\",
+                  \"text\": {
+                    \"type\": \"mrkdwn\",
+                    \"text\": \"*Commit Message:* ${COMMIT_MSG}\"
+                  }
+                },
+                {
+                  \"type\": \"actions\",
+                  \"elements\": [
+                    {
+                      \"type\": \"button\",
+                      \"text\": {
+                        \"type\": \"plain_text\",
+                        \"text\": \"📦 View Release\"
+                      },
+                      \"url\": \"${{ github.server_url }}/${{ github.repository }}/releases/tag/${{ github.ref_name }}\",
+                      \"style\": \"primary\"
+                    },
+                    {
+                      \"type\": \"button\",
+                      \"text\": {
+                        \"type\": \"plain_text\",
+                        \"text\": \"🐳 Docker Hub\"
+                      },
+                      \"url\": \"https://hub.docker.com/r/xiilab/astrago-keycloak-theme/tags\"
+                    },
+                    {
+                      \"type\": \"button\",
+                      \"text\": {
+                        \"type\": \"plain_text\",
+                        \"text\": \"📋 View Workflow\"
+                      },
+                      \"url\": \"${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\"
+                    }
+                  ]
+                }
+              ]
+            }" \
+            ${{ secrets.ASTRAGO_DEPLOY_WEBHOOK_URL }}
