@@ -117,10 +117,12 @@ jobs:
       actions: 'read'
     steps:
       - name: Send Slack Notification
+        env:
+          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
         run: |
           STATUS="${{ needs.build.result == 'success' && needs.update_astrago_deployment.result == 'success' && '✅ Success' || '❌ Failed' }}"
           IMAGE_TAG="${{ needs.build.outputs.version }}"
-          COMMIT_MSG=$(echo "${{ github.event.head_commit.message }}" | head -1)
+          COMMIT_MSG=$(echo "$COMMIT_MESSAGE" | head -1)
 
           # 성공/실패에 따른 색상 설정
           if [[ "${{ needs.build.result }}" == "success" && "${{ needs.update_astrago_deployment.result }}" == "success" ]]; then
