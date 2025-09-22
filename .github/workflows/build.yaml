@@ -66,10 +66,10 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       
-      - name: Set version (4자리 커밋 해시)
+      - name: Set version (태그 이름)
         id: version
         run: |
-          VERSION=$(git rev-parse --short=4 HEAD)
+          VERSION=${{ github.ref_name }}
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "Using version: $VERSION"
       
