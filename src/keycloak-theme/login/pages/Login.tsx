@@ -446,7 +446,7 @@ export default function Login(
                             </div>
                           )}
                           {/* 임시로 추가된 소셜 로그인 버튼, 추후 삭제 필요 */}
-                          <div
+                          {/* <div
                             id="kc-social-providers"
                             className="kcFormSocialAccountContentClass col-xs-12 col-sm-6 kcFormSocialAccountClass login-pf-social-section">
                             <ul className="kcFormSocialAccountListClass login-pf-social list-unstyled login-pf-social-all">
@@ -459,7 +459,7 @@ export default function Login(
                                 </a>
                               </li>
                             </ul>
-                          </div>
+                          </div> */}
                         </LoginButtonWrapper>
                       </div>
                     </form>
