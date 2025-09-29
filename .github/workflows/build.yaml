@@ -106,7 +106,7 @@ jobs:
         run: |
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action"
-          git add environments/
+          git add helmfile/
           git commit -m "Update keycloak theme to ${{ needs.build.outputs.version }}"
           git push
 
