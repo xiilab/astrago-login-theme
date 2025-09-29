@@ -1,5 +1,6 @@
 // Copy pasted from: https://github.com/InseeFrLab/keycloakify/blob/main/src/login/Template.tsx
 
+import { useEffect } from 'react';
 import { clsx } from 'keycloakify/tools/clsx';
 import { usePrepareTemplate } from 'keycloakify/lib/usePrepareTemplate';
 import { type TemplateProps } from 'keycloakify/account/TemplateProps';
@@ -27,6 +28,40 @@ export default function Template(props: TemplateProps<KcContext, I18n>) {
     htmlClassName: getClassName('kcHtmlClass'),
     bodyClassName: clsx('admin-console', 'user', getClassName('kcBodyClass')),
   });
+
+  // CSP 설정 - 동적 도메인 허용 (IP, astrago.ai, demo.astrago.ai 등)
+  useEffect(() => {
+    const existingMeta = document.querySelector('meta[http-equiv="Content-Security-Policy"]');
+    if (!existingMeta) {
+      const currentOrigin = window.location.origin;
+      const currentHost = window.location.hostname;
+      
+      // 다양한 접근 경로를 허용하는 CSP 설정
+      const allowedSources = [
+        "'self'",
+        currentOrigin,
+        `http://${currentHost}`,
+        `https://${currentHost}`,
+        "http://demo.astrago.ai",
+        "https://demo.astrago.ai",
+        "http://astrago.ai", 
+        "https://astrago.ai",
+        "http://*.astrago.ai",
+        "https://*.astrago.ai"
+      ];
+      
+      // 중복 제거
+      const uniqueSources = Array.from(new Set(allowedSources));
+      const sourcesString = uniqueSources.join(' ');
+      
+      const meta = document.createElement('meta');
+      meta.httpEquiv = 'Content-Security-Policy';
+      meta.content = `frame-src ${sourcesString}; frame-ancestors ${sourcesString}; object-src 'none';`;
+      document.head.appendChild(meta);
+      
+      console.log('CSP 설정 완료:', meta.content);
+    }
+  }, []);
 
   if (!isReady) {
     return null;
