@@ -95,6 +95,7 @@ jobs:
           repository: 'xiilab/astrago-deployment'
           #ref: release
           #yq eval ".keycloak.image.tag = \"$VERSION\"" -i environments/prod/values.yaml
+          #git add environments/ 110line
           ref: stabilize/1.0
       
       - name: Update theme version in common values
@@ -106,7 +107,7 @@ jobs:
         run: |
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action"
-          git add environments/
+          git add helmfile/
           git commit -m "Update keycloak theme to ${{ needs.build.outputs.version }}"
           git push
 
