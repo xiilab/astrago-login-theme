@@ -93,12 +93,14 @@ jobs:
         with:
           token: ${{ secrets.TOKEN }}
           repository: 'xiilab/astrago-deployment'
-          ref: release
+          #ref: release
+          #yq eval ".keycloak.image.tag = \"$VERSION\"" -i environments/prod/values.yaml
+          ref: stabilize/1.0
       
       - name: Update theme version in common values
         run: |
           VERSION="${{ needs.build.outputs.version }}"
-          yq eval ".keycloak.image.tag = \"$VERSION\"" -i environments/prod/values.yaml
+          yq eval ".keycloak.image.tag = \"$VERSION\"" -i helmfile/environments/customers/xiilab/values.yaml
       
       - name: Commit and push changes
         run: |
