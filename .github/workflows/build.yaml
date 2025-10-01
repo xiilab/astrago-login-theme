@@ -88,14 +88,13 @@ jobs:
     name: Update astrago-deployment files
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout astrago-deployment
+      - name: Checkout astrago-deployment stabilize/1.0 branch
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.TOKEN }}
           repository: 'xiilab/astrago-deployment'
           #ref: release
           #yq eval ".keycloak.image.tag = \"$VERSION\"" -i environments/prod/values.yaml
-          #git add environments/ 110line
           ref: stabilize/1.0
       
       - name: Update theme version in common values
@@ -108,6 +107,27 @@ jobs:
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action"
           git add helmfile/
+          git commit -m "Update keycloak theme to ${{ needs.build.outputs.version }}"
+          git push
+      
+      # release 브랜치도 업데이트
+      - name: Checkout astrago-deployment release branch
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.TOKEN }}
+          repository: 'xiilab/astrago-deployment'
+          ref: release
+      
+      - name: Update theme version in release branch
+        run: |
+          VERSION="${{ needs.build.outputs.version }}"
+          yq eval ".keycloak.image.tag = \"$VERSION\"" -i environments/prod/values.yaml
+      
+      - name: Commit and push release changes
+        run: |
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
+          git add environments/
           git commit -m "Update keycloak theme to ${{ needs.build.outputs.version }}"
           git push
 
