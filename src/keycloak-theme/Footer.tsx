@@ -32,6 +32,13 @@ const Footer = ({ showAdminButton = false, onAdminClick, showGeneralButton = fal
           <AdminModeButton onClick={onGeneralClick}>
             일반 전용 로그인
           </AdminModeButton>
+          <Divider aria-hidden="true">|</Divider>
+          <AdminModeAnchor
+            href="https://doosankor.sharepoint.com/:b:/s/0112.REQTEAMS.28872/EZHY0U3Iea9Iljgo6yJ307oBsolgnb-K3PYtr-xbYBO7EQ?e=w8ABTY"
+            target="_blank"
+            rel="noopener noreferrer">
+            사용자 가이드
+          </AdminModeAnchor>
         </AdminSection>
       )}
     </Wrapper>
@@ -73,6 +80,7 @@ const AdminSection = styled('section')`
   align-items: center;
   padding: 0;
   margin-top: 2px;
+  gap: 8px;
 `;
 
 const AdminModeButton = styled('button')`
@@ -87,6 +95,23 @@ const AdminModeButton = styled('button')`
   cursor: pointer;
   text-decoration: none;
   padding: 0;
+
+  &:hover {
+    color: #003d7a;
+  }
+`;
+
+const Divider = styled('span')`
+  color: #005eb8;
+  font-size: 14px;
+  font-weight: 500;
+`;
+
+const AdminModeAnchor = styled('a')`
+  color: #005eb8;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
 
   &:hover {
     color: #003d7a;

@@ -620,6 +620,12 @@ const LoginButtonWrapper = styled('div')`
   margin-bottom: 14px;
 `;
 
+const UserDescription = styled('div')`
+  color: #17171f;
+  font-size: 12px;
+  text-align: center;
+`;
+
 const ModeWrapper = styled('div')`
   display: flex;
   justify-content: center;
@@ -644,6 +650,7 @@ const AdminModeLink = styled('button')`
     color: #003d7a;
   }
 `;
+
 
 const LoginButton = styled(Button)`
   background: #005eb8;
