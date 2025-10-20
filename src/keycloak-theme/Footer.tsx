@@ -25,6 +25,13 @@ const Footer = ({ showAdminButton = false, onAdminClick, showGeneralButton = fal
           <AdminModeButton onClick={onAdminClick}>
             관리자 전용 로그인
           </AdminModeButton>
+          <Divider aria-hidden="true">|</Divider>
+          <AdminModeAnchor
+            href="https://doosankor.sharepoint.com/:b:/s/0112.REQTEAMS.28872/EZHY0U3Iea9Iljgo6yJ307oBsolgnb-K3PYtr-xbYBO7EQ?e=w8ABTY"
+            target="_blank"
+            rel="noopener noreferrer">
+            사용자 가이드
+          </AdminModeAnchor>
         </AdminSection>
       )}
       {showGeneralButton && (
@@ -112,6 +119,8 @@ const AdminModeAnchor = styled('a')`
   font-size: 14px;
   font-weight: 500;
   text-decoration: none;
+  display: flex;
+  align-items: center;
 
   &:hover {
     color: #003d7a;
