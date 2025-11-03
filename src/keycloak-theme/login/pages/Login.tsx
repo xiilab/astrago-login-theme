@@ -72,6 +72,8 @@ export default function Login(
   const [validationMessage, setValidationMessage] = useState<
     string | undefined
   >(undefined);
+  // 언어 선택 상태 추가
+  const [selectedLanguage, setSelectedLanguage] = useState('korea');
 
   // ===== onSubmit 함수 수정 =====
   const onSubmit = useConstCallback<FormEventHandler<HTMLFormElement>>((e) => {
@@ -336,6 +338,18 @@ export default function Login(
                               </div>
                             )}
                         </PasswordInputWrapper>
+                      </div>
+
+                      {/* 언어 선택 Select Box */}
+                      <div className={getClassName('kcFormGroupClass')}>
+                        <LanguageSelectWrapper>
+                          <LanguageSelect
+                            value={selectedLanguage}
+                            onChange={(e) => setSelectedLanguage(e.target.value)}>
+                            <option value="korea">한국어</option>
+                            <option value="english">English</option>
+                          </LanguageSelect>
+                        </LanguageSelectWrapper>
                       </div>
 
                       {/* <div
@@ -782,4 +796,45 @@ const ErrorText = styled('div')`
   position: absolute;
   bottom: -30px;
   left: 10px;
+`;
+
+const LanguageSelectWrapper = styled('div')`
+  margin-top: 16px;
+  margin-bottom: 16px;
+`;
+
+const LanguageSelect = styled('select')`
+  width: 380px;
+  height: 48px;
+  background-color: #ffffff;
+  border: 1px solid #D5D4D8;
+  border-radius: 8px;
+  padding: 12px 40px 12px 20px;
+  color: #17171f;
+  font-size: 14px;
+  line-height: 24px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  appearance: none;
+  background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 5"><path fill="%23666" d="m0 0l2 2 2-2z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 20px center;
+  background-size: 12px;
+  display: flex;
+  align-items: center;
+
+  &:focus {
+    outline: none;
+    border: 1px solid #5b29c7;
+  }
+
+  &:hover {
+    border: 1px solid #5b29c7;
+  }
+
+  option {
+    padding: 8px;
+    color: #17171f;
+    background-color: #ffffff;
+  }
 `;
