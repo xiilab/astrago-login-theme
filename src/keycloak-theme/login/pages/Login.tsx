@@ -61,7 +61,7 @@ export default function Login(
 
   console.log('kcContext:', kcContext);
 
-  const { msg, msgStr } = i18n;
+  const { msg, msgStr, changeLocale, currentLanguageTag } = i18n;
 
   const [isLoginButtonDisabled, setIsLoginButtonDisabled] = useState(false);
   const [passwordType, setPasswordType] = useState({
@@ -72,8 +72,79 @@ export default function Login(
   const [validationMessage, setValidationMessage] = useState<
     string | undefined
   >(undefined);
-  // 언어 선택 상태 추가
-  const [selectedLanguage, setSelectedLanguage] = useState('korea');
+  // 언어 선택 상태 추가 - 초기값을 현재 언어로 설정
+  const [selectedLanguage, setSelectedLanguage] = useState(
+    currentLanguageTag === 'ko' ? 'korea' : 'english'
+  );
+
+  // 초기 로드 시 URL에서 lang 파라미터 확인 및 redirect_uri 업데이트
+  useEffect(() => {
+    const currentUrl = new URL(window.location.href);
+    const redirectUri = currentUrl.searchParams.get('redirect_uri');
+
+    if (redirectUri) {
+      try {
+        const decodedRedirectUri = decodeURIComponent(redirectUri);
+        const redirectUrl = new URL(decodedRedirectUri);
+        const existingLang = redirectUrl.searchParams.get('lang');
+
+        // redirect_uri에 lang이 없으면 현재 언어로 추가
+        if (!existingLang) {
+          const localeTag = currentLanguageTag === 'ko' ? 'ko' : 'en';
+          redirectUrl.searchParams.set('lang', localeTag);
+          const updatedRedirectUri = encodeURIComponent(redirectUrl.toString());
+          currentUrl.searchParams.set('redirect_uri', updatedRedirectUri);
+          window.history.replaceState({}, '', currentUrl.toString());
+        } else {
+          // redirect_uri에 lang이 있으면 그에 맞게 언어 설정
+          const langValue = existingLang === 'ko' ? 'korea' : 'english';
+          setSelectedLanguage(langValue);
+          if (existingLang !== currentLanguageTag) {
+            changeLocale(existingLang as 'ko' | 'en');
+          }
+        }
+      } catch (error) {
+        console.warn('Failed to process redirect_uri:', error);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // 언어 변경 핸들러
+  const handleLanguageChange = useConstCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      const newLang = e.target.value;
+      setSelectedLanguage(newLang);
+
+      // Keycloak 언어 변경 (ko 또는 en)
+      const localeTag = newLang === 'korea' ? 'ko' : 'en';
+      changeLocale(localeTag);
+
+      // 현재 URL에서 redirect_uri 파라미터 찾기
+      const currentUrl = new URL(window.location.href);
+      const redirectUri = currentUrl.searchParams.get('redirect_uri');
+
+      if (redirectUri) {
+        try {
+          // redirect_uri 디코드
+          const decodedRedirectUri = decodeURIComponent(redirectUri);
+          const redirectUrl = new URL(decodedRedirectUri);
+
+          // lang 파라미터 추가 또는 업데이트
+          redirectUrl.searchParams.set('lang', localeTag);
+
+          // redirect_uri 업데이트
+          const updatedRedirectUri = encodeURIComponent(redirectUrl.toString());
+          currentUrl.searchParams.set('redirect_uri', updatedRedirectUri);
+
+          // URL 업데이트 (페이지 리로드 없이)
+          window.history.replaceState({}, '', currentUrl.toString());
+        } catch (error) {
+          console.warn('Failed to update redirect_uri with lang parameter:', error);
+        }
+      }
+    }
+  );
 
   // ===== onSubmit 함수 수정 =====
   const onSubmit = useConstCallback<FormEventHandler<HTMLFormElement>>((e) => {
@@ -345,7 +416,7 @@ export default function Login(
                         <LanguageSelectWrapper>
                           <LanguageSelect
                             value={selectedLanguage}
-                            onChange={(e) => setSelectedLanguage(e.target.value)}>
+                            onChange={handleLanguageChange}>
                             <option value="korea">한국어</option>
                             <option value="english">English</option>
                           </LanguageSelect>
