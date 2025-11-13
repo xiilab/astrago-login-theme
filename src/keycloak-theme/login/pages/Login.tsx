@@ -73,9 +73,11 @@ export default function Login(
     string | undefined
   >(undefined);
   // 언어 선택 상태 추가 - 초기값을 현재 언어로 설정
-  const [selectedLanguage, setSelectedLanguage] = useState(
+  const [selectedLanguage, setSelectedLanguage] = useState<'korea' | 'english'>(
     currentLanguageTag === 'ko' ? 'korea' : 'english'
   );
+  const selectedLocaleTag: 'ko' | 'en' =
+    selectedLanguage === 'korea' ? 'ko' : 'en';
 
   // 초기 로드 시 URL에서 lang 파라미터 확인 및 redirect_uri 업데이트
   useEffect(() => {
@@ -113,7 +115,7 @@ export default function Login(
   // 언어 변경 핸들러
   const handleLanguageChange = useConstCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
-      const newLang = e.target.value;
+      const newLang = e.target.value as 'korea' | 'english';
       setSelectedLanguage(newLang);
 
       // Keycloak 언어 변경 (ko 또는 en)
@@ -130,7 +132,7 @@ export default function Login(
           const decodedRedirectUri = decodeURIComponent(redirectUri);
           const redirectUrl = new URL(decodedRedirectUri);
 
-          // lang 파라미터 추가 또는 업데이트
+          // lang 파라미터 추가 또는 업데이트 (한국어와 영어 모두)
           redirectUrl.searchParams.set('lang', localeTag);
 
           // redirect_uri 업데이트
@@ -421,6 +423,11 @@ export default function Login(
                             <option value="english">English</option>
                           </LanguageSelect>
                         </LanguageSelectWrapper>
+                        <input
+                          type="hidden"
+                          name="kc_locale"
+                          value={selectedLocaleTag}
+                        />
                       </div>
 
                       {/* <div
