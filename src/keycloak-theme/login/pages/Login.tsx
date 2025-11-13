@@ -62,6 +62,7 @@ export default function Login(
   console.log('kcContext:', kcContext);
 
   const { msg, msgStr, changeLocale, currentLanguageTag } = i18n;
+  const isIntlEnabled = kcContext.realm?.internationalizationEnabled ?? false;
 
   const [isLoginButtonDisabled, setIsLoginButtonDisabled] = useState(false);
   const [passwordType, setPasswordType] = useState({
@@ -73,8 +74,10 @@ export default function Login(
     string | undefined
   >(undefined);
   // 언어 선택 상태 추가 - 초기값을 현재 언어로 설정
+  const initialLocaleTag =
+    (isIntlEnabled ? currentLanguageTag : undefined) === 'en' ? 'en' : 'ko';
   const [selectedLanguage, setSelectedLanguage] = useState<'korea' | 'english'>(
-    currentLanguageTag === 'ko' ? 'korea' : 'english'
+    initialLocaleTag === 'en' ? 'english' : 'korea'
   );
   const selectedLocaleTag: 'ko' | 'en' =
     selectedLanguage === 'korea' ? 'ko' : 'en';
@@ -92,7 +95,8 @@ export default function Login(
 
         // redirect_uri에 lang이 없으면 현재 언어로 추가
         if (!existingLang) {
-          const localeTag = currentLanguageTag === 'ko' ? 'ko' : 'en';
+          const localeTag =
+            initialLocaleTag === 'en' ? 'en' : 'ko';
           redirectUrl.searchParams.set('lang', localeTag);
           const updatedRedirectUri = encodeURIComponent(redirectUrl.toString());
           currentUrl.searchParams.set('redirect_uri', updatedRedirectUri);
@@ -101,7 +105,7 @@ export default function Login(
           // redirect_uri에 lang이 있으면 그에 맞게 언어 설정
           const langValue = existingLang === 'ko' ? 'korea' : 'english';
           setSelectedLanguage(langValue);
-          if (existingLang !== currentLanguageTag) {
+          if (isIntlEnabled && existingLang !== currentLanguageTag) {
             changeLocale(existingLang as 'ko' | 'en');
           }
         }
@@ -120,7 +124,9 @@ export default function Login(
 
       // Keycloak 언어 변경 (ko 또는 en)
       const localeTag = newLang === 'korea' ? 'ko' : 'en';
-      changeLocale(localeTag);
+      if (isIntlEnabled) {
+        changeLocale(localeTag);
+      }
 
       // 현재 URL에서 redirect_uri 파라미터 찾기
       const currentUrl = new URL(window.location.href);
