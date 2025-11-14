@@ -73,86 +73,50 @@ export default function Login(
   const [validationMessage, setValidationMessage] = useState<
     string | undefined
   >(undefined);
-  // 언어 선택 상태 추가 - 초기값을 현재 언어로 설정
-  const initialLocaleTag =
-    (isIntlEnabled ? currentLanguageTag : undefined) === 'en' ? 'en' : 'ko';
-  const [selectedLanguage, setSelectedLanguage] = useState<'korea' | 'english'>(
-    initialLocaleTag === 'en' ? 'english' : 'korea'
-  );
-  const selectedLocaleTag: 'ko' | 'en' =
-    selectedLanguage === 'korea' ? 'ko' : 'en';
+  // 언어 설정 상태 (선택 UI 제거 후 자동 처리)
+  const initialLocaleTag: 'ko' | 'en' =
+    isIntlEnabled && currentLanguageTag === 'en' ? 'en' : 'ko';
+  const [localeTag, setLocaleTag] = useState<'ko' | 'en'>(initialLocaleTag);
 
   // 초기 로드 시 URL에서 lang 파라미터 확인 및 redirect_uri 업데이트
   useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const applyLocale = (lang: 'ko' | 'en') => {
+      setLocaleTag(prev => (prev === lang ? prev : lang));
+      if (isIntlEnabled && lang !== currentLanguageTag) {
+        changeLocale(lang);
+      }
+    };
+
     const currentUrl = new URL(window.location.href);
     const redirectUri = currentUrl.searchParams.get('redirect_uri');
 
-    if (redirectUri) {
-      try {
-        const decodedRedirectUri = decodeURIComponent(redirectUri);
-        const redirectUrl = new URL(decodedRedirectUri);
-        const existingLang = redirectUrl.searchParams.get('lang');
-
-        // redirect_uri에 lang이 없으면 현재 언어로 추가
-        if (!existingLang) {
-          const localeTag =
-            initialLocaleTag === 'en' ? 'en' : 'ko';
-          redirectUrl.searchParams.set('lang', localeTag);
-          const updatedRedirectUri = encodeURIComponent(redirectUrl.toString());
-          currentUrl.searchParams.set('redirect_uri', updatedRedirectUri);
-          window.history.replaceState({}, '', currentUrl.toString());
-        } else {
-          // redirect_uri에 lang이 있으면 그에 맞게 언어 설정
-          const langValue = existingLang === 'ko' ? 'korea' : 'english';
-          setSelectedLanguage(langValue);
-          if (isIntlEnabled && existingLang !== currentLanguageTag) {
-            changeLocale(existingLang as 'ko' | 'en');
-          }
-        }
-      } catch (error) {
-        console.warn('Failed to process redirect_uri:', error);
+    try {
+      if (!redirectUri) {
+        applyLocale(localeTag);
+        return;
       }
+
+      const decodedRedirectUri = decodeURIComponent(redirectUri);
+      const redirectUrl = new URL(decodedRedirectUri);
+      const existingLang = redirectUrl.searchParams.get('lang');
+
+      if (existingLang === 'ko' || existingLang === 'en') {
+        applyLocale(existingLang);
+      } else {
+        redirectUrl.searchParams.set('lang', localeTag);
+        const updatedRedirectUri = encodeURIComponent(redirectUrl.toString());
+        currentUrl.searchParams.set('redirect_uri', updatedRedirectUri);
+        window.history.replaceState({}, '', currentUrl.toString());
+        applyLocale(localeTag);
+      }
+    } catch (error) {
+      console.warn('Failed to process redirect_uri:', error);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // 언어 변경 핸들러
-  const handleLanguageChange = useConstCallback(
-    (e: React.ChangeEvent<HTMLSelectElement>) => {
-      const newLang = e.target.value as 'korea' | 'english';
-      setSelectedLanguage(newLang);
-
-      // Keycloak 언어 변경 (ko 또는 en)
-      const localeTag = newLang === 'korea' ? 'ko' : 'en';
-      if (isIntlEnabled) {
-        changeLocale(localeTag);
-      }
-
-      // 현재 URL에서 redirect_uri 파라미터 찾기
-      const currentUrl = new URL(window.location.href);
-      const redirectUri = currentUrl.searchParams.get('redirect_uri');
-
-      if (redirectUri) {
-        try {
-          // redirect_uri 디코드
-          const decodedRedirectUri = decodeURIComponent(redirectUri);
-          const redirectUrl = new URL(decodedRedirectUri);
-
-          // lang 파라미터 추가 또는 업데이트 (한국어와 영어 모두)
-          redirectUrl.searchParams.set('lang', localeTag);
-
-          // redirect_uri 업데이트
-          const updatedRedirectUri = encodeURIComponent(redirectUrl.toString());
-          currentUrl.searchParams.set('redirect_uri', updatedRedirectUri);
-
-          // URL 업데이트 (페이지 리로드 없이)
-          window.history.replaceState({}, '', currentUrl.toString());
-        } catch (error) {
-          console.warn('Failed to update redirect_uri with lang parameter:', error);
-        }
-      }
-    }
-  );
+  }, [changeLocale, currentLanguageTag, isIntlEnabled, localeTag]);
 
   // ===== onSubmit 함수 수정 =====
   const onSubmit = useConstCallback<FormEventHandler<HTMLFormElement>>((e) => {
@@ -419,23 +383,7 @@ export default function Login(
                         </PasswordInputWrapper>
                       </div>
 
-                      {/* 언어 선택 Select Box */}
-                      <div className={getClassName('kcFormGroupClass')}>
-                        <LanguageSelectWrapper>
-                          <LanguageSelect
-                            value={selectedLanguage}
-                            onChange={handleLanguageChange}>
-                            <option value="korea">한국어</option>
-                            <option value="english">English</option>
-                          </LanguageSelect>
-                        </LanguageSelectWrapper>
-                        <input
-                          type="hidden"
-                          name="kc_locale"
-                          value={selectedLocaleTag}
-                        />
-                      </div>
-
+                      <input type="hidden" name="kc_locale" value={localeTag} />
                       {/* <div
                     className={clsx(
                       getClassName('kcFormGroupClass'),
@@ -880,45 +828,4 @@ const ErrorText = styled('div')`
   position: absolute;
   bottom: -30px;
   left: 10px;
-`;
-
-const LanguageSelectWrapper = styled('div')`
-  margin-top: 16px;
-  margin-bottom: 16px;
-`;
-
-const LanguageSelect = styled('select')`
-  width: 380px;
-  height: 48px;
-  background-color: #ffffff;
-  border: 1px solid #D5D4D8;
-  border-radius: 8px;
-  padding: 12px 40px 12px 20px;
-  color: #17171f;
-  font-size: 14px;
-  line-height: 24px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  appearance: none;
-  background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 5"><path fill="%23666" d="m0 0l2 2 2-2z"/></svg>');
-  background-repeat: no-repeat;
-  background-position: right 20px center;
-  background-size: 12px;
-  display: flex;
-  align-items: center;
-
-  &:focus {
-    outline: none;
-    border: 1px solid #5b29c7;
-  }
-
-  &:hover {
-    border: 1px solid #5b29c7;
-  }
-
-  option {
-    padding: 8px;
-    color: #17171f;
-    background-color: #ffffff;
-  }
 `;
