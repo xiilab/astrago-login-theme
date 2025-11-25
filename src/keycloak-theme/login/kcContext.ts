@@ -114,7 +114,7 @@ export const { kcContext } = getKcContext({
   // 테스트 설정 가이드
   // ========================================
   // 1. 로그인 페이지 테스트 (현재 활성화)
-  mockPageId: 'login.ftl',
+  // mockPageId: 'login.ftl',
   // 2. Approval Check Flow 직접 테스트
   //    - 승인 대기 상태 (approvalYN: 'N') 테스트
   //    - 승인 완료 상태 (approvalYN: 'Y') 테스트
