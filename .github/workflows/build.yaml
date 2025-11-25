@@ -56,16 +56,24 @@ jobs:
         id: create_release
         if: steps.check_release.outputs.release_exists != 'true'
         continue-on-error: true
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }} # This token is provided by Actions, you do not need to create your own token
-        with:
-          tag_name: ${{ github.ref_name }}
-          release_name: Release ${{ github.ref_name }}
-          body: |
-            - 깃헙 액션에서 자동으로 생성됨
-          draft: true
-          prerelease: false
+        run: |
+          curl -X POST \
+            -H "Authorization: token ${{ secrets.TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/${{ github.repository }}/releases" \
+            -d '{
+              "tag_name": "${{ github.ref_name }}",
+              "name": "Release ${{ github.ref_name }}",
+              "body": "- 깃헙 액션에서 자동으로 생성됨",
+              "draft": true,
+              "prerelease": false
+            }' | jq -r '.id, .upload_url' > release_info.txt || true
+          if [ -f release_info.txt ] && [ -s release_info.txt ]; then
+            RELEASE_ID=$(head -n1 release_info.txt)
+            UPLOAD_URL=$(tail -n1 release_info.txt)
+            echo "release_id=$RELEASE_ID" >> $GITHUB_OUTPUT
+            echo "upload_url=$UPLOAD_URL" >> $GITHUB_OUTPUT
+          fi
 
       - name: Set release info
         id: release_info
@@ -73,9 +81,9 @@ jobs:
           if [ "${{ steps.check_release.outputs.release_exists }}" == "true" ]; then
             echo "upload_url=${{ steps.check_release.outputs.upload_url }}" >> $GITHUB_OUTPUT
             echo "release_id=${{ steps.check_release.outputs.release_id }}" >> $GITHUB_OUTPUT
-          elif [ "${{ steps.create_release.outcome }}" == "success" ]; then
+          elif [ -n "${{ steps.create_release.outputs.release_id }}" ]; then
             echo "upload_url=${{ steps.create_release.outputs.upload_url }}" >> $GITHUB_OUTPUT
-            echo "release_id=${{ steps.create_release.outputs.id }}" >> $GITHUB_OUTPUT
+            echo "release_id=${{ steps.create_release.outputs.release_id }}" >> $GITHUB_OUTPUT
           else
             echo "upload_url=" >> $GITHUB_OUTPUT
             echo "release_id=" >> $GITHUB_OUTPUT
@@ -103,14 +111,14 @@ jobs:
           id: ${{ steps.release_info.outputs.release_id }}
       
       # 새로 추가할 Docker 이미지 빌드 단계들
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
       
       - name: Set version (태그 이름)
         id: version
