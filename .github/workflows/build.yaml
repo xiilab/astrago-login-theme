@@ -70,8 +70,12 @@ jobs:
         id: version
         run: |
           VERSION=${{ github.ref_name }}
+          # Docker 태그는 슬래시를 사용할 수 없으므로 하이픈으로 변환
+          DOCKER_TAG=$(echo "$VERSION" | sed 's/\//-/g')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "docker_tag=$DOCKER_TAG" >> $GITHUB_OUTPUT
           echo "Using version: $VERSION"
+          echo "Using Docker tag: $DOCKER_TAG"
       
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
@@ -80,7 +84,8 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            xiilab/astrago-keycloak-theme:${{ steps.version.outputs.version }}
+            xiilab/astrago-login-theme:${{ steps.version.outputs.docker_tag }}
+            xiilab/astrago-login-theme:doosan-latest
 
   update_astrago_deployment:
     if: startsWith(github.ref, 'refs/tags/v')
