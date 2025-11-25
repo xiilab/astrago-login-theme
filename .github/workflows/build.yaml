@@ -57,14 +57,14 @@ jobs:
           id: ${{ steps.create_release.outputs.id }}
       
       # 새로 추가할 Docker 이미지 빌드 단계들
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-      
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
       
       - name: Set version (태그 이름)
         id: version
