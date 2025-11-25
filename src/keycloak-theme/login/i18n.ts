@@ -569,7 +569,19 @@ export const { useI18n } = createUseI18n({
     readOnlyUsernameMessage:
       '사용자 이름은 읽기 전용이므로 업데이트할 수 없습니다.',
     alphanumericalCharsOnly: '',
+    'footer.systemWarning':
+      'This system is only available to Doosan personnel and authorized users. Unauthorized use may result in civil and criminal penalties under applicable laws. System usage is monitored by administrators.',
+    'footer.adminLogin': 'Admin Login',
+    'footer.generalLogin': 'General Login',
+    'footer.userGuide': 'User Guide',
   },
+  ko: {
+    'footer.systemWarning':
+      '본 시스템은 두산 담당자 및 인가된 사용자만 사용할 수 있으며, 불법 사용시에는 법령에 의해 민/형사상의 제제를 받을 수가 있습니다. 시스템 사용은 관리자에 의해 모니터링 되고 있습니다.',
+    'footer.adminLogin': '관리자 전용 로그인',
+    'footer.generalLogin': '일반 전용 로그인',
+    'footer.userGuide': '사용자 가이드',
+  } as any,
 });
 
 export type I18n = NonNullable<ReturnType<typeof useI18n>>;

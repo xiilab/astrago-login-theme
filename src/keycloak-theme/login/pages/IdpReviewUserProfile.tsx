@@ -106,7 +106,7 @@ export default function IdpReviewUserProfile(
             </Section>
           </Template>
           <FooterWrapper>
-            <Footer />
+            <Footer i18n={i18n} />
           </FooterWrapper>
         </Container>
       </Wrapper>
