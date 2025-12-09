@@ -4,6 +4,9 @@ on:
     # Pattern matched against refs/tags
     tags:
       - '**' # Push events to matching v*, i.e. v1.0, v20.15.10
+    # doosan 브랜치에도 트리거 추가
+    branches:
+      - doosan
 
 jobs:
   build:
@@ -30,6 +33,7 @@ jobs:
 
       - name: Check if release exists
         id: check_release
+        if: startsWith(github.ref, 'refs/tags/')
         continue-on-error: true
         run: |
           TAG_NAME="${{ github.ref_name }}"
@@ -54,7 +58,7 @@ jobs:
 
       - name: Create release
         id: create_release
-        if: steps.check_release.outputs.release_exists != 'true'
+        if: startsWith(github.ref, 'refs/tags/') && steps.check_release.outputs.release_exists != 'true'
         continue-on-error: true
         run: |
           curl -X POST \
@@ -90,7 +94,7 @@ jobs:
           fi
 
       - name: Upload release asset
-        if: steps.release_info.outputs.upload_url != ''
+        if: startsWith(github.ref, 'refs/tags/') && steps.release_info.outputs.upload_url != ''
         continue-on-error: true
         uses: actions/upload-release-asset@v1
         env:
@@ -102,7 +106,7 @@ jobs:
           asset_content_type: application/java-archive
 
       - name: Publish release
-        if: steps.release_info.outputs.release_id != ''
+        if: startsWith(github.ref, 'refs/tags/') && steps.release_info.outputs.release_id != ''
         continue-on-error: true
         uses: StuYarrow/publish-release@v1.1.2
         env:
@@ -120,13 +124,21 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       
-      - name: Set version (태그 이름)
+      - name: Set version (태그 이름 또는 브랜치)
         id: version
         run: |
-          VERSION=${{ github.ref_name }}
-          # Docker 태그 형식: doosan/1.3.1 -> login-1.3.1
-          # doosan/ 부분을 login-으로 변경하고 버전 번호만 사용
-          DOCKER_TAG=$(echo "$VERSION" | sed 's/doosan\//login-/' | sed 's/\//-/g')
+          # 태그인 경우 태그 이름 사용, 브랜치인 경우 브랜치 이름 + 커밋 SHA 짧은 버전 사용
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            VERSION=${{ github.ref_name }}
+            # Docker 태그 형식: doosan/1.3.1 -> login-1.3.1
+            DOCKER_TAG=$(echo "$VERSION" | sed 's/doosan\//login-/' | sed 's/\//-/g')
+          else
+            # 브랜치인 경우: doosan -> login-theme-{short-sha}
+            BRANCH_NAME=${{ github.ref_name }}
+            SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+            VERSION="${BRANCH_NAME}-${SHORT_SHA}"
+            DOCKER_TAG="login-theme-${SHORT_SHA}"
+          fi
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "docker_tag=$DOCKER_TAG" >> $GITHUB_OUTPUT
           echo "Using version: $VERSION"
@@ -140,60 +152,12 @@ jobs:
           push: true
           tags: |
             xiilab/astrago-doosan:${{ steps.version.outputs.docker_tag }}
-
-  update_astrago_deployment:
-    if: startsWith(github.ref, 'refs/tags/v')
-    needs: build
-    name: Update astrago-deployment files
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout astrago-deployment stabilize/1.0 branch
-        uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.TOKEN }}
-          repository: 'xiilab/astrago-deployment'
-          #ref: release
-          #yq eval ".keycloak.image.tag = \"$VERSION\"" -i environments/prod/values.yaml
-          ref: stabilize/1.0
-      
-      - name: Update theme version in common values
-        run: |
-          VERSION="${{ needs.build.outputs.version }}"
-          yq eval ".keycloak.image.tag = \"$VERSION\"" -i helmfile/environments/customers/xiilab/values.yaml
-      
-      - name: Commit and push changes
-        run: |
-          git config --global user.email "action@github.com"
-          git config --global user.name "GitHub Action"
-          git add helmfile/
-          git commit -m "Update keycloak theme to ${{ needs.build.outputs.version }}"
-          git push
-      
-      # release 브랜치도 업데이트
-      - name: Checkout astrago-deployment release branch
-        uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.TOKEN }}
-          repository: 'xiilab/astrago-deployment'
-          ref: release
-      
-      - name: Update theme version in release branch
-        run: |
-          VERSION="${{ needs.build.outputs.version }}"
-          yq eval ".keycloak.image.tag = \"$VERSION\"" -i environments/prod/values.yaml
-      
-      - name: Commit and push release changes
-        run: |
-          git config --global user.email "action@github.com"
-          git config --global user.name "GitHub Action"
-          git add environments/
-          git commit -m "Update keycloak theme to ${{ needs.build.outputs.version }}"
-          git push
-
+            ${{ github.ref == 'refs/heads/doosan' && format('xiilab/astrago-doosan:login-theme-latest') || '' }}
 
   notify_slack:
-    if: startsWith(github.ref, 'refs/tags/v')
-    needs: [build, update_astrago_deployment]
+    # 태그 또는 doosan 브랜치일 때 알림
+    if: startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/doosan'
+    needs: [build]
     runs-on: ubuntu-latest
     permissions:
       actions: 'read'
@@ -202,13 +166,17 @@ jobs:
         env:
           COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
         run: |
-          STATUS="${{ needs.build.result == 'success' && needs.update_astrago_deployment.result == 'success' && '✅ Success' || '❌ Failed' }}"
-          # Docker 태그 형식: doosan/1.3.1 -> login-1.3.1
-          IMAGE_TAG=$(echo "${{ needs.build.outputs.version }}" | sed 's/doosan\//login-/' | sed 's/\//-/g')
+          STATUS="${{ needs.build.result == 'success' && '✅ Success' || '❌ Failed' }}"
+          # Docker 태그 형식 설정
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            IMAGE_TAG=$(echo "${{ needs.build.outputs.version }}" | sed 's/doosan\//login-/' | sed 's/\//-/g')
+          else
+            IMAGE_TAG="${{ needs.build.outputs.docker_tag }}"
+          fi
           COMMIT_MSG=$(echo "$COMMIT_MESSAGE" | head -1)
 
           # 성공/실패에 따른 색상 설정
-          if [[ "${{ needs.build.result }}" == "success" && "${{ needs.update_astrago_deployment.result }}" == "success" ]]; then
+          if [[ "${{ needs.build.result }}" == "success" ]]; then
             COLOR="#36a64f"
             STATUS_EMOJI="✅"
             STATUS_TEXT="Success"
