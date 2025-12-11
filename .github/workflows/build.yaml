@@ -1,12 +1,10 @@
 name: 배포
+
 on:
   push:
     # Pattern matched against refs/tags
     tags:
       - '**' # Push events to matching v*, i.e. v1.0, v20.15.10
-    # doosan 브랜치에도 트리거 추가
-    branches:
-      - doosan
 
 jobs:
   build:
@@ -31,114 +29,52 @@ jobs:
       - run: mv build_keycloak/target/retrocompat-*.jar build_keycloak/target/retrocompat-keycloak-theme.jar
       - run: mv build_keycloak/target/astrago-*.jar build_keycloak/target/keycloak-theme.jar
 
-      - name: Check if release exists
-        id: check_release
-        if: startsWith(github.ref, 'refs/tags/')
-        continue-on-error: true
-        run: |
-          TAG_NAME="${{ github.ref_name }}"
-          RESPONSE=$(curl -s -w "\n%{http_code}" -H "Authorization: token ${{ secrets.TOKEN }}" \
-            "https://api.github.com/repos/${{ github.repository }}/releases/tags/${TAG_NAME}")
-          HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
-          BODY=$(echo "$RESPONSE" | sed '$d')
-          
-          if [ "$HTTP_CODE" = "200" ]; then
-            RELEASE_ID=$(echo "$BODY" | jq -r '.id // empty')
-            UPLOAD_URL=$(echo "$BODY" | jq -r '.upload_url // empty')
-            if [ -n "$RELEASE_ID" ] && [ "$RELEASE_ID" != "null" ]; then
-              echo "release_id=$RELEASE_ID" >> $GITHUB_OUTPUT
-              echo "release_exists=true" >> $GITHUB_OUTPUT
-              echo "upload_url=$UPLOAD_URL" >> $GITHUB_OUTPUT
-            else
-              echo "release_exists=false" >> $GITHUB_OUTPUT
-            fi
-          else
-            echo "release_exists=false" >> $GITHUB_OUTPUT
-          fi
-
       - name: Create release
         id: create_release
-        if: startsWith(github.ref, 'refs/tags/') && steps.check_release.outputs.release_exists != 'true'
-        continue-on-error: true
-        run: |
-          curl -X POST \
-            -H "Authorization: token ${{ secrets.TOKEN }}" \
-            -H "Accept: application/vnd.github.v3+json" \
-            "https://api.github.com/repos/${{ github.repository }}/releases" \
-            -d '{
-              "tag_name": "${{ github.ref_name }}",
-              "name": "Release ${{ github.ref_name }}",
-              "body": "- 깃헙 액션에서 자동으로 생성됨",
-              "draft": true,
-              "prerelease": false
-            }' | jq -r '.id, .upload_url' > release_info.txt || true
-          if [ -f release_info.txt ] && [ -s release_info.txt ]; then
-            RELEASE_ID=$(head -n1 release_info.txt)
-            UPLOAD_URL=$(tail -n1 release_info.txt)
-            echo "release_id=$RELEASE_ID" >> $GITHUB_OUTPUT
-            echo "upload_url=$UPLOAD_URL" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Set release info
-        id: release_info
-        run: |
-          if [ "${{ steps.check_release.outputs.release_exists }}" == "true" ]; then
-            echo "upload_url=${{ steps.check_release.outputs.upload_url }}" >> $GITHUB_OUTPUT
-            echo "release_id=${{ steps.check_release.outputs.release_id }}" >> $GITHUB_OUTPUT
-          elif [ -n "${{ steps.create_release.outputs.release_id }}" ]; then
-            echo "upload_url=${{ steps.create_release.outputs.upload_url }}" >> $GITHUB_OUTPUT
-            echo "release_id=${{ steps.create_release.outputs.release_id }}" >> $GITHUB_OUTPUT
-          else
-            echo "upload_url=" >> $GITHUB_OUTPUT
-            echo "release_id=" >> $GITHUB_OUTPUT
-          fi
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: |
+            - 깃헙 액션에서 자동으로 생성됨
+          draft: true
+          prerelease: false
 
       - name: Upload release asset
-        if: startsWith(github.ref, 'refs/tags/') && steps.release_info.outputs.upload_url != ''
-        continue-on-error: true
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
         with:
-          upload_url: ${{ steps.release_info.outputs.upload_url }}
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: build_keycloak/target/keycloak-theme.jar
           asset_name: keycloak-theme.jar
           asset_content_type: application/java-archive
 
       - name: Publish release
-        if: startsWith(github.ref, 'refs/tags/') && steps.release_info.outputs.release_id != ''
-        continue-on-error: true
         uses: StuYarrow/publish-release@v1.1.2
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
         with:
-          id: ${{ steps.release_info.outputs.release_id }}
+          id: ${{ steps.create_release.outputs.id }}
       
       # 새로 추가할 Docker 이미지 빌드 단계들
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-      
-      - name: Set version (태그 이름 또는 브랜치)
+      - name: Set version (태그 이름)
         id: version
         run: |
-          # 태그인 경우 태그 이름 사용, 브랜치인 경우 브랜치 이름 + 커밋 SHA 짧은 버전 사용
-          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
-            VERSION=${{ github.ref_name }}
-            # Docker 태그 형식: doosan/1.3.1 -> login-1.3.1
-            DOCKER_TAG=$(echo "$VERSION" | sed 's/doosan\//login-/' | sed 's/\//-/g')
-          else
-            # 브랜치인 경우: doosan -> login-theme-{short-sha}
-            BRANCH_NAME=${{ github.ref_name }}
-            SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
-            VERSION="${BRANCH_NAME}-${SHORT_SHA}"
-            DOCKER_TAG="login-theme-${SHORT_SHA}"
-          fi
+          VERSION=${{ github.ref_name }}
+          # Docker 태그 형식: login-stage-{version} (예: login-stage-v1.0.0)
+          DOCKER_TAG="login-stage-${VERSION}"
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "docker_tag=$DOCKER_TAG" >> $GITHUB_OUTPUT
           echo "Using version: $VERSION"
@@ -152,16 +88,59 @@ jobs:
           push: true
           tags: |
             xiilab/astrago-doosan:${{ steps.version.outputs.docker_tag }}
-            ${{ github.ref == 'refs/heads/doosan' && format('xiilab/astrago-doosan:login-theme-latest') || '' }}
-          cache-from: type=registry,ref=xiilab/astrago-doosan:login-theme-latest
-          cache-to: type=inline
-          # Docker Hub 인증을 사용하여 base image pull
-          platforms: linux/amd64
+
+  update_astrago_deployment:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    name: Update astrago-deployment files
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout astrago-deployment stabilize/1.0 branch
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.TOKEN }}
+          repository: 'xiilab/astrago-deployment'
+          #ref: release
+          #yq eval ".keycloak.image.tag = \"$VERSION\"" -i environments/prod/values.yaml
+          ref: stabilize/1.0
+      
+      - name: Update theme version in common values
+        run: |
+          VERSION="${{ needs.build.outputs.version }}"
+          yq eval ".keycloak.image.tag = \"$VERSION\"" -i helmfile/environments/customers/xiilab/values.yaml
+      
+      - name: Commit and push changes
+        run: |
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
+          git add helmfile/
+          git commit -m "Update keycloak theme to ${{ needs.build.outputs.version }}"
+          git push
+      
+      # release 브랜치도 업데이트
+      - name: Checkout astrago-deployment release branch
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.TOKEN }}
+          repository: 'xiilab/astrago-deployment'
+          ref: release
+      
+      - name: Update theme version in release branch
+        run: |
+          VERSION="${{ needs.build.outputs.version }}"
+          yq eval ".keycloak.image.tag = \"$VERSION\"" -i environments/prod/values.yaml
+      
+      - name: Commit and push release changes
+        run: |
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
+          git add environments/
+          git commit -m "Update keycloak theme to ${{ needs.build.outputs.version }}"
+          git push
 
   notify_slack:
-    # 태그 또는 doosan 브랜치일 때 알림
-    if: startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/doosan'
-    needs: [build]
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [build, update_astrago_deployment]
     runs-on: ubuntu-latest
     permissions:
       actions: 'read'
@@ -170,17 +149,13 @@ jobs:
         env:
           COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
         run: |
-          STATUS="${{ needs.build.result == 'success' && '✅ Success' || '❌ Failed' }}"
-          # Docker 태그 형식 설정
-          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
-            IMAGE_TAG=$(echo "${{ needs.build.outputs.version }}" | sed 's/doosan\//login-/' | sed 's/\//-/g')
-          else
-            IMAGE_TAG="${{ needs.build.outputs.docker_tag }}"
-          fi
+          STATUS="${{ needs.build.result == 'success' && needs.update_astrago_deployment.result == 'success' && '✅ Success' || '❌ Failed' }}"
+          # Docker 태그 형식: login-stage-{version}
+          IMAGE_TAG="login-stage-${{ needs.build.outputs.version }}"
           COMMIT_MSG=$(echo "$COMMIT_MESSAGE" | head -1)
 
           # 성공/실패에 따른 색상 설정
-          if [[ "${{ needs.build.result }}" == "success" ]]; then
+          if [[ "${{ needs.build.result }}" == "success" && "${{ needs.update_astrago_deployment.result }}" == "success" ]]; then
             COLOR="#36a64f"
             STATUS_EMOJI="✅"
             STATUS_TEXT="Success"
