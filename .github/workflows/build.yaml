@@ -29,35 +29,89 @@ jobs:
       - run: mv build_keycloak/target/retrocompat-*.jar build_keycloak/target/retrocompat-keycloak-theme.jar
       - run: mv build_keycloak/target/astrago-*.jar build_keycloak/target/keycloak-theme.jar
 
+      - name: Check if release exists
+        id: check_release
+        if: startsWith(github.ref, 'refs/tags/')
+        continue-on-error: true
+        run: |
+          TAG_NAME="${{ github.ref_name }}"
+          RESPONSE=$(curl -s -w "\n%{http_code}" -H "Authorization: token ${{ secrets.TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/releases/tags/${TAG_NAME}")
+          HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | sed '$d')
+          
+          if [ "$HTTP_CODE" = "200" ]; then
+            RELEASE_ID=$(echo "$BODY" | jq -r '.id // empty')
+            UPLOAD_URL=$(echo "$BODY" | jq -r '.upload_url // empty')
+            if [ -n "$RELEASE_ID" ] && [ "$RELEASE_ID" != "null" ]; then
+              echo "release_id=$RELEASE_ID" >> $GITHUB_OUTPUT
+              echo "release_exists=true" >> $GITHUB_OUTPUT
+              echo "upload_url=$UPLOAD_URL" >> $GITHUB_OUTPUT
+            else
+              echo "release_exists=false" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "release_exists=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Create release
         id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }} # This token is provided by Actions, you do not need to create your own token
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          body: |
-            - 깃헙 액션에서 자동으로 생성됨
-          draft: true
-          prerelease: false
+        if: startsWith(github.ref, 'refs/tags/') && steps.check_release.outputs.release_exists != 'true'
+        continue-on-error: true
+        run: |
+          curl -X POST \
+            -H "Authorization: token ${{ secrets.TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/${{ github.repository }}/releases" \
+            -d '{
+              "tag_name": "${{ github.ref_name }}",
+              "name": "Release ${{ github.ref_name }}",
+              "body": "- 깃헙 액션에서 자동으로 생성됨",
+              "draft": true,
+              "prerelease": false
+            }' | jq -r '.id, .upload_url' > release_info.txt || true
+          if [ -f release_info.txt ] && [ -s release_info.txt ]; then
+            RELEASE_ID=$(head -n1 release_info.txt)
+            UPLOAD_URL=$(tail -n1 release_info.txt)
+            echo "release_id=$RELEASE_ID" >> $GITHUB_OUTPUT
+            echo "upload_url=$UPLOAD_URL" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Set release info
+        id: release_info
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          if [ "${{ steps.check_release.outputs.release_exists }}" == "true" ]; then
+            echo "upload_url=${{ steps.check_release.outputs.upload_url }}" >> $GITHUB_OUTPUT
+            echo "release_id=${{ steps.check_release.outputs.release_id }}" >> $GITHUB_OUTPUT
+          elif [ -n "${{ steps.create_release.outputs.release_id }}" ]; then
+            echo "upload_url=${{ steps.create_release.outputs.upload_url }}" >> $GITHUB_OUTPUT
+            echo "release_id=${{ steps.create_release.outputs.release_id }}" >> $GITHUB_OUTPUT
+          else
+            echo "upload_url=" >> $GITHUB_OUTPUT
+            echo "release_id=" >> $GITHUB_OUTPUT
+          fi
 
       - name: Upload release asset
+        if: startsWith(github.ref, 'refs/tags/') && steps.release_info.outputs.upload_url != ''
+        continue-on-error: true
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          upload_url: ${{ steps.release_info.outputs.upload_url }}
           asset_path: build_keycloak/target/keycloak-theme.jar
           asset_name: keycloak-theme.jar
           asset_content_type: application/java-archive
 
       - name: Publish release
+        if: startsWith(github.ref, 'refs/tags/') && steps.release_info.outputs.release_id != ''
+        continue-on-error: true
         uses: StuYarrow/publish-release@v1.1.2
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
         with:
-          id: ${{ steps.create_release.outputs.id }}
+          id: ${{ steps.release_info.outputs.release_id }}
       
       # 새로 추가할 Docker 이미지 빌드 단계들
       - name: Set up Docker Buildx
