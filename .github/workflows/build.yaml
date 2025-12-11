@@ -123,12 +123,18 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       
-      - name: Pull base image to avoid rate limit
+      - name: Import base image to buildx
         run: |
-          # Docker Hub에 로그인한 상태에서 base image를 미리 pull하여 rate limit 회피
-          # 인증된 사용자는 더 높은 pull rate limit을 가집니다
-          echo "Pulling base image: bitnamilegacy/keycloak:22.0.5-debian-11-r2"
-          docker pull bitnamilegacy/keycloak:22.0.5-debian-11-r2 || echo "Warning: Failed to pull base image, will try during build"
+          # Docker Hub에 로그인한 상태에서 base image를 buildx로 직접 import
+          # 이렇게 하면 rate limit을 회피할 수 있습니다
+          BASE_IMAGE="bitnamilegacy/keycloak:22.0.5-debian-11-r2"
+          echo "Importing base image to buildx: $BASE_IMAGE"
+          
+          # Buildx를 사용하여 base image를 직접 pull (인증 정보 사용)
+          docker buildx build --platform linux/amd64 --load - <<EOF || echo "Warning: Failed to import base image"
+          FROM $BASE_IMAGE
+          RUN echo "Base image imported"
+          EOF
       
       - name: Set version (태그 이름)
         id: version
@@ -153,6 +159,7 @@ jobs:
           cache-to: type=inline
           # Docker Hub 인증을 사용하여 base image pull (로그인 후 빌드)
           platforms: linux/amd64
+          # Docker Hub 로그인 정보가 이미 설정되어 있으므로 base image pull 시 자동 사용됨
 
   update_astrago_deployment:
     if: startsWith(github.ref, 'refs/tags/v')
