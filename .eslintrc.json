@@ -3,14 +3,10 @@
   "extends": ["react-app", "plugin:prettier/recommended"],
   "rules": {
     "prettier/prettier": [
-      "warn", // alternativly change to 'warn' if you want only warning
+      "warn",
       {
-        "endOfLine": "auto" // <---- this is the solution
-        // ... put other prettier rules here like "semi":flase,
-      },
-      {
+        "endOfLine": "auto",
         "useTabs": false
-        // ... put other prettier rules here like "semi":flase,
       }
     ],
 

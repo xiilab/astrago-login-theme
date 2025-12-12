@@ -58,6 +58,13 @@ export default function Login(
   const [validationMessage, setValidationMessage] = useState<
     string | undefined
   >(undefined);
+  // 팝업 상태 추가 - 페이지 진입 시 자동으로 열림
+  const [isPopupOpen, setIsPopupOpen] = useState(true);
+
+  // 페이지 진입 시 팝업 자동 표시
+  useEffect(() => {
+    setIsPopupOpen(true);
+  }, []);
 
   // ===== onSubmit 함수 수정 =====
   const onSubmit = useConstCallback<FormEventHandler<HTMLFormElement>>((e) => {
@@ -398,6 +405,46 @@ export default function Login(
           </BackgroundContainer>
         </BackgroundWrapper>
       </Wrapper>
+      {/* 팝업 모달 */}
+      {isPopupOpen && (
+        <ModalOverlay onClick={() => setIsPopupOpen(false)}>
+          <ModalContent onClick={(e) => e.stopPropagation()}>
+            <ModalHeader>
+              <ModalTitleWrapper>
+                <ModalTitle>DooGPU 시스템 업그레이드 작업 공지</ModalTitle>
+              </ModalTitleWrapper>
+            </ModalHeader>
+            <ModalBody>
+              <NoticeDate>
+                <DateText>12/27 (토) ~ 12/30 (화)</DateText>
+              </NoticeDate>
+              <NoticeContent>
+                <NoticeSection>
+                  <NoticeItemTitle>백업 안내</NoticeItemTitle>
+                  <NoticeItemText>
+                    Private Registry에서 사용중인 이미지에 대해 백업 부탁드립니다.
+                    <NoticeSubText>(백업 생성 시간에 5~10분 소요될 수 있음)</NoticeSubText>
+                  </NoticeItemText>
+                </NoticeSection>
+                <NoticeSection>
+                  <NoticeItemTitle>백업 방법</NoticeItemTitle>
+                  <NoticeItemText>
+                    실행중인 워크로드 상세보기 &gt; Container Image 실행 &gt; 이름 및 태그 입력
+                  </NoticeItemText>
+                </NoticeSection>
+                <NoticeFooter>
+                  <NoticeFooterText>상세한 내용은 메일을 통해서 공유드리겠습니다</NoticeFooterText>
+                </NoticeFooter>
+              </NoticeContent>
+            </ModalBody>
+            <ModalFooter>
+              <ModalButton onClick={() => setIsPopupOpen(false)}>
+                확인
+              </ModalButton>
+            </ModalFooter>
+          </ModalContent>
+        </ModalOverlay>
+      )}
     </>
   );
 }
@@ -675,4 +722,188 @@ const ErrorText = styled('div')`
   position: absolute;
   bottom: -30px;
   left: 10px;
+`;
+
+// 팝업 관련 스타일 컴포넌트
+const ModalOverlay = styled('div')`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease;
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+`;
+
+const ModalContent = styled('div')`
+  background: #ffffff;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 750px;
+  max-height: 85vh;
+  overflow: auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1);
+  animation: slideUp 0.3s ease;
+  position: relative;
+
+  @keyframes slideUp {
+    from {
+      transform: translateY(30px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+`;
+
+const ModalHeader = styled('div')`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 32px 32px 24px 32px;
+  border-bottom: 2px solid #f0f0f0;
+  background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
+`;
+
+const ModalTitleWrapper = styled('div')`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+`;
+
+const ModalTitle = styled('h2')`
+  margin: 0;
+  font-size: 26px;
+  font-weight: 700;
+  color: #005eb8;
+  font-family: 'Work Sans', sans-serif;
+  text-align: center;
+  letter-spacing: -0.5px;
+`;
+
+const ModalBody = styled('div')`
+  padding: 32px;
+  color: #17171f;
+  font-size: 15px;
+  line-height: 1.8;
+`;
+
+const NoticeDate = styled('div')`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #005eb8;
+  text-align: center;
+  margin-bottom: 28px;
+  padding: 18px 24px;
+  background: linear-gradient(135deg, #e8f2ff 0%, #f0f7ff 100%);
+  border-radius: 12px;
+  border: 1px solid #d0e5ff;
+`;
+
+const DateText = styled('span')`
+  font-weight: 600;
+`;
+
+const NoticeContent = styled('div')`
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+`;
+
+const NoticeSection = styled('div')`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+`;
+
+const NoticeItemTitle = styled('div')`
+  color: #005eb8;
+  font-size: 20px;
+  font-weight: 700;
+  font-family: 'Work Sans', sans-serif;
+  margin-bottom: 4px;
+`;
+
+const NoticeItemText = styled('div')`
+  color: #17171f;
+  font-size: 16px;
+  line-height: 1.9;
+  font-weight: 500;
+`;
+
+const NoticeSubText = styled('span')`
+  display: block;
+  color: #666666;
+  font-size: 14px;
+  margin-top: 10px;
+  padding-left: 0;
+  font-weight: 400;
+`;
+
+const NoticeFooter = styled('div')`
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 2px solid #e8f2ff;
+  text-align: center;
+`;
+
+const NoticeFooterText = styled('div')`
+  color: #005eb8;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.8;
+`;
+
+const ModalFooter = styled('div')`
+  padding: 24px 32px;
+  border-top: 2px solid #f0f0f0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #fafbfc;
+`;
+
+const ModalButton = styled('button')`
+  padding: 14px 56px;
+  background: linear-gradient(135deg, #005eb8 0%, #004a9a 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 140px;
+  box-shadow: 0 4px 12px rgba(0, 94, 184, 0.3);
+
+  &:hover {
+    background: linear-gradient(135deg, #004a9a 0%, #003d7a 100%);
+    box-shadow: 0 6px 16px rgba(0, 94, 184, 0.4);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(0, 94, 184, 0.3);
+  }
 `;
