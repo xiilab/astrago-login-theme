@@ -16,6 +16,10 @@ import background from '../assets/login-background.svg';
 import logo from './white-logo.png';
 import Footer from '../../Footer';
 import { setCookie, getCookie, deleteCookie } from './shared/cookieUtils';
+// 슬라이더 이미지 - 실제 이미지 파일 경로로 교체해주세요
+import slide1 from './images/slide1.png';
+import slide2 from './images/slide2.png';
+import slide3 from './images/slide3.png';
 
 const my_custom_param = new URL(window.location.href).searchParams.get(
   'my_custom_param',
@@ -60,11 +64,102 @@ export default function Login(
   >(undefined);
   // 팝업 상태 추가 - 페이지 진입 시 자동으로 열림
   const [isPopupOpen, setIsPopupOpen] = useState(true);
+  // 이미지 슬라이더 상태
+  const [currentSlide, setCurrentSlide] = useState(0);
+  // 이미지 확대 모달 상태
+  const [enlargedImage, setEnlargedImage] = useState<string | null>(null);
+  
+  // 슬라이드 데이터
+  const slides = [
+    {
+      image: slide1,
+      alt: '슬라이드 1',
+      description: (
+        <>
+          이미지 커밋 할 실행 중인 워크로드 상세보기로 이동합니다.
+          <br />
+          <div style={{ marginTop: '12px', display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'flex-start', textAlign: 'left' }}>
+            <div style={{ fontSize: '13px', color: '#d32f2f', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <span>⚠</span>
+              <span>주의사항</span>
+            </div>
+            <div style={{ fontSize: '13px', color: '#666666', lineHeight: '1.7', paddingLeft: '20px' }}>
+              <div>
+                • 실행 중인 워크로드만 가능합니다.
+              </div>
+            </div>
+          </div>
+        </>
+      )
+    },
+    {
+      image: slide2,
+      alt: '슬라이드 2',
+      description: '상세보기의 이미지 및 리소스 Private Registry의 Commit Image 실행을 클릭합니다.'
+    },
+    {
+      image: slide3,
+      alt: '슬라이드 3',
+      description: (
+        <>
+          이미지명과 태그명을 입력 후 저장 버튼을 클릭합니다.
+          <br />
+          <div style={{ marginTop: '12px', display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'flex-start', textAlign: 'left' }}>
+            <div style={{ fontSize: '13px', color: '#d32f2f', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <span>⚠</span>
+              <span>주의사항</span>
+            </div>
+            <div style={{ fontSize: '13px', color: '#666666', lineHeight: '1.7', paddingLeft: '20px' }}>
+              <div style={{ marginBottom: '6px' }}>
+                • 네트워크 및 이미지 용량으로 인해 백업 시간이 소요될 수 있습니다.
+              </div>
+              <div>
+                • 이미지 저장 후 워크스페이스 &gt; 리포지토리 &gt; Private Registry에서 해당 이미지를 확인할 수 있습니다.
+              </div>
+            </div>
+          </div>
+        </>
+      )
+    }
+  ];
 
   // 페이지 진입 시 팝업 자동 표시
   useEffect(() => {
     setIsPopupOpen(true);
   }, []);
+
+  // 이미지 슬라이더 자동 전환 (1 -> 2 -> 3 -> 1 순서)
+  useEffect(() => {
+    if (!isPopupOpen) return;
+    
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => {
+        // 0 -> 1 -> 2 -> 0 순서로 순차 전환
+        return (prev + 1) % slides.length;
+      });
+    }, 5000); // 5초마다 자동 전환
+
+    return () => clearInterval(interval);
+  }, [isPopupOpen, slides.length]);
+
+  // 슬라이더 네비게이션 함수
+  const goToSlide = (index: number) => {
+    setCurrentSlide(index);
+  };
+
+  const goToPrevious = () => {
+    setCurrentSlide((prev) => {
+      // 역순 전환
+      return (prev - 1 + slides.length) % slides.length;
+    });
+  };
+
+  const goToNext = () => {
+    setCurrentSlide((prev) => {
+      // 순차 전환
+      return (prev + 1) % slides.length;
+    });
+  };
 
   // ===== onSubmit 함수 수정 =====
   const onSubmit = useConstCallback<FormEventHandler<HTMLFormElement>>((e) => {
@@ -433,7 +528,52 @@ export default function Login(
                   </NoticeItemText>
                 </NoticeSection>
                 <NoticeFooter>
-                  <NoticeFooterText>상세한 내용은 메일을 통해서 공유드리겠습니다</NoticeFooterText>
+                  <ImageSlider>
+                    <SliderContainer>
+                      <SliderTrack 
+                        style={{ 
+                          transform: `translateX(-${currentSlide * 33.333333}%)`,
+                          transition: 'transform 0.5s ease-in-out'
+                        }}
+                      >
+                        {slides.map((slide, index) => (
+                          <Slide key={index}>
+                            <SlideContent>
+                              <SlideImage 
+                                src={slide.image} 
+                                alt={slide.alt}
+                                onClick={() => setEnlargedImage(slide.image)}
+                                style={{ cursor: 'pointer' }}
+                              />
+                              <SlideDescription>{slide.description}</SlideDescription>
+                            </SlideContent>
+                          </Slide>
+                        ))}
+                      </SliderTrack>
+                    </SliderContainer>
+                    <SliderControls>
+                      <SliderButton onClick={goToPrevious} aria-label="이전 이미지">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M15 18L9 12L15 6" stroke="#005eb8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </SliderButton>
+                      <SliderIndicators>
+                        {slides.map((_, index) => (
+                          <Indicator
+                            key={index}
+                            active={currentSlide === index}
+                            onClick={() => goToSlide(index)}
+                            aria-label={`슬라이드 ${index + 1}`}
+                          />
+                        ))}
+                      </SliderIndicators>
+                      <SliderButton onClick={goToNext} aria-label="다음 이미지">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M9 18L15 12L9 6" stroke="#005eb8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </SliderButton>
+                    </SliderControls>
+                  </ImageSlider>
                 </NoticeFooter>
               </NoticeContent>
             </ModalBody>
@@ -444,6 +584,19 @@ export default function Login(
             </ModalFooter>
           </ModalContent>
         </ModalOverlay>
+      )}
+      {/* 이미지 확대 모달 */}
+      {enlargedImage && (
+        <ImageEnlargeOverlay onClick={() => setEnlargedImage(null)}>
+          <ImageEnlargeContent onClick={(e: React.MouseEvent) => e.stopPropagation()}>
+            <ImageEnlargeCloseButton onClick={() => setEnlargedImage(null)}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M18 6L6 18M6 6L18 18" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </ImageEnlargeCloseButton>
+            <EnlargedImage src={enlargedImage} alt="확대된 이미지" />
+          </ImageEnlargeContent>
+        </ImageEnlargeOverlay>
       )}
     </>
   );
@@ -872,6 +1025,188 @@ const NoticeFooterText = styled('div')`
   font-size: 15px;
   font-weight: 600;
   line-height: 1.8;
+`;
+
+const ImageSlider = styled('div')`
+  width: 100%;
+  position: relative;
+  margin-top: 8px;
+`;
+
+const SliderContainer = styled('div')`
+  width: 100%;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #f8f9ff;
+  position: relative;
+`;
+
+const SliderTrack = styled('div')`
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+  width: 300%;
+  height: 100%;
+`;
+
+const Slide = styled('div')`
+  width: 33.333333%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+`;
+
+const SlideContent = styled('div')`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+`;
+
+const SlideImage = styled('img')`
+  width: 100%;
+  height: auto;
+  max-height: 400px;
+  object-fit: contain;
+  border-radius: 8px;
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: scale(1.02);
+  }
+`;
+
+const SlideDescription = styled('div')`
+  width: 100%;
+  color: #17171f;
+  font-size: 16px;
+  line-height: 1.8;
+  text-align: center;
+  font-weight: 500;
+  padding: 0 8px;
+  word-break: keep-all;
+`;
+
+const ImageEnlargeOverlay = styled('div')`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  animation: fadeIn 0.2s ease;
+  cursor: pointer;
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+`;
+
+const ImageEnlargeContent = styled('div')`
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+`;
+
+const ImageEnlargeCloseButton = styled('button')`
+  position: absolute;
+  top: -50px;
+  right: 0;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+  z-index: 2001;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+`;
+
+const EnlargedImage = styled('img')`
+  max-width: 90vw;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+`;
+
+const SliderControls = styled('div')`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 16px;
+`;
+
+const SliderButton = styled('button')`
+  background: #ffffff;
+  border: 2px solid #005eb8;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+
+  &:hover {
+    background: #005eb8;
+    svg path {
+      stroke: #ffffff;
+    }
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+`;
+
+const SliderIndicators = styled('div')`
+  display: flex;
+  gap: 8px;
+  align-items: center;
+`;
+
+const Indicator = styled('button')<{ active: boolean }>`
+  width: ${(props) => (props.active ? '24px' : '8px')};
+  height: 8px;
+  border-radius: 4px;
+  border: none;
+  background: ${(props) => (props.active ? '#005eb8' : '#d0e5ff')};
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+
+  &:hover {
+    background: ${(props) => (props.active ? '#004a9a' : '#a8d0ff')};
+  }
 `;
 
 const ModalFooter = styled('div')`
