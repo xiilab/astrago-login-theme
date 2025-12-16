@@ -137,7 +137,7 @@ export default function Login(
         // 0 -> 1 -> 2 -> 0 순서로 순차 전환
         return (prev + 1) % slides.length;
       });
-    }, 5000); // 5초마다 자동 전환
+    }, 10000); // 10초마다 자동 전환
 
     return () => clearInterval(interval);
   }, [isPopupOpen, slides.length]);
