@@ -109,7 +109,7 @@ export default function ApprovalCheckFlow(props: PageProps<any, I18n>) {
             </Section>
           </Template>
           <FooterWrapper>
-            <Footer i18n={i18n} />
+            <Footer />
           </FooterWrapper>
         </Container>
       </Wrapper>
