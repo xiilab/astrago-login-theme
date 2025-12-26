@@ -8,6 +8,7 @@ import { useGetClassName } from 'keycloakify/login/lib/useGetClassName';
 import type { KcContext } from './kcContext';
 import type { I18n } from './i18n';
 import styled from '@emotion/styled';
+import { getLocale } from './pages/shared/localeUtils';
 
 export default function Template(props: TemplateProps<KcContext, I18n>) {
   const {
@@ -28,7 +29,15 @@ export default function Template(props: TemplateProps<KcContext, I18n>) {
 
   const { getClassName } = useGetClassName({ doUseDefaultCss, classes });
 
-  const { msg, changeLocale, labelBySupportedLanguageTag, currentLanguageTag } = i18n;
+  const { msg, changeLocale: originalChangeLocale, labelBySupportedLanguageTag, currentLanguageTag: i18nCurrentLanguageTag } = i18n;
+  
+  // 언어 변경 시 세션 스토리지에 저장하는 래퍼 함수
+  const changeLocale = (languageTag: string) => {
+    sessionStorage.setItem('kc_locale', languageTag);
+    originalChangeLocale(languageTag);
+  };
+  
+  const currentLanguageTag = i18nCurrentLanguageTag || kcContext.locale?.currentLanguageTag || getLocale();
 
   const { realm, locale, auth, url, message, isAppInitiatedAction } = kcContext;
 

@@ -16,6 +16,7 @@ import background from '../assets/login-background.svg';
 import logo from './white-logo.png';
 import Footer from '../../Footer';
 import { setCookie, getCookie, deleteCookie } from './shared/cookieUtils';
+import { getLocale } from './shared/localeUtils';
 // 슬라이더 이미지 - 실제 이미지 파일 경로로 교체해주세요
 import slide1 from './images/slide1.png';
 import slide2 from './images/slide2.png';
@@ -450,23 +451,32 @@ export default function Login(
                                           'kcFormSocialAccountDoubleListClass',
                                         ),
                                     )}>
-                                    {social.providers.map((p) => (
-                                      <li
-                                        key={p.providerId}
-                                        className={getClassName(
-                                          'kcFormSocialAccountListLinkClass',
-                                        )}>
-                                        <a
-                                          href={p.loginUrl}
-                                          id={`zocial-${p.alias}`}
-                                          className={clsx(
-                                            'zocial',
-                                            p.providerId,
+                                    {social.providers.map((p) => {
+                                      // 현재 언어 정보 추출 (우선순위: i18n > kcContext > getLocale)
+                                      const currentLocale = i18n.currentLanguageTag || kcContext.locale?.currentLanguageTag || getLocale();
+                                      // URL에 언어 파라미터 추가
+                                      const urlWithLocale = p.loginUrl.includes('?')
+                                        ? `${p.loginUrl}&kc_locale=${currentLocale}`
+                                        : `${p.loginUrl}?kc_locale=${currentLocale}`;
+                                      
+                                      return (
+                                        <li
+                                          key={p.providerId}
+                                          className={getClassName(
+                                            'kcFormSocialAccountListLinkClass',
                                           )}>
-                                          <span>{p.displayName}</span>
-                                        </a>
-                                      </li>
-                                    ))}
+                                          <a
+                                            href={urlWithLocale}
+                                            id={`zocial-${p.alias}`}
+                                            className={clsx(
+                                              'zocial',
+                                              p.providerId,
+                                            )}>
+                                            <span>{p.displayName}</span>
+                                          </a>
+                                        </li>
+                                      );
+                                    })}
                                   </ul>
                                 </div>
                               )}
