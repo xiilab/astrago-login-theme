@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, type FormEventHandler } from 'react';
+import { useState, useEffect, type FormEventHandler } from 'react';
 import { clsx } from 'keycloakify/tools/clsx';
 import { useConstCallback } from 'keycloakify/tools/useConstCallback';
 import type { PageProps } from 'keycloakify/login/pages/PageProps';
@@ -43,14 +43,12 @@ export default function Login(
     classes,
   });
 
-  const { social, realm, url, usernameHidden, login, auth, message, locale } =
+  const { social, realm, url, usernameHidden, login, auth, message } =
     kcContext;
 
-  const { msg, changeLocale, labelBySupportedLanguageTag, currentLanguageTag } = i18n;
+  const { msg } = i18n;
 
   const [isLoginButtonDisabled, setIsLoginButtonDisabled] = useState(false);
-  const localeSelectRef = useRef<HTMLSelectElement>(null);
-  const [uiLanguage, setUiLanguage] = useState<'ko' | 'en'>((currentLanguageTag as 'ko' | 'en') || 'ko');
   const [passwordType, setPasswordType] = useState({
     type: 'password',
     visible: false,
@@ -325,19 +323,6 @@ export default function Login(
                               </LoginButton>
                             </LoginButtonWrapper>
                           </div>
-                          {/* 언어 선택 Select 박스 */}
-                          <LocaleSelectWrapper>
-                            <LocaleSelectBox
-                              value={uiLanguage}
-                              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                                const selectedLanguage = e.target.value as 'ko' | 'en';
-                                // 클라이언트 측 상태만 업데이트 (페이지 리로드 없음)
-                                setUiLanguage(selectedLanguage);
-                              }}>
-                              <option value="ko">한국어</option>
-                              <option value="en">English</option>
-                            </LocaleSelectBox>
-                          </LocaleSelectWrapper>
                         </form>
                       ) : (
                         <>
@@ -383,20 +368,6 @@ export default function Login(
                                   </ul>
                                 </div>
                               )}
-                            {/* 언어 선택 Select 박스 */}
-                            <LocaleSelectWrapper>
-                              <LocaleSelectBox
-                                ref={localeSelectRef}
-                                value={uiLanguage}
-                                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                                  const selectedLanguage = e.target.value as 'ko' | 'en';
-                                  // 클라이언트 측 상태만 업데이트 (페이지 리로드 없음)
-                                  setUiLanguage(selectedLanguage);
-                                }}>
-                                <option value="ko">한국어</option>
-                                <option value="en">English</option>
-                              </LocaleSelectBox>
-                            </LocaleSelectWrapper>
                           </div>
                         </>
                       )}
@@ -409,7 +380,6 @@ export default function Login(
           <FooterWrapper>
             <Footer 
               i18n={i18n}
-              uiLanguage={uiLanguage}
               showAdminButton={!isAdmin}
               onAdminClick={() => setIsAdmin(true)}
               showGeneralButton={isAdmin}
@@ -708,49 +678,4 @@ const ErrorText = styled('div')`
   position: absolute;
   bottom: -30px;
   left: 10px;
-`;
-
-const LocaleSelectWrapper = styled('div')`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 16px;
-`;
-
-const LocaleSelectBox = styled('select')`
-  border: 1px solid #D5D4D8;
-  width: 380px;
-  height: 54px;
-  border-radius: 12px;
-  background: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 20px;
-  font-size: 16px;
-  font-weight: 700;
-  color: #17171f;
-  cursor: pointer;
-  outline: none;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='%2317171f' d='M8 11L3 6h10z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 20px center;
-  padding-right: 48px;
-  transition: all 0.2s ease;
-
-  &:hover {
-    border-color: #005eb8;
-  }
-
-  &:focus {
-    border-color: #005eb8;
-  }
-
-  option {
-    color: #17171f;
-    background: #ffffff;
-    font-size: 16px;
-    font-weight: 700;
-  }
 `;
