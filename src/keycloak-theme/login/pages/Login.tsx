@@ -1,611 +1,450 @@
-import { useState, useEffect, type FormEventHandler } from 'react';
+/**
+ * Login.tsx - Keycloak 로그인 페이지
+ *
+ * Keycloak Context 주요 속성:
+ * - social: 소셜 로그인 설정 (Google, GitHub 등)
+ * - realm: Keycloak Realm 설정 (비밀번호 정책, 등록 허용 여부 등)
+ * - url: Keycloak URL (로그인 액션, 비밀번호 재설정 등)
+ * - login: 이전 로그인 시도 정보 (저장된 username 등)
+ * - auth: 인증 관련 정보 (선택된 credential 등)
+ * - message: Keycloak 서버 메시지 (에러, 경고 등)
+ */
+
+/* React */
+import { useState, type FormEventHandler } from 'react';
+
+/* Keycloakify */
 import { clsx } from 'keycloakify/tools/clsx';
 import { useConstCallback } from 'keycloakify/tools/useConstCallback';
-import type { PageProps } from 'keycloakify/login/pages/PageProps';
 import { useGetClassName } from 'keycloakify/login/lib/useGetClassName';
+import type { PageProps } from 'keycloakify/login/pages/PageProps';
 import type { KcContext } from '../kcContext';
 import type { I18n } from '../i18n';
+
+/* Styling */
 import styled from '@emotion/styled';
 
-import { ReactComponent as MailIcon } from './icons/mail_outline.svg';
-import { ReactComponent as LockIcon } from './icons/lock_outline.svg';
-import { ReactComponent as VisibilityOffIcon } from './icons/visibility_off_white.svg';
-import { ReactComponent as VisibilityIcon } from './icons/remove_red_eye_white.svg';
-import { ReactComponent as GoogleLogoIcon } from './icons/google_logo.svg';
-import { ReactComponent as WhiteLogo } from './WhiteLogo.svg';
-import { ReactComponent as BlackLogo } from './BlackLogo.svg';
-import microsoftLogo from './microsoft_logo.png';
-// import { ReactComponent as BackgroundImg } from './loginBackground.svg';
-import mySvg from './loginBackground.svg';
+/* Assets */
+import { ReactComponent as MailIcon } from './icons/mail.svg';
+import { ReactComponent as LockIcon } from './icons/lock.svg';
+import { ReactComponent as EyeOpenIcon } from './icons/open-eye.svg';
+import { ReactComponent as EyeClosedIcon } from './icons/close-eye.svg';
+import { ReactComponent as LogoIcon } from './icons/login-icon.svg';
+import { ReactComponent as CheckboxIcon } from './icons/checkbox.svg';
+import { ReactComponent as CheckboxCheckedIcon } from './icons/checkbox-checked.svg';
+import backgroundImage from './icons/background.svg';
 
-import Footer from '../../Footer';
-import { setCookie, getCookie, deleteCookie } from './shared/cookieUtils';
+interface LoginProps
+  extends PageProps<Extract<KcContext, { pageId: 'login.ftl' }>, I18n> {}
 
-const my_custom_param = new URL(window.location.href).searchParams.get(
-  'my_custom_param',
-);
-if (my_custom_param !== null) {
-  console.log('my_custom_param:', my_custom_param);
+interface PasswordVisibility {
+  type: 'password' | 'text';
+  isVisible: boolean;
 }
 
-export default function Login(
-  props: PageProps<Extract<KcContext, { pageId: 'login.ftl' }>, I18n> & {
-    displayMessage?: boolean;
-  },
-) {
-  const {
-    kcContext,
-    i18n,
-    doUseDefaultCss,
-    Template,
-    classes,
-    displayMessage = true,
-  } = props;
+export default function Login(props: LoginProps) {
+  const { kcContext, i18n, doUseDefaultCss, Template, classes } = props;
+  const { getClassName } = useGetClassName({ doUseDefaultCss, classes });
+  const { social, realm, url, login, auth, registrationDisabled, message } =
+    kcContext;
+  const { msg } = i18n;
 
-  const { getClassName } = useGetClassName({
-    doUseDefaultCss,
-    classes,
-  });
-
-  const {
-    social,
-    realm,
-    url,
-    usernameHidden,
-    login,
-    auth,
-    registrationDisabled,
-    message,
-    client,
-  } = kcContext;
-
-  console.log('kcContext:', kcContext);
-
-  const { msg, msgStr } = i18n;
-
-  const [isLoginButtonDisabled, setIsLoginButtonDisabled] = useState(false);
-  const [passwordType, setPasswordType] = useState({
-    type: 'password',
-    visible: false,
-  });
-  // validation 메시지 상태 추가
-  const [validationMessage, setValidationMessage] = useState<
-    string | undefined
-  >(undefined);
-
-  // ===== onSubmit 함수 수정 =====
-  const onSubmit = useConstCallback<FormEventHandler<HTMLFormElement>>((e) => {
-    e.preventDefault();
-
-    setIsLoginButtonDisabled(true);
-
-    const formElement = e.target as HTMLFormElement;
-    const emailInput = formElement.querySelector(
-      "input[name='email']",
-    ) as HTMLInputElement;
-    const username = emailInput?.value || '';
-
-    // 비밀번호 공백 체크
-    const passwordInput = formElement.querySelector(
-      "input[name='password']",
-    ) as HTMLInputElement;
-    if (!passwordInput || passwordInput.value.trim() === '') {
-      setIsLoginButtonDisabled(false);
-      setValidationMessage('비밀번호를 입력해 주세요.');
-      passwordInput?.focus();
-      return;
-    }
-
-    // 쿠키에서 실패 정보 확인
-    const failInfo = getCookie(`login_fail_${username}`);
-    if (failInfo) {
-      try {
-        const { count, until } = JSON.parse(failInfo);
-        const now = Date.now();
-        if (count >= 5 && now < until) {
-          setValidationMessage(
-            '보안 정책으로 이 기기에서 로그인 시도가 제한되었습니다. 5분 후 다시 시도하세요.',
-          );
-          setIsLoginButtonDisabled(false);
-          return;
-        }
-      } catch (e) {
-        // 쿠키 파싱 오류 시 무시
-      }
-    }
-
-    //NOTE: Even if we login with email Keycloak expect username and password in
-    //the POST request.
-    formElement
-      .querySelector("input[name='email']")
-      ?.setAttribute('name', 'username');
-
-    setValidationMessage(undefined); // 로그인 시도 전 메시지 초기화
-    formElement.submit();
-  });
-  // ===== onSubmit 함수 끝 =====
-
-  // handlePasswordType 함수 복원
-  const handlePasswordType = () => {
-    setPasswordType(() => {
-      if (!passwordType.visible) {
-        return { type: 'text', visible: true };
-      }
-      return { type: 'password', visible: false };
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [passwordVisibility, setPasswordVisibility] =
+    useState<PasswordVisibility>({
+      type: 'password',
+      isVisible: false,
     });
+  const [emailError, setEmailError] = useState<string | undefined>(undefined);
+  const [passwordError, setPasswordError] = useState<string | undefined>(
+    undefined,
+  );
+  // Keycloak 서버 에러 (로그인 실패 등) - 입력창 빨간 테두리 없이 텍스트만 표시
+  const [serverError, setServerError] = useState<string | undefined>(
+    message?.summary,
+  );
+  /* 아이디 저장 기능 - localStorage에서 저장된 이메일과 체크 상태 불러오기 */
+  const [savedEmail] = useState(() => {
+    try {
+      return localStorage.getItem('savedEmail') || '';
+    } catch {
+      return '';
+    }
+  });
+  const [rememberMe, setRememberMe] = useState(() => {
+    try {
+      return localStorage.getItem('rememberMe') === 'true';
+    } catch {
+      return false;
+    }
+  });
+
+  /**
+   * 폼 제출 핸들러
+   * Keycloak은 POST 요청 시 'username' 필드명을 기대하므로 제출 직전에 변경
+   */
+  const handleSubmit = useConstCallback<FormEventHandler<HTMLFormElement>>(
+    (e) => {
+      e.preventDefault();
+      setIsSubmitting(true);
+
+      const formElement = e.target as HTMLFormElement;
+      const emailInput = formElement.querySelector(
+        "input[name='email']",
+      ) as HTMLInputElement;
+      const passwordInput = formElement.querySelector(
+        "input[name='password']",
+      ) as HTMLInputElement;
+
+      // 이메일 유효성 검사
+      if (!emailInput?.value.trim()) {
+        setIsSubmitting(false);
+        setEmailError('이메일을 입력해 주세요.');
+        setPasswordError(undefined);
+        emailInput?.focus();
+        return;
+      }
+
+      // 비밀번호 유효성 검사
+      if (!passwordInput?.value.trim()) {
+        setIsSubmitting(false);
+        setEmailError(undefined);
+        setPasswordError('비밀번호를 입력해 주세요.');
+        passwordInput?.focus();
+        return;
+      }
+
+      // 아이디 저장 처리
+      try {
+        if (rememberMe) {
+          localStorage.setItem('savedEmail', emailInput.value);
+          localStorage.setItem('rememberMe', 'true');
+        } else {
+          localStorage.removeItem('savedEmail');
+          localStorage.removeItem('rememberMe');
+        }
+      } catch {
+        // localStorage 접근 실패 시 무시
+      }
+
+      // Keycloak은 'username' 필드명을 기대
+      emailInput.setAttribute('name', 'username');
+      setEmailError(undefined);
+      setPasswordError(undefined);
+      formElement.submit();
+    },
+  );
+
+  const togglePasswordVisibility = () => {
+    setPasswordVisibility((prev) => ({
+      type: prev.isVisible ? 'password' : 'text',
+      isVisible: !prev.isVisible,
+    }));
   };
 
-  // kcContext.message.summary가 존재하는 경우 message 상태 업데이트 및 실패 횟수 관리
-  useEffect(() => {
-    if (message?.summary) {
-      setValidationMessage(message.summary);
+  const clearEmailError = () => setEmailError(undefined);
+  const clearPasswordError = () => {
+    setPasswordError(undefined);
+    setServerError(undefined);
+  };
 
-      // 실패한 계정명 추출
-      const form = document.getElementById(
-        'kc-form-login',
-      ) as HTMLFormElement | null;
-      let emailInput = form?.querySelector(
-        "input[name='email']",
-      ) as HTMLInputElement | null;
-      if (!emailInput) {
-        // 이미 name이 username으로 바뀌었을 수 있음
-        emailInput = form?.querySelector(
-          "input[name='username']",
-        ) as HTMLInputElement | null;
-      }
-      const username = emailInput?.value || login.username || '';
-
-      if (username) {
-        const failInfo = getCookie(`login_fail_${username}`);
-        let count = 1;
-        let until = 0;
-        const now = Date.now();
-        if (failInfo) {
-          try {
-            const parsed = JSON.parse(failInfo);
-            count = parsed.count + 1;
-            until = parsed.until;
-          } catch (e) {
-            // 쿠키 파싱 오류 시 무시
-          }
-        }
-        if (count >= 5) {
-          until = now + 5 * 60 * 1000; // 5분 제한
-          setCookie(
-            `login_fail_${username}`,
-            JSON.stringify({ count, until }),
-            5,
-          );
-        } else {
-          setCookie(
-            `login_fail_${username}`,
-            JSON.stringify({ count, until: 0 }),
-            5,
-          );
-        }
-      }
-    } else {
-      // 로그인 성공 시 쿠키 삭제
-      const username = login.username || '';
-      if (username) {
-        deleteCookie(`login_fail_${username}`);
-      }
-    }
-  }, [message]);
+  const hasSocialProviders = realm.password && social.providers !== undefined;
 
   return (
-    <>
-      <Wrapper>
-        <Container>
+    <PageContainer>
+      <FormPanel>
+        <FormPanelContent>
           <Template
-            {...{ kcContext, i18n, doUseDefaultCss, classes }}
+            kcContext={kcContext}
+            i18n={i18n}
+            doUseDefaultCss={doUseDefaultCss}
+            classes={classes}
             displayInfo={social.displayInfo}
-            displayWide={realm.password && social.providers !== undefined}
+            displayWide={hasSocialProviders}
             headerNode={msg('doLogIn')}
-            infoNode={
-              realm.password &&
-              realm.registrationAllowed &&
-              !registrationDisabled && (
-                <div id="kc-registration">
-                  <span>
-                    Don't have account?
-                    {/* <a tabIndex={6} href={url.registrationUrl}> */}
-                    {/* TODO 키클락 서버와 연동으로 회원가입 페이지로 지정 */}
-                    <a tabIndex={6} href={`${window.location.origin}/register`}>
-                      Create an account
-                    </a>
-                  </span>
-                </div>
-              )
-            }>
-            <Section>
-              {/* <Title>ASTRAGO</Title> */}
-              <Title>
-                <BlackLogo />
-              </Title>
-              <SubTitle>Login to your Account</SubTitle>
+            infoNode={null}>
+            <LoginFormWrapper>
+              {/* 헤더 */}
+              <Header>
+                <LogoWrapper>
+                  <LogoIcon aria-hidden="true" />
+                </LogoWrapper>
+                <PageTitle>Log in</PageTitle>
+              </Header>
+              <PageSubtitle>
+                세상의 모든 GPU, AstraGo로 관리해 보세요.
+              </PageSubtitle>
+
+              {/* 로그인 폼 */}
               <div
                 id="kc-form"
                 className={clsx(
-                  realm.password &&
-                    social.providers !== undefined &&
-                    getClassName('kcContentWrapperClass'),
+                  hasSocialProviders && getClassName('kcContentWrapperClass'),
                 )}>
                 <div
                   id="kc-form-wrapper"
                   className={clsx(
-                    realm.password &&
-                      social.providers && [
-                        getClassName('kcFormSocialAccountContentClass'),
-                        getClassName('kcFormSocialAccountClass'),
-                      ],
+                    hasSocialProviders && [
+                      getClassName('kcFormSocialAccountContentClass'),
+                      getClassName('kcFormSocialAccountClass'),
+                    ],
                   )}>
                   {realm.password && (
                     <form
                       id="kc-form-login"
-                      onSubmit={onSubmit}
+                      onSubmit={handleSubmit}
                       action={url.loginAction}
-                      method="post">
-                      <div className={getClassName('kcFormGroupClass')}>
-                        {!usernameHidden &&
-                          (() => {
-                            const label = !realm.loginWithEmailAllowed
-                              ? 'username'
-                              : realm.registrationEmailAsUsername
-                                ? 'email'
-                                : 'usernameOrEmail';
-
-                            const autoCompleteHelper: typeof label =
-                              label === 'usernameOrEmail' ? 'username' : label;
-
-                            return (
-                              <>
-                                {/* <label
-                              htmlFor={autoCompleteHelper}
-                              className={getClassName('kcLabelClass')}
-                            >
-                              {msg(label)}
-                            </label> */}
-                                <InputContainer
-                                  showError={
-                                    displayMessage && message !== undefined
-                                  }>
-                                  <MailIcon />
-                                  <input
-                                    tabIndex={1}
-                                    id={autoCompleteHelper}
-                                    className={getClassName('kcInputClass')}
-                                    //NOTE: This is used by Google Chrome auto fill so we use it to tell
-                                    //the browser how to pre fill the form but before submit we put it back
-                                    //to username because it is what keycloak expects.
-                                    name={autoCompleteHelper}
-                                    defaultValue={login.username}
-                                    placeholder="E-mail"
-                                    type="text"
-                                    autoFocus={true}
-                                  />
-                                </InputContainer>
-                              </>
-                            );
-                          })()}
-                      </div>
-                      <div className={getClassName('kcFormGroupClass')}>
-                        {/* <label
-                      htmlFor="password"
-                      className={getClassName('kcLabelClass')}
-                    >
-                      {msg('password')}
-                    </label> */}
-                        <PasswordInputWrapper>
-                          <PasswordInputContainer
-                            showError={displayMessage && message !== undefined}>
-                            <LockIcon />
+                      method="post"
+                      aria-label="로그인 폼">
+                      {/* 이메일 입력 */}
+                      <FormGroup className={getClassName('kcFormGroupClass')}>
+                        <FieldWrapper>
+                          <FieldLabel htmlFor="email">E-mail</FieldLabel>
+                          <InputBox hasError={!!emailError}>
+                            <InputIcon aria-hidden="true">
+                              <MailIcon />
+                            </InputIcon>
                             <input
-                              tabIndex={2}
-                              id="password"
+                              id="email"
+                              name="email"
+                              type="email"
+                              tabIndex={1}
                               className={getClassName('kcInputClass')}
-                              name="password"
-                              type={passwordType.type}
-                              placeholder="Password"
+                              defaultValue={savedEmail || login.username || ''}
+                              placeholder="이메일을 입력해 주세요."
+                              autoFocus
+                              autoComplete="email"
+                              aria-invalid={!!emailError}
+                              aria-describedby={
+                                emailError ? 'email-error' : undefined
+                              }
+                              onChange={clearEmailError}
                             />
-                            <VisibleButton onClick={handlePasswordType}>
-                              {passwordType.visible ? (
-                                <VisibilityIcon />
-                              ) : (
-                                <VisibilityOffIcon />
-                              )}
-                            </VisibleButton>
-                          </PasswordInputContainer>
-                          {displayMessage &&
-                            (validationMessage !== undefined ||
-                              message !== undefined) && (
-                              <div
-                                className={clsx(
-                                  'alert',
-                                  `alert-${message?.type}`,
-                                )}>
-                                <ErrorText
-                                  className="kc-feedback-text"
-                                  dangerouslySetInnerHTML={{
-                                    __html:
-                                      validationMessage ||
-                                      message?.summary ||
-                                      '',
-                                  }}
-                                />
-                              </div>
-                            )}
-                        </PasswordInputWrapper>
-                      </div>
+                          </InputBox>
+                          {emailError && (
+                            <ErrorMessage id="email-error" role="alert">
+                              {emailError}
+                            </ErrorMessage>
+                          )}
+                        </FieldWrapper>
+                      </FormGroup>
 
-                      {/* <div
-                    className={clsx(
-                      getClassName('kcFormGroupClass'),
-                      getClassName('kcFormSettingClass')
-                    )}
-                  > */}
-                      {/* <div id="kc-form-options">
-                      {realm.rememberMe && !usernameHidden && (
-                        <div className="checkbox">
-                          <label>
+                      {/* 비밀번호 입력 */}
+                      <FormGroup className={getClassName('kcFormGroupClass')}>
+                        <FieldWrapper>
+                          <FieldLabel htmlFor="password">Password</FieldLabel>
+                          <PasswordInputBox hasError={!!passwordError}>
+                            <InputIcon aria-hidden="true">
+                              <LockIcon />
+                            </InputIcon>
                             <input
-                              tabIndex={3}
-                              id="rememberMe"
-                              name="rememberMe"
-                              type="checkbox"
-                              {...(login.rememberMe === 'on'
-                                ? {
-                                    checked: true,
-                                  }
-                                : {})}
+                              id="password"
+                              name="password"
+                              type={passwordVisibility.type}
+                              tabIndex={2}
+                              className={getClassName('kcInputClass')}
+                              placeholder="비밀번호를 입력해 주세요."
+                              autoComplete="current-password"
+                              aria-invalid={!!passwordError}
+                              aria-describedby={
+                                passwordError || serverError
+                                  ? 'password-error'
+                                  : undefined
+                              }
+                              onChange={clearPasswordError}
                             />
-                            {msg('rememberMe')}
-                          </label>
-                        </div>
-                      )}
-                    </div> */}
-                      {/* <ResetWrapper>
-                      {realm.resetPasswordAllowed && (
-                        <a tabIndex={5} href={url.loginResetCredentialsUrl}>
-                          Find Password
-                        </a>
-                      )}
-                    </ResetWrapper> */}
-                      {/* </div> */}
-                      <DivisorWrapper>
-                        <Line />
-                        <p>or</p>
-                        <Line />
-                      </DivisorWrapper>
+                            <PasswordToggleButton
+                              type="button"
+                              tabIndex={-1}
+                              onClick={togglePasswordVisibility}
+                              aria-label={
+                                passwordVisibility.isVisible
+                                  ? '비밀번호 숨기기'
+                                  : '비밀번호 표시'
+                              }
+                              aria-pressed={passwordVisibility.isVisible}>
+                              {passwordVisibility.isVisible ? (
+                                <EyeOpenIcon aria-hidden="true" />
+                              ) : (
+                                <EyeClosedIcon aria-hidden="true" />
+                              )}
+                            </PasswordToggleButton>
+                          </PasswordInputBox>
+                          {passwordError && (
+                            <ErrorMessage id="password-error" role="alert">
+                              {passwordError}
+                            </ErrorMessage>
+                          )}
+                          {!passwordError && serverError && (
+                            <ErrorMessage id="password-error" role="alert">
+                              {serverError}
+                            </ErrorMessage>
+                          )}
+                        </FieldWrapper>
+                      </FormGroup>
 
-                      {/* <GoogleLoginButton>
-                        <GoogleLogoIcon />
-                        <p>Login of Google</p>
-                      </GoogleLoginButton> */}
+                      {/* 로그인 옵션 */}
+                      <LoginOptions>
+                        <RememberMeButton
+                          type="button"
+                          onClick={() => setRememberMe(!rememberMe)}
+                          aria-pressed={rememberMe}>
+                          {rememberMe ? (
+                            <CheckboxCheckedIcon
+                              style={{ color: '#5B29C7' }}
+                              aria-hidden="true"
+                            />
+                          ) : (
+                            <CheckboxIcon aria-hidden="true" />
+                          )}
+                          <span>아이디 저장</span>
+                        </RememberMeButton>
+
+                        {realm.resetPasswordAllowed && (
+                          <ForgotPasswordLink
+                            href={`${window.location.origin}/reset-password`}>
+                            비밀번호를 잊으셨나요?
+                          </ForgotPasswordLink>
+                        )}
+                      </LoginOptions>
+
+                      {/* 로그인 버튼 */}
                       <div
                         id="kc-form-buttons"
                         className={getClassName('kcFormGroupClass')}>
-                        <input
-                          type="hidden"
-                          id="id-hidden-input"
-                          name="credentialId"
-                          {...(auth?.selectedCredential !== undefined
-                            ? {
-                                value: auth.selectedCredential,
-                              }
-                            : {})}
-                        />
-                        <LoginButtonWrapper>
-                          <LoginButton>
-                            <input
-                              tabIndex={4}
-                              // className={clsx(
-                              // getClassName('kcButtonClass'),
-                              // getClassName('kcButtonPrimaryClass'),
-                              // getClassName('kcButtonBlockClass'),
-                              // getClassName('kcButtonLargeClass')
-                              // )}
-                              name="login"
-                              id="kc-login"
-                              type="submit"
-                              // value={msgStr('doLogIn')}
-                              value="LOG IN"
-                              disabled={isLoginButtonDisabled}
-                            />
-                          </LoginButton>
-                          {realm.password && social.providers !== undefined && (
-                            <div
-                              id="kc-social-providers"
-                              className={clsx(
-                                getClassName('kcFormSocialAccountContentClass'),
-                                getClassName('kcFormSocialAccountClass'),
-                              )}>
-                              <ul
-                                className={clsx(
-                                  getClassName('kcFormSocialAccountListClass'),
-                                  social.providers.length > 4 &&
-                                    getClassName(
-                                      'kcFormSocialAccountDoubleListClass',
-                                    ),
-                                )}>
-                                {social.providers.map((p) => (
-                                  <li
-                                    key={p.providerId}
-                                    className={getClassName(
-                                      'kcFormSocialAccountListLinkClass',
-                                    )}>
-                                    <a
-                                      href={p.loginUrl}
-                                      id={`zocial-${p.alias}`}
-                                      className={clsx('zocial', p.providerId)}>
-                                      <span>{p.displayName}</span>
-                                    </a>
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
+                        {auth?.selectedCredential && (
+                          <input
+                            type="hidden"
+                            name="credentialId"
+                            value={auth.selectedCredential}
+                          />
+                        )}
+
+                        <SubmitButtonWrapper>
+                          <SubmitButton
+                            type="submit"
+                            tabIndex={4}
+                            disabled={isSubmitting}
+                            aria-busy={isSubmitting}>
+                            로그인
+                          </SubmitButton>
+                        </SubmitButtonWrapper>
+
+                        {realm.password &&
+                          realm.registrationAllowed &&
+                          !registrationDisabled && (
+                            <SignUpPrompt>
+                              아직 계정이 없으신가요?
+                              <a
+                                href={`${window.location.origin}/signup`}
+                                tabIndex={6}>
+                                회원 가입하기
+                              </a>
+                            </SignUpPrompt>
                           )}
-                          {/* 임시로 추가된 소셜 로그인 버튼, 추후 삭제 필요 */}
-                          {/* <div
-                            id="kc-social-providers"
-                            className="kcFormSocialAccountContentClass col-xs-12 col-sm-6 kcFormSocialAccountClass login-pf-social-section">
-                            <ul className="kcFormSocialAccountListClass login-pf-social list-unstyled login-pf-social-all">
-                              <li className="kcFormSocialAccountListLinkClass login-pf-social-link">
+                      </div>
+
+                      {/* 소셜 로그인 */}
+                      {hasSocialProviders && social.providers && (
+                        <SocialProviders
+                          id="kc-social-providers"
+                          className={clsx(
+                            getClassName('kcFormSocialAccountContentClass'),
+                            getClassName('kcFormSocialAccountClass'),
+                          )}
+                          aria-label="소셜 로그인">
+                          <ul
+                            className={clsx(
+                              getClassName('kcFormSocialAccountListClass'),
+                              social.providers.length > 4 &&
+                                getClassName(
+                                  'kcFormSocialAccountDoubleListClass',
+                                ),
+                            )}>
+                            {social.providers.map((provider) => (
+                              <li
+                                key={provider.providerId}
+                                className={getClassName(
+                                  'kcFormSocialAccountListLinkClass',
+                                )}>
                                 <a
-                                  href="/auth/realms/astrago/broker/azuread/login?client_id=astrago-client&tab_id=zJEx9rladzM&session_code=7HEag5tm3ZTAmbDQiILFEur36PXuhMMaYQ_fI7edBXY"
-                                  id="zocial-azuread"
-                                  className="zocial oidc">
-                                  <span>azuread</span>
+                                  href={provider.loginUrl}
+                                  id={`zocial-${provider.alias}`}
+                                  className={clsx(
+                                    'zocial',
+                                    provider.providerId,
+                                  )}
+                                  aria-label={`${provider.displayName}로 로그인`}>
+                                  <span>{provider.displayName}</span>
                                 </a>
                               </li>
-                            </ul>
-                          </div> */}
-                        </LoginButtonWrapper>
-                      </div>
+                            ))}
+                          </ul>
+                        </SocialProviders>
+                      )}
                     </form>
                   )}
                 </div>
               </div>
-            </Section>
+            </LoginFormWrapper>
           </Template>
-          <FooterWrapper>
-            <Footer></Footer>
-          </FooterWrapper>
-        </Container>
-        <BackgroundWrapper
-          data-sy="BackgroundWrapper"
-          style={{
-            backgroundSize: 'cover',
-            backgroundImage: `url(${mySvg})`,
-            backgroundPosition: 'center',
-          }}>
-          <BackgroundContainer data-sy="BackgroundContainer">
-            <WhiteLogo />
-            <LogoContent>
-              <span>
-                AstraGo는 자원 최적화 기술을 활용하여 GPU 서버의 활용도를
-                극대화하는 솔루션입니다.
-              </span>
-              <span>
-                이를 통해 학습 시간을 단축하여 사용자의 프로젝트 계획을 더욱
-                향상시킵니다.
-              </span>
-            </LogoContent>
-          </BackgroundContainer>
-        </BackgroundWrapper>
-      </Wrapper>
-    </>
+        </FormPanelContent>
+
+        {/* 푸터 */}
+        <Footer>
+          <FooterNav aria-label="푸터 링크">
+            <FooterLink
+              href="#"
+              title="지금은 제공하지 않는 서비스입니다."
+              onClick={(e) => e.preventDefault()}
+              aria-disabled="true">
+              도움말
+            </FooterLink>
+            <FooterDivider aria-hidden="true">|</FooterDivider>
+            <FooterLink
+              href="#"
+              title="지금은 제공하지 않는 서비스입니다."
+              onClick={(e) => e.preventDefault()}
+              aria-disabled="true">
+              개인정보처리방침
+            </FooterLink>
+            <FooterDivider aria-hidden="true">|</FooterDivider>
+            <FooterLink
+              href="#"
+              title="지금은 제공하지 않는 서비스입니다."
+              onClick={(e) => e.preventDefault()}
+              aria-disabled="true">
+              이용약관
+            </FooterLink>
+          </FooterNav>
+          <FooterCopyright>
+            (주)씨이랩 | 대표이사 : 채정환, 윤세혁 | 사업자등록번호 :
+            119-86-31534
+          </FooterCopyright>
+        </Footer>
+      </FormPanel>
+
+      <BackgroundPanel $backgroundUrl={backgroundImage} aria-hidden="true" />
+    </PageContainer>
   );
 }
-const FooterWrapper = styled('div')`
-  position: absolute;
-  bottom: 0;
-`;
 
-const Wrapper = styled('div')`
+/* Layout */
+const PageContainer = styled.div`
+  width: 100vw;
+  height: 100vh;
   display: flex;
-  flex-direction: row;
-  width: 100%;
+  background-color: #fff;
+  overflow: hidden;
 
-  & .kcFormSocialAccountListClass {
+  .kcFormSocialAccountListClass {
     list-style: none;
   }
-
-  /* 동적으로 생성되는 Azure AD 로그인 버튼 스타일 */
-  #zocial-azuread {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 8px !important;
-    background: #ffffff !important;
-    border: 1px solid #d5d4d8 !important;
-    border-radius: 8px !important;
-    padding: 12px 16px !important;
-    text-decoration: none !important;
-    color: #17171f !important;
-    font-weight: 500 !important;
-    font-size: 14px !important;
-    transition: all 0.2s ease !important;
-    position: relative !important;
-
-    &:hover {
-      background: #f8f8f8 !important;
-      border-color: #5b29c7 !important;
-    }
-
-    /* Microsoft 로고 이미지를 :before 가상 요소로 추가 */
-    &:before {
-      content: '';
-      width: 18px;
-      height: 18px;
-      background-image: url(${microsoftLogo});
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: center;
-      flex-shrink: 0;
-      display: inline-block;
-    }
-
-    /* 기존 텍스트를 숨기고 새로운 텍스트 표시 */
-    span {
-      color: #17171f !important;
-      font-weight: 500 !important;
-      display: none !important;
-    }
-
-    /* 새로운 텍스트를 :after 가상 요소로 추가 */
-    &:after {
-      content: 'Azure Login' !important;
-      color: #17171f !important;
-      font-weight: 700 !important;
-      font-size: 16px !important;
-    }
-  }
-`;
-
-const BackgroundWrapper = styled('div')`
-  flex-grow: 1;
-  min-width: 1000px;
-`;
-
-const BackgroundContainer = styled('div')`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  color: #ffffff;
-  gap: 15px;
-  height: 100%;
-`;
-
-const LogoTitle = styled('div')`
-  font-weight: 700;
-  font-size: 50px;
-  text-align: center;
-`;
-
-const LogoContent = styled('div')`
-  span {
-    display: block;
-    line-height: 28px;
-  }
-  font-weight: 500;
-  font-size: 16px;
-  text-align: center;
-`;
-
-const Container = styled('div')`
-  position: relative;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  min-width: 620px;
 
   #kc-registration {
     font-size: 14px;
     text-align: center;
+
     span {
       color: #90919e;
     }
@@ -618,168 +457,343 @@ const Container = styled('div')`
   }
 `;
 
-const Section = styled('div')`
-  margin: 0 auto;
-  width: 380px;
-`;
-
-const Title = styled('div')`
-  text-align: center;
-`;
-
-const SubTitle = styled('div')`
-  color: #5b29c7;
-  font-size: 14px;
-  font-weight: 700;
-  text-align: center;
-  line-height: 25px;
-  margin: 32px 0 34px 0;
-`;
-
-const InputContainer = styled('div')<ErrorInputContainerProps>`
-  background-color: #ffffff;
-  border: ${(props) =>
-    props.showError ? '1px solid #F14A4A' : '1px solid #D5D4D8'};
-  height: 48px;
-  border-radius: 8px;
+const FormPanel = styled.div`
+  flex: 0 0 620px;
+  height: 100%;
+  padding: 30px 90px;
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding: 0 22px 0 20px;
-  gap: 10px;
-  transition: all 0.5s ease;
-
-  &:focus-within {
-    border: ${(props) =>
-      props.showError ? '1px solid #F14A4A' : '1px solid #5b29c7'};
-  }
-
-  input {
-    width: 360px;
-    height: 28px;
-    background: transparent;
-    border-color: transparent;
-    color: #17171f;
-  }
-
-  input::placeholder {
-    size: 14px;
-    font-style: normal;
-    color: #90919e;
-  }
-
-  input:focus {
-    outline: none;
-  }
-  input:-webkit-autofill,
-  input:-webkit-autofill:hover,
-  input:-webkit-autofill:focus,
-  input:-webkit-autofill:active {
-    -webkit-text-fill-color: #17171f;
-    -webkit-box-shadow: 0 0 0px 1000px #ffffff inset;
-    box-shadow: 0 0 0px 1000px #ffffff inset;
-    transition: background-color 5000s ease-in-out 0s;
-  }
+  flex-direction: column;
 `;
 
-const PasswordInputWrapper = styled('div')`
-  position: relative;
-`;
-
-interface ErrorInputContainerProps {
-  showError: boolean;
-}
-
-const PasswordInputContainer = styled(InputContainer)<ErrorInputContainerProps>`
-  margin-top: 16px;
-  border: ${(props) =>
-    props.showError ? '1px solid #F14A4A' : '1px solid #E2E1E7'};
-`;
-
-// const ResetWrapper = styled('div')`
-//   text-align: right;
-//   text-decoration: none;
-//   margin-bottom: 27px;
-//   a {
-//     color: #7a7a7a;
-//     font-size: 12px;
-//   }
-// `;
-
-const DivisorWrapper = styled('div')`
+const FormPanelContent = styled.div`
+  flex: 1;
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  color: #cccccc;
+  justify-content: center;
   align-items: center;
-  margin: 40px 0;
-  p {
-    font-size: 14px;
-    line-height: 25px;
-    text-align: center;
-    width: 54px;
-  }
 `;
 
-const Line = styled('div')`
-  width: 200px;
-  border-top: 1px solid #cccccc;
+const BackgroundPanel = styled.div<{ $backgroundUrl: string }>`
+  flex: 1;
+  min-width: 1200px;
+  height: 100%;
+  background: url(${(props) => props.$backgroundUrl}) center / cover no-repeat;
 `;
 
-const Button = styled('button')`
-  width: 380px;
-  height: 54px;
-  border-radius: 12px;
-  cursor: pointer;
-`;
-
-const VisibleButton = styled('div')`
-  background: transparent;
-  cursor: pointer;
-  border: none;
-  height: 18px;
-`;
-const GoogleLoginButton = styled(Button)`
+/* Header */
+const Header = styled.header`
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 24px;
-  background: #ffffff;
-  border: 1px solid #d5d4d8;
-  margin-bottom: 16px;
-  p {
-    font-weight: 500;
-    font-size: 14px;
-    color: #afadb4;
-    margin: 0;
+  gap: 8px;
+  margin-bottom: 8px;
+`;
+
+const LogoWrapper = styled.div`
+  width: 36px;
+  height: 36px;
+  background-color: #5b29c7;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  svg {
+    width: 32px;
+    height: 32px;
+
+    path {
+      fill: white;
+    }
   }
 `;
 
-const LoginButtonWrapper = styled('div')`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-bottom: 30px;
+const PageTitle = styled.h1`
+  font-family: Pretendard, sans-serif;
+  font-size: 36px;
+  font-weight: 600;
+  line-height: 1;
+  color: #000;
+  margin: 0;
 `;
 
-const LoginButton = styled(Button)`
-  background: #5b29c7;
-  border: none;
+const PageSubtitle = styled.p`
+  font-family: Pretendard, sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  text-align: center;
+  color: #333;
+  margin: 0 0 36px;
+`;
+
+/* Form */
+const LoginFormWrapper = styled.div`
+  width: 440px;
+`;
+
+const FormGroup = styled.div``;
+
+const FieldWrapper = styled.div`
+  margin-top: 16px;
+`;
+
+const FieldLabel = styled.label`
+  display: block;
+  font-family: Pretendard, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 16px;
+  color: #000;
+  margin-bottom: 4px;
+`;
+
+const InputBox = styled.div<{ hasError: boolean }>`
+  position: relative;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  background-color: #f8f9fa;
+  border: 1px solid ${(props) => (props.hasError ? '#fa5252' : '#e9ecef')};
+  border-radius: 2px;
+  transition: border-color 0.2s ease;
+
+  &:focus-within {
+    border-color: ${(props) => (props.hasError ? '#fa5252' : '#3366ff')};
+  }
+
   input {
+    flex: 1;
+    height: 100%;
+    padding: 8px 10px 8px 36px;
     background: transparent;
     border: none;
-    color: #ffffff;
-    font-weight: 700;
-    font-size: 16px;
-    cursor: pointer;
+    font-family: Pretendard, sans-serif;
+    font-size: 12px;
+    color: ${(props) => (props.hasError ? '#e03131' : '#000')};
+
+    &::placeholder {
+      color: ${(props) => (props.hasError ? '#e03131' : '#555')};
+    }
+
+    &:focus {
+      outline: none;
+    }
   }
 `;
 
-const ErrorText = styled('div')`
-  color: #f14a4a;
-  font-size: 11px;
-  line-height: 16px;
+const InputIcon = styled.span`
   position: absolute;
-  bottom: -30px;
-  left: 10px;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+
+  svg {
+    width: 20px;
+    height: 20px;
+    fill: #adb5bd;
+  }
+`;
+
+const PasswordInputBox = styled(InputBox)`
+  input {
+    padding-right: 36px;
+  }
+`;
+
+const PasswordToggleButton = styled.button`
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  padding: 0;
+  cursor: pointer;
+  outline: none;
+  transition: background-color 0.15s ease;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.06);
+  }
+
+  &:active {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+`;
+
+const ErrorMessage = styled.span`
+  display: block;
+  font-size: 12px;
+  color: #f14a4a;
+  margin-top: 8px;
+`;
+
+/* Login Options */
+const LoginOptions = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 12px 0 34px;
+`;
+
+const RememberMeButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: Pretendard, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: #494b4d;
+
+  &:hover svg rect {
+    stroke: #3366ff;
+  }
+`;
+
+const ForgotPasswordLink = styled.a`
+  font-family: Pretendard, sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  color: #888;
+  text-decoration: none;
+
+  &:hover,
+  &:focus {
+    text-decoration: underline;
+  }
+
+  &:focus {
+    outline: 2px solid #3366ff;
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+`;
+
+/* Submit Button */
+const SubmitButtonWrapper = styled.div`
+  margin-bottom: 24px;
+`;
+
+const SubmitButton = styled.button`
+  width: 100%;
+  height: 34px;
+  background: radial-gradient(
+    74.04% 44.5% at 50% 50%,
+    #15155d 0%,
+    #070913 100%
+  );
+  border: 1px solid #000;
+  border-radius: 2px;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.15);
+  font-family: Pretendard, sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+
+  &:hover:not(:disabled) {
+    opacity: 0.9;
+  }
+
+  &:focus {
+    outline: 2px solid #3366ff;
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+`;
+
+const SignUpPrompt = styled.p`
+  font-family: Pretendard, sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  text-align: center;
+  color: #828588;
+  margin: 20px 0 0;
+
+  a {
+    margin-left: 6px;
+    font-weight: 500;
+    color: #544ad8;
+    text-decoration: none;
+
+    &:hover,
+    &:focus {
+      text-decoration: underline;
+    }
+
+    &:focus {
+      outline: 2px solid #3366ff;
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
+  }
+`;
+
+/* Social Providers */
+const SocialProviders = styled.nav``;
+
+/* Footer */
+const Footer = styled.footer`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
+
+const FooterNav = styled.nav`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-family: Pretendard, sans-serif;
+  font-size: 10px;
+  color: #828588;
+`;
+
+const FooterLink = styled.a`
+  color: #828588;
+  text-decoration: none;
+  cursor: not-allowed;
+
+  &:focus {
+    outline: 2px solid #3366ff;
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+`;
+
+const FooterDivider = styled.span``;
+
+const FooterCopyright = styled.p`
+  font-family: Pretendard, sans-serif;
+  font-size: 10px;
+  font-weight: 400;
+  text-align: center;
+  color: #828588;
+  margin: 0;
 `;
