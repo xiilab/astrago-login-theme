@@ -90,7 +90,7 @@ export const { getKcContext } = createGetKcContext({
  * - 프로덕션에서는 Keycloak 서버가 실제 pageId를 제공
  */
 export const { kcContext } = getKcContext({
-  mockPageId: 'login.ftl',
+  // mockPageId: 'login.ftl',
 });
 
 /**
