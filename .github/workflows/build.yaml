@@ -28,37 +28,51 @@ jobs:
       - run: mv build_keycloak/target/retrocompat-*.jar build_keycloak/target/retrocompat-keycloak-theme.jar
       - run: mv build_keycloak/target/astrago-*.jar build_keycloak/target/keycloak-theme.jar
 
-      - name: Create release and upload assets
-        uses: softprops/action-gh-release@v2
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
-          name: Release ${{ github.ref_name }}
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
           body: |
             - 깃헙 액션에서 자동으로 생성됨
-          draft: false
+          draft: true
           prerelease: false
-          files: |
-            build_keycloak/target/keycloak-theme.jar
-            build_keycloak/target/retrocompat-keycloak-theme.jar
+      - name: Upload release asset
+        uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
-      
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: build_keycloak/target/keycloak-theme.jar
+          asset_name: keycloak-theme.jar
+          asset_content_type: application/java-archive
+      - name: Publish release
+        uses: StuYarrow/publish-release@v1.1.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+        with:
+          id: ${{ steps.create_release.outputs.id }}
+
       # 새로 추가할 Docker 이미지 빌드 단계들
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      
+
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      
+
       - name: Set version (태그 이름)
         id: version
         run: |
           VERSION=${{ github.ref_name }}
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "Using version: $VERSION"
-      
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
@@ -82,12 +96,12 @@ jobs:
           #ref: release
           #yq eval ".keycloak.image.tag = \"$VERSION\"" -i environments/prod/values.yaml
           ref: stabilize/1.0
-      
+
       - name: Update theme version in common values
         run: |
           VERSION="${{ needs.build.outputs.version }}"
           yq eval ".keycloak.image.tag = \"$VERSION\"" -i helmfile/environments/customers/xiilab/values.yaml
-      
+
       - name: Commit and push changes
         run: |
           git config --global user.email "action@github.com"
@@ -95,7 +109,7 @@ jobs:
           git add helmfile/
           git commit -m "Update keycloak theme to ${{ needs.build.outputs.version }}"
           git push
-      
+
       # release 브랜치도 업데이트
       - name: Checkout astrago-deployment release branch
         uses: actions/checkout@v4
@@ -103,12 +117,12 @@ jobs:
           token: ${{ secrets.TOKEN }}
           repository: 'xiilab/astrago-deployment'
           ref: release
-      
+
       - name: Update theme version in release branch
         run: |
           VERSION="${{ needs.build.outputs.version }}"
           yq eval ".keycloak.image.tag = \"$VERSION\"" -i environments/prod/values.yaml
-      
+
       - name: Commit and push release changes
         run: |
           git config --global user.email "action@github.com"
@@ -116,7 +130,6 @@ jobs:
           git add environments/
           git commit -m "Update keycloak theme to ${{ needs.build.outputs.version }}"
           git push
-
 
   notify_slack:
     if: startsWith(github.ref, 'refs/tags/v')
