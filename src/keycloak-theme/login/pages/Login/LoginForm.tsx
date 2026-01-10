@@ -68,34 +68,34 @@ export function LoginForm({
             method="post"
             aria-label="로그인 폼"
           >
-            {/* 이메일 입력 */}
+            {/* 사용자명/이메일 입력 */}
             <FormGroup className={kcClsx("kcFormGroupClass")}>
               <FieldWrapper>
-                <FieldLabel htmlFor="email">E-mail</FieldLabel>
-                <InputBox hasError={!!state.errors.email}>
+                <FieldLabel htmlFor="username">E-mail</FieldLabel>
+                <InputBox hasError={!!state.errors.username}>
                   <InputIcon aria-hidden="true">
                     <MailIcon />
                   </InputIcon>
                   <input
-                    ref={refs.emailRef}
-                    id="email"
-                    name="email"
-                    type="email"
+                    ref={refs.usernameRef}
+                    id="username"
+                    name="username"
+                    type="text"
                     tabIndex={1}
-                    defaultValue={state.savedEmail || login.username || ""}
+                    defaultValue={state.savedUsername || login.username || ""}
                     placeholder="이메일을 입력해 주세요."
                     autoFocus
                     autoComplete="off"
-                    aria-invalid={!!state.errors.email}
+                    aria-invalid={!!state.errors.username}
                     aria-describedby={
-                      state.errors.email ? "email-error" : undefined
+                      state.errors.username ? "username-error" : undefined
                     }
-                    onChange={actions.clearEmailError}
+                    onChange={actions.clearUsernameError}
                   />
                 </InputBox>
-                {state.errors.email && (
-                  <ErrorMessage id="email-error" role="alert">
-                    {state.errors.email}
+                {state.errors.username && (
+                  <ErrorMessage id="username-error" role="alert">
+                    {state.errors.username}
                   </ErrorMessage>
                 )}
               </FieldWrapper>

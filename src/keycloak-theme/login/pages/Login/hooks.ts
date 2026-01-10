@@ -10,14 +10,14 @@ interface PasswordVisibility {
 }
 
 interface FormErrors {
-  email?: string;
+  username?: string;
   password?: string;
   server?: string;
 }
 
 interface UseLoginFormReturn {
   refs: {
-    emailRef: React.RefObject<HTMLInputElement>;
+    usernameRef: React.RefObject<HTMLInputElement>;
     passwordRef: React.RefObject<HTMLInputElement>;
   };
   state: {
@@ -25,13 +25,13 @@ interface UseLoginFormReturn {
     passwordVisibility: PasswordVisibility;
     errors: FormErrors;
     rememberMe: boolean;
-    savedEmail: string;
+    savedUsername: string;
   };
   actions: {
     handleSubmit: FormEventHandler<HTMLFormElement>;
     togglePasswordVisibility: () => void;
     setRememberMe: (value: boolean) => void;
-    clearEmailError: () => void;
+    clearUsernameError: () => void;
     clearPasswordError: () => void;
   };
 }
@@ -42,10 +42,10 @@ interface UseLoginFormReturn {
 export function useLoginForm(
   kcContext: Extract<KcContext, { pageId: "login.ftl" }>
 ): UseLoginFormReturn {
-  const { url, login, message } = kcContext;
+  const { message } = kcContext;
 
   // Refs
-  const emailRef = useRef<HTMLInputElement>(null);
+  const usernameRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
 
   // State
@@ -58,10 +58,10 @@ export function useLoginForm(
     server: message?.summary,
   });
 
-  // localStorage에서 저장된 이메일과 체크 상태 불러오기
-  const [savedEmail] = useState(() => {
+  // localStorage에서 저장된 사용자명과 체크 상태 불러오기
+  const [savedUsername] = useState(() => {
     try {
-      return localStorage.getItem("savedEmail") || "";
+      return localStorage.getItem("savedUsername") || "";
     } catch {
       return "";
     }
@@ -76,8 +76,8 @@ export function useLoginForm(
   });
 
   // Actions
-  const clearEmailError = useCallback(() => {
-    setErrors((prev) => ({ ...prev, email: undefined }));
+  const clearUsernameError = useCallback(() => {
+    setErrors((prev) => ({ ...prev, username: undefined }));
   }, []);
 
   const clearPasswordError = useCallback(() => {
@@ -100,14 +100,14 @@ export function useLoginForm(
       e.preventDefault();
       setIsSubmitting(true);
 
-      const emailValue = emailRef.current?.value.trim();
+      const usernameValue = usernameRef.current?.value.trim();
       const passwordValue = passwordRef.current?.value.trim();
 
-      // 이메일 유효성 검사
-      if (!emailValue) {
+      // 사용자명 유효성 검사
+      if (!usernameValue) {
         setIsSubmitting(false);
-        setErrors({ email: "이메일을 입력해 주세요." });
-        emailRef.current?.focus();
+        setErrors({ username: "이메일을 입력해 주세요." });
+        usernameRef.current?.focus();
         return;
       }
 
@@ -122,19 +122,14 @@ export function useLoginForm(
       // 아이디 저장 처리
       try {
         if (rememberMe) {
-          localStorage.setItem("savedEmail", emailValue);
+          localStorage.setItem("savedUsername", usernameValue);
           localStorage.setItem("rememberMe", "true");
         } else {
-          localStorage.removeItem("savedEmail");
+          localStorage.removeItem("savedUsername");
           localStorage.removeItem("rememberMe");
         }
       } catch {
         // localStorage 접근 실패 시 무시
-      }
-
-      // Keycloak은 'username' 필드명을 기대
-      if (emailRef.current) {
-        emailRef.current.setAttribute("name", "username");
       }
 
       setErrors({});
@@ -144,19 +139,19 @@ export function useLoginForm(
   );
 
   return {
-    refs: { emailRef, passwordRef },
+    refs: { usernameRef, passwordRef },
     state: {
       isSubmitting,
       passwordVisibility,
       errors,
       rememberMe,
-      savedEmail,
+      savedUsername,
     },
     actions: {
       handleSubmit,
       togglePasswordVisibility,
       setRememberMe,
-      clearEmailError,
+      clearUsernameError,
       clearPasswordError,
     },
   };
