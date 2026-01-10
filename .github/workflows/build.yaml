@@ -41,7 +41,9 @@ jobs:
         run: npm run build
 
       - name: Build Keycloakify theme
-        run: npx keycloakify build
+        run: |
+          rm -rf dist_keycloak
+          npx keycloakify build
 
       - name: Debug - Check Keycloakify output
         run: |
