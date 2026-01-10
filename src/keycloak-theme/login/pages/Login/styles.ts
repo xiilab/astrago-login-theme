@@ -133,14 +133,20 @@ export const InputBox = styled.div<{ hasError?: boolean }>`
     border: none;
     font-family: Pretendard, sans-serif;
     font-size: 12px;
+    font-weight: 400;
+    line-height: 1.5;
     color: ${(props) => (props.hasError ? "#e03131" : "#000")};
 
     &::placeholder {
       color: ${(props) => (props.hasError ? "#e03131" : "#555")};
+      font-weight: 400;
+      line-height: 1.5;
     }
 
     &:focus {
       outline: none;
+      font-weight: 400;
+      line-height: 1.5;
     }
   }
 `;

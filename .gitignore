@@ -5,6 +5,9 @@ node_modules
 /dist
 /dist_keycloak
 
+# Keycloakify cache
+.keycloakify
+
 # Logs
 *.log
 npm-debug.log*

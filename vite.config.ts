@@ -9,15 +9,15 @@ export default defineConfig({
     svgr(),
     react(),
     keycloakify({
-      themeName: ["astrago", "astrago-variant-1"],
+      themeName: ["astrago-v2"],
       accountThemeImplementation: "none",
       keycloakVersionTargets: {
         "all-other-versions": "keycloak-theme.jar",
-        "22-to-25": false
-      }
-    })
+        "22-to-25": false,
+      },
+    }),
   ],
   build: {
-    sourcemap: true
-  }
+    sourcemap: true,
+  },
 });

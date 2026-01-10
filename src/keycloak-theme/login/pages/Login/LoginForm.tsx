@@ -82,13 +82,14 @@ export function LoginForm({
                     name="email"
                     type="email"
                     tabIndex={1}
-                    className={kcClsx("kcInputClass")}
                     defaultValue={state.savedEmail || login.username || ""}
                     placeholder="이메일을 입력해 주세요."
                     autoFocus
-                    autoComplete="email"
+                    autoComplete="off"
                     aria-invalid={!!state.errors.email}
-                    aria-describedby={state.errors.email ? "email-error" : undefined}
+                    aria-describedby={
+                      state.errors.email ? "email-error" : undefined
+                    }
                     onChange={actions.clearEmailError}
                   />
                 </InputBox>
@@ -114,7 +115,6 @@ export function LoginForm({
                     name="password"
                     type={state.passwordVisibility.type}
                     tabIndex={2}
-                    className={kcClsx("kcInputClass")}
                     placeholder="비밀번호를 입력해 주세요."
                     autoComplete="current-password"
                     aria-invalid={!!state.errors.password}
@@ -164,7 +164,10 @@ export function LoginForm({
                 aria-pressed={state.rememberMe}
               >
                 {state.rememberMe ? (
-                  <CheckboxCheckedIcon style={{ color: "#5B29C7" }} aria-hidden="true" />
+                  <CheckboxCheckedIcon
+                    style={{ color: "#5B29C7" }}
+                    aria-hidden="true"
+                  />
                 ) : (
                   <CheckboxIcon aria-hidden="true" />
                 )}
@@ -172,7 +175,9 @@ export function LoginForm({
               </RememberMeButton>
 
               {realm.resetPasswordAllowed && (
-                <ForgotPasswordLink href={`${window.location.origin}/reset-password`}>
+                <ForgotPasswordLink
+                  href={`${window.location.origin}/reset-password`}
+                >
                   비밀번호를 잊으셨나요?
                 </ForgotPasswordLink>
               )}
@@ -199,21 +204,26 @@ export function LoginForm({
                 </SubmitButton>
               </SubmitButtonWrapper>
 
-              {realm.password && realm.registrationAllowed && !registrationDisabled && (
-                <SignUpPrompt>
-                  아직 계정이 없으신가요?
-                  <a href={`${window.location.origin}/signup`} tabIndex={6}>
-                    회원 가입하기
-                  </a>
-                </SignUpPrompt>
-              )}
+              {realm.password &&
+                realm.registrationAllowed &&
+                !registrationDisabled && (
+                  <SignUpPrompt>
+                    아직 계정이 없으신가요?
+                    <a href={`${window.location.origin}/signup`} tabIndex={6}>
+                      회원 가입하기
+                    </a>
+                  </SignUpPrompt>
+                )}
             </div>
 
             {/* 소셜 로그인 */}
             {hasSocialProviders && social?.providers && (
-              <SocialProviders id="kc-social-providers" aria-label="소셜 로그인">
+              <SocialProviders
+                id="kc-social-providers"
+                aria-label="소셜 로그인"
+              >
                 <SocialProvidersList>
-                  {social.providers.map(provider => (
+                  {social.providers.map((provider) => (
                     <SocialProviderItem key={provider.providerId}>
                       <a
                         href={provider.loginUrl}
