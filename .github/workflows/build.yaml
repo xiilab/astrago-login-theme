@@ -3,7 +3,7 @@ on:
   push:
     # Pattern matched against refs/tags
     tags:
-      - '**' # Push events to matching v*, i.e. v1.0, v20.15.10
+      - "**" # Push events to matching v*, i.e. v1.0, v20.15.10
 
 jobs:
   build:
@@ -28,8 +28,8 @@ jobs:
       - name: Setup Java (Maven 의존성)
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
-          java-version: '21'
+          distribution: "temurin"
+          java-version: "21"
 
       - name: Install dependencies
         run: npm ci
@@ -91,7 +91,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.TOKEN }}
-          repository: 'xiilab/astrago-deployment'
+          repository: "xiilab/astrago-deployment"
           #ref: release
           #yq eval ".keycloak.image.tag = \"$VERSION\"" -i environments/prod/values.yaml
           ref: stabilize/1.0
@@ -101,20 +101,25 @@ jobs:
           VERSION="${{ needs.build.outputs.version }}"
           yq eval ".keycloak.image.tag = \"$VERSION\"" -i helmfile/environments/customers/xiilab/values.yaml
 
-      - name: Commit and push changes
-        run: |
-          git config --global user.email "action@github.com"
-          git config --global user.name "GitHub Action"
-          git add helmfile/
-          git commit -m "Update keycloak theme to ${{ needs.build.outputs.version }}"
-          git push
+      - name: Create Pull Request for stabilize/1.0
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.TOKEN }}
+          commit-message: "Update keycloak theme to ${{ needs.build.outputs.version }}"
+          title: "chore: Update keycloak theme to ${{ needs.build.outputs.version }}"
+          body: |
+            자동 생성된 PR입니다.
+            - Keycloak 테마 버전: `${{ needs.build.outputs.version }}`
+            - Docker 이미지: `xiilab/astrago-keycloak-theme:${{ needs.build.outputs.version }}`
+          branch: chore/update-keycloak-theme-${{ needs.build.outputs.version }}
+          base: stabilize/1.0
 
       # release 브랜치도 업데이트
       - name: Checkout astrago-deployment release branch
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.TOKEN }}
-          repository: 'xiilab/astrago-deployment'
+          repository: "xiilab/astrago-deployment"
           ref: release
 
       - name: Update theme version in release branch
@@ -122,20 +127,25 @@ jobs:
           VERSION="${{ needs.build.outputs.version }}"
           yq eval ".keycloak.image.tag = \"$VERSION\"" -i environments/prod/values.yaml
 
-      - name: Commit and push release changes
-        run: |
-          git config --global user.email "action@github.com"
-          git config --global user.name "GitHub Action"
-          git add environments/
-          git commit -m "Update keycloak theme to ${{ needs.build.outputs.version }}"
-          git push
+      - name: Create Pull Request for release
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.TOKEN }}
+          commit-message: "Update keycloak theme to ${{ needs.build.outputs.version }}"
+          title: "chore: Update keycloak theme to ${{ needs.build.outputs.version }}"
+          body: |
+            자동 생성된 PR입니다.
+            - Keycloak 테마 버전: `${{ needs.build.outputs.version }}`
+            - Docker 이미지: `xiilab/astrago-keycloak-theme:${{ needs.build.outputs.version }}`
+          branch: chore/update-keycloak-theme-${{ needs.build.outputs.version }}-release
+          base: release
 
   notify_slack:
     if: startsWith(github.ref, 'refs/tags/v')
     needs: [build, update_astrago_deployment]
     runs-on: ubuntu-latest
     permissions:
-      actions: 'read'
+      actions: "read"
     steps:
       - name: Send Slack Notification
         env:
