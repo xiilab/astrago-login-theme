@@ -1,21 +1,16 @@
-# Use the same base image as astrago-deployment
-FROM bitnamilegacy/keycloak:22.0.5-debian-11-r2
+FROM quay.io/keycloak/keycloak:26.4.7
 
-# Switch to root for file operations
 USER root
 
-# Copy the built JAR file directly
-COPY build_keycloak/target/keycloak-theme.jar /opt/bitnami/keycloak/providers/keycloak-theme.jar
+COPY build_keycloak/target/keycloak-theme.jar /opt/keycloak/providers/keycloak-theme.jar
 
-# Set proper permissions
-RUN chown -R 1001:1001 /opt/bitnami/keycloak/providers/keycloak-theme.jar
+RUN chown -R 1000:0 /opt/keycloak/providers/keycloak-theme.jar \
+    && chmod 0644 /opt/keycloak/providers/keycloak-theme.jar \
+    && /opt/keycloak/bin/kc.sh build
 
-# Switch back to non-root user
-USER 1001
+USER 1000
 
-# Expose the default Keycloak port
 EXPOSE 8080
 
-# Use the default Keycloak entrypoint
-ENTRYPOINT ["/opt/bitnami/scripts/keycloak/entrypoint.sh"]
-CMD ["/opt/bitnami/scripts/keycloak/run.sh"]
+ENTRYPOINT ["/opt/keycloak/bin/kc.sh"]
+CMD ["start"]
