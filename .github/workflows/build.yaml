@@ -30,7 +30,6 @@ jobs:
         with:
           distribution: "temurin"
           java-version: "21"
-          cache: "maven"
 
       - name: Verify Maven installation
         run: mvn --version
