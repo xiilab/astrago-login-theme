@@ -74,6 +74,17 @@ jobs:
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "Using version: $VERSION"
 
+      - name: Debug - Check dist_keycloak folder
+        run: |
+          echo "=== Current directory ==="
+          pwd
+          echo "=== Directory listing ==="
+          ls -la
+          echo "=== dist_keycloak folder ==="
+          ls -la dist_keycloak/ || echo "dist_keycloak folder not found!"
+          echo "=== .dockerignore contents ==="
+          cat .dockerignore
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
