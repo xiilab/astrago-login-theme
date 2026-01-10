@@ -213,7 +213,7 @@ export function LoginForm({
             {hasSocialProviders && social?.providers && (
               <SocialProviders id="kc-social-providers" aria-label="소셜 로그인">
                 <SocialProvidersList>
-                  {social.providers.map((provider) => (
+                  {social.providers.map(provider => (
                     <SocialProviderItem key={provider.providerId}>
                       <a
                         href={provider.loginUrl}
