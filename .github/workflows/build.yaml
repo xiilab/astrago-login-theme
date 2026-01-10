@@ -9,6 +9,8 @@ jobs:
   build:
     name: Create keycloak-theme.jar
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     strategy:
       matrix:
         node-version: [18.18.2]
@@ -38,7 +40,7 @@ jobs:
           draft: false
           prerelease: false
         env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
       # 새로 추가할 Docker 이미지 빌드 단계들
       - name: Set up Docker Buildx
