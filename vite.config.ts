@@ -12,11 +12,8 @@ export default defineConfig({
       themeName: ["astrago", "astrago-variant-1"],
       accountThemeImplementation: "none",
       keycloakVersionTargets: {
-        hasAccountTheme: false,
-        "21-and-below": false,
-        "23": false,
-        "24": false,
-        "25-and-above": "keycloak-theme.jar"
+        "all-other-versions": "keycloak-theme.jar",
+        "22-to-25": false
       }
     })
   ],
