@@ -47,10 +47,14 @@ jobs:
         run: |
           echo "=== Find all JAR files ==="
           find . -name "*.jar" -type f 2>/dev/null || echo "No JAR files found"
-          echo "=== dist_keycloak after build ==="
-          ls -la dist_keycloak/ || echo "dist_keycloak not found"
-          echo "=== Check for other keycloak output dirs ==="
-          ls -la | grep -i keycloak || echo "No keycloak dirs found"
+          echo "=== dist_keycloak full contents (recursive) ==="
+          ls -laR dist_keycloak/ || echo "dist_keycloak not found"
+          echo "=== dist folder contents ==="
+          ls -la dist/ || echo "dist not found"
+          echo "=== Check Maven path ==="
+          which mvn
+          echo "=== dist_keycloak/.gitignore content ==="
+          cat dist_keycloak/.gitignore || echo "No .gitignore"
 
       # [변경됨] 최신 액션으로 릴리스 생성 및 업로드 통합
       - name: Create Release and Upload Asset
