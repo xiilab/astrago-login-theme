@@ -1,225 +1,161 @@
-<p align="center">
-    <i>🚀 A starter/demo project for <a href="https://keycloakify.dev">Keycloakify</a> v9 🚀</i>
-    <br/>
-    <br/>
-    <img src="https://github.com/codegouvfr/keycloakify-starter/workflows/ci/badge.svg?branch=main">
-    <br/>
-    <br/>
-    <a href="https://starter.keycloakify.dev">Authenticated React SPA</a>
-</p>
+# AstraGo Login Theme
 
-# Introduction
+Keycloak 26.x 호환 로그인 테마 (Keycloakify 11.x + Vite 기반)
 
-Uyuni 키클락 테마 파일
+## 요구사항
 
-# Quick start
+- Node.js 18.x 이상
+- npm 9.x 이상
+- Maven (테마 JAR 빌드 시 필요)
+
+## 빠른 시작
 
 ```bash
-git clone https://github.com/keycloakify/keycloakify-starter
+# 의존성 설치
+npm install
 
-cd keycloakify-starter
+# 개발 서버 실행
+npm run dev
 
-yarn # install dependencies (it's like npm install)
+# 프로덕션 빌드
+npm run build
 
-yarn storybook # Start Storybook
-               # This is by far the best way to develop your theme
-               # This enable to quickly see your pages in isolation and in different states.
-               # You can create stories even for pages that you haven't explicitly overloaded. See src/keycloak-theme/login/pages/LoginResetPassword.stories.tsx
-               # See Keycloakify's storybook for if you need a starting point for your stories: https://github.com/keycloakify/keycloakify/tree/main/stories
-
-yarn start # See the Hello World app
-           # Uncomment line 97 of src/keycloak-theme/login/kcContext where it reads: `mockPageId: "login.ftl"`, reload https://localhost:3000
-           # You can now develop your Login pages. (Don't forget to comment it back when you're done)
-
-# Install mvn (Maven) if not already done. On mac it's 'brew install maven', on Ubuntu/Debian it's 'sudo apt-get install maven'
-
-yarn build-keycloak-theme # Actually build the theme
-                          # Read the instruction printed on the console to see how to test
-                          # your theme on a real Keycloak instance.
-
-npx eject-keycloak-page # Prompt that let you select the pages you want to customize
-                        # This CLI tools is not guaranty to work, you can always copy pase pages
-                        # from the Keycloakify repo.
-
-npx initialize-email-theme # For initializing your email theme
-                           # Note that Keycloakify does not feature React integration for email yet.
-
-npx download-builtin-keycloak-theme # For downloading the default theme (as a reference)
-                                    # Look for the files in build_keycloak/src/main/resources/theme/{base,keycloak}
+# Keycloak 테마 JAR 빌드
+npm run build-keycloak-theme
 ```
 
-# 개발 진행
+## 개발 모드
 
-```
-nvm use lts/gallium
-yarn install
-yarn start
-```
+개발 서버 실행 시 `src/main.tsx`에서 Mock KcContext가 자동으로 활성화됩니다.
 
-- ./src/keycloak-theme/login/kcContext.ts 의 파일 수정 : 103 줄
-
-```
-export const { kcContext } = getKcContext({
-  // Uncomment to test the login page for development.
-  //   mockPageId: "login.ftl", // login 화면 개발시 해당 라인 주석 해제후 개발 진행
-  //   mockPageId: "register.ftl", // 회원가입 화면 개발시 해당 라인 주석 해제후 개발 진행
-});
+```typescript
+// src/main.tsx
+if (import.meta.env.DEV) {
+  window.kcContext = getKcContextMock({
+    pageId: "login.ftl",  // 테스트할 페이지 변경 가능
+    overrides: {
+      // 필요시 오버라이드 데이터 추가
+    }
+  });
+}
 ```
 
-# The CI workflow
+### 테스트 가능한 페이지
 
-- You need to manually allow GitHub Action to push on your repository. For this reason the initial setup will fail. You need to enabled permission and re-run failed job: [see video](https://user-images.githubusercontent.com/6702424/213480604-0aac0ea7-487f-491d-94ae-df245b2c7ee8.mov).
-- This CI is configured to publish [the app](https://starter.keycloakify.dev) on [GitHub Pages](https://github.com/codegouvfr/keycloakify-starter/blob/3617a71deb1a6544c3584aa8d6d2241647abd48c/.github/workflows/ci.yaml#L51-L76) and on [DockerHub](https://github.com/codegouvfr/keycloakify-starter/blob/3617a71deb1a6544c3584aa8d6d2241647abd48c/.github/workflows/ci.yaml#L78-L123) (as a Ngnix based docker image). In practice you probably want one or the other but not both... or neither if you are just building a theme (and not a theme + an app).  
-  If you want to enable the CI to publish on DockerHub on your behalf go to repository `Settings` tab, then `Secrets` you will need to add two new secrets:
-  `DOCKERHUB_TOKEN`, you Dockerhub authorization token.  
-  `DOCKERHUB_USERNAME`, Your Dockerhub username.
-  We deploy the demo app at [starter.keycloakify.dev](https://starter.keycloakify.dev) using GitHub page on the branch `gh-pages` (you have to enable it).  
-  To configure your own domain name please refer to [this documentation](https://docs.gitlanding.dev/using-a-custom-domain-name).
-- To release **don't create a tag manually**, the CI do it for you. Just update the `package.json`'s version field and push.
-- The `.jar` files that bundle the Keycloak theme will be attached as an asset with every GitHub release. [Example](https://github.com/InseeFrLab/keycloakify-starter/releases/tag/v0.1.0). The permalink to download the latest version is: `https://github.com/USER/PROJECT/releases/latest/download/keycloak-theme.jar`.
-  For this demo repo it's [here](https://github.com/codegouvfr/keycloakify-starter/releases/latest/download/keycloak-theme.jar)
-- The CI publishes the app docker image on DockerHub. `<org>/<repo>:main` for each **commit** on `main`, `<org>/<repo>:<feature-branch-name>` for each **pull-request** on `main`
-  and when **releasing a new version**: `<org>/<repo>:latest` and `<org>/<repo>:X.Y.Z`
-  [See on DockerHub](https://hub.docker.com/r/codegouvfr/keycloakify-starter)
+- `login.ftl` - 로그인 페이지
+- `register.ftl` - 회원가입 페이지
+- `login-reset-password.ftl` - 비밀번호 재설정
+- `login-update-password.ftl` - 비밀번호 변경
+- `error.ftl` - 에러 페이지
 
-![image](https://user-images.githubusercontent.com/6702424/229296422-9d522707-114e-4282-93f7-01ca38c3a1e0.png)
+## 프로젝트 구조
 
-![image](https://user-images.githubusercontent.com/6702424/229296556-a69f2dc9-4653-475c-9c89-d53cf33dc05a.png)
+```
+src/
+├── keycloak-theme/
+│   ├── login/
+│   │   ├── pages/           # 커스텀 페이지 컴포넌트
+│   │   │   └── Login.tsx    # 로그인 페이지
+│   │   ├── i18n.ts          # 다국어 설정
+│   │   ├── KcContext.ts     # KcContext 타입 확장
+│   │   ├── KcPage.tsx       # 페이지 라우터
+│   │   ├── KcPageStory.tsx  # 개발용 Mock Context
+│   │   └── Template.tsx     # 페이지 템플릿
+│   └── kc.gen.ts            # Keycloakify 자동 생성 파일
+├── main.tsx                 # 앱 엔트리포인트
+└── main.app.tsx             # 비-Keycloak 앱 (선택)
+```
 
-# The storybook
-
-![image](https://user-images.githubusercontent.com/6702424/232350420-1921af90-d33e-492e-9296-0083298a84fa.png)
+## 빌드 출력
 
 ```bash
-yarn
-yarn storybook
+npm run build-keycloak-theme
 ```
 
-# Docker
+빌드 후 생성되는 파일:
+- `dist_keycloak/keycloak-theme.jar` - Keycloak 25+ 호환 테마
 
-Instructions for building and running the react app (`src/App`) that is collocated with our Keycloak theme.
+## Keycloak에 테마 적용
+
+1. JAR 파일을 Keycloak의 `providers/` 디렉토리에 복사
+2. Keycloak 재시작
+3. Admin Console에서 Realm Settings > Themes > Login Theme 선택
 
 ```bash
-docker build -f Dockerfile -t keycloakify/keycloakify-starter:main .
-docker run -it -dp 8083:80 keycloakify/keycloakify-starter:main
-# You can access the app at http://localhost:8083
+# Docker 예시
+docker cp dist_keycloak/keycloak-theme.jar keycloak:/opt/keycloak/providers/
+docker exec keycloak /opt/keycloak/bin/kc.sh build
+docker restart keycloak
 ```
 
-# Standalone keycloak theme
+## 환경 변수
 
-If you are only looking to create a keycloak theme, you can run theses few commands
-after clicking ![image](https://user-images.githubusercontent.com/6702424/98155461-92395e80-1ed6-11eb-93b2-98c64453043f.png) to refactor the template
-and remove unnecessary files.
+vite.config.ts에서 Keycloakify 설정 확인:
+
+```typescript
+keycloakify({
+  accountThemeImplementation: "none",
+  keycloakVersionTargets: {
+    hasAccountTheme: false,
+    "21-and-below": false,
+    "23": false,
+    "24": false,
+    "25-and-above": "keycloak-theme.jar"
+  }
+})
+```
+
+## CI/CD
+
+### GitHub Actions
+
+`v*` 태그 푸시 시 자동으로:
+1. 테마 빌드
+2. Docker 이미지 빌드 및 푸시
+3. GitHub Release 생성
 
 ```bash
-rm -r src/App
-mv src/keycloak-theme/* src/
-rm -r src/keycloak-theme
-
-cat << EOF > src/index.tsx
-import { createRoot } from "react-dom/client";
-import { StrictMode, lazy, Suspense } from "react";
-import { kcContext as kcLoginThemeContext } from "./login/kcContext";
-import { kcContext as kcAccountThemeContext } from "./account/kcContext";
-
-const KcLoginThemeApp = lazy(() => import("./login/KcApp"));
-const KcAccountThemeApp = lazy(() => import("./account/KcApp"));
-
-createRoot(document.getElementById("root")!).render(
-    <StrictMode>
-        <Suspense>
-            {(()=>{
-
-                if( kcLoginThemeContext !== undefined ){
-                    return <KcLoginThemeApp kcContext={kcLoginThemeContext} />;
-                }
-
-                if( kcAccountThemeContext !== undefined ){
-                    return <KcAccountThemeApp kcContext={kcAccountThemeContext} />;
-                }
-
-                throw new Error(
-                  "This app is a Keycloak theme" +
-                  "It isn't meant to be deployed outside of Keycloak"
-                );
-
-            })()}
-        </Suspense>
-    </StrictMode>
-);
-
-EOF
-
-rm .dockerignore Dockerfile nginx.conf
-
-cat << EOF > .github/workflows/ci.yaml
-name: ci
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
-
-jobs:
-
-  test:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-node@v2
-    - uses: bahmutov/npm-install@v1
-    - run: yarn build
-    - run: npx keycloakify
-      env:
-        XDG_CACHE_HOME: "/home/runner/.cache/yarn"
-
-  check_if_version_upgraded:
-    name: Check if version upgrade
-    if: github.event_name == 'push'
-    runs-on: ubuntu-latest
-    needs: test
-    outputs:
-      from_version: \${{ steps.step1.outputs.from_version }}
-      to_version: \${{ steps.step1.outputs.to_version }}
-      is_upgraded_version: \${{ steps.step1.outputs.is_upgraded_version }}
-    steps:
-    - uses: garronej/ts-ci@v2.1.0
-      id: step1
-      with:
-        action_name: is_package_json_version_upgraded
-        branch: \${{ github.head_ref || github.ref }}
-
-  create_github_release:
-    runs-on: ubuntu-latest
-    needs: check_if_version_upgraded
-    # We create a release only if the version have been upgraded and we are on a default branch
-    if: needs.check_if_version_upgraded.outputs.is_upgraded_version == 'true' && github.event_name == 'push'
-    steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-node@v2
-    - uses: bahmutov/npm-install@v1
-    - run: yarn build
-    - run: npx keycloakify
-      env:
-        XDG_CACHE_HOME: "/home/runner/.cache/yarn"
-    - run: mv build_keycloak/target/retrocompat-*.jar retrocompat-keycloak-theme.jar
-    - run: mv build_keycloak/target/*.jar keycloak-theme.jar
-    - uses: softprops/action-gh-release@v1
-      with:
-        name: Release v\${{ needs.check_if_version_upgraded.outputs.to_version }}
-        tag_name: v\${{ needs.check_if_version_upgraded.outputs.to_version }}
-        target_commitish: \${{ github.head_ref || github.ref }}
-        generate_release_notes: true
-        draft: false
-        files: |
-          retrocompat-keycloak-theme.jar
-          keycloak-theme.jar
-      env:
-        GITHUB_TOKEN: \${{ secrets.GITHUB_TOKEN }}
-
-EOF
+# 릴리즈 방법
+# 1. package.json version 업데이트
+# 2. 태그 생성 및 푸시
+git tag v1.0.0
+git push origin v1.0.0
 ```
 
-You can also remove `oidc-spa`, `powerhooks` and `tsafe` from your dependencies.
+### GitLab CI
+
+main 브랜치 푸시 및 태그 생성 시 자동 빌드
+
+## 커스터마이징
+
+### 새 페이지 추가
+
+1. `src/keycloak-theme/login/pages/` 에 컴포넌트 생성
+2. `KcPage.tsx`에서 import 및 라우팅 추가
+
+### 스타일 수정
+
+- Emotion styled-components 사용
+- `Template.tsx`에서 전역 스타일 수정
+- 각 페이지 컴포넌트에서 개별 스타일 적용
+
+### 다국어 추가
+
+`src/keycloak-theme/login/i18n.ts`에서 번역 추가:
+
+```typescript
+.withCustomTranslations({
+  en: {
+    // 기본 번역 (현재 한국어로 설정됨)
+  },
+  ko: {
+    // 한국어 번역 추가 시
+  }
+})
+```
+
+## 참고 자료
+
+- [Keycloakify 공식 문서](https://docs.keycloakify.dev/)
+- [Keycloakify GitHub](https://github.com/keycloakify/keycloakify)
+- [Keycloak 테마 가이드](https://www.keycloak.org/docs/latest/server_development/#_themes)
