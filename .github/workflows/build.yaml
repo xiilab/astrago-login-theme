@@ -9,6 +9,9 @@ jobs:
   build:
     name: Create keycloak-theme.jar
     runs-on: ubuntu-latest
+    # 릴리스 생성을 위해 쓰기 권한이 필요합니다.
+    permissions:
+      contents: write
     strategy:
       matrix:
         node-version: [18.18.2]
@@ -28,33 +31,19 @@ jobs:
       - run: mv build_keycloak/target/retrocompat-*.jar build_keycloak/target/retrocompat-keycloak-theme.jar
       - run: mv build_keycloak/target/astrago-*.jar build_keycloak/target/keycloak-theme.jar
 
-      - name: Create release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }} # This token is provided by Actions, you do not need to create your own token
+      # [변경됨] 최신 액션으로 릴리스 생성 및 업로드 통합
+      - name: Create Release and Upload Asset
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
           body: |
             - 깃헙 액션에서 자동으로 생성됨
-          draft: true
+          draft: false # 즉시 배포 (draft를 원하면 true로 변경)
           prerelease: false
-      - name: Upload release asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: build_keycloak/target/keycloak-theme.jar
-          asset_name: keycloak-theme.jar
-          asset_content_type: application/java-archive
-      - name: Publish release
-        uses: StuYarrow/publish-release@v1.1.2
-        env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
-        with:
-          id: ${{ steps.create_release.outputs.id }}
+          files: |
+            build_keycloak/target/keycloak-theme.jar
 
       # 새로 추가할 Docker 이미지 빌드 단계들
       - name: Set up Docker Buildx
