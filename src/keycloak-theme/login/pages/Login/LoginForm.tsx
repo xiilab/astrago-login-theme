@@ -204,20 +204,16 @@ export function LoginForm({
                 </SubmitButton>
               </SubmitButtonWrapper>
 
-              {realm.password &&
-                realm.registrationAllowed &&
-                !registrationDisabled && (
-                  <SignUpPrompt>
-                    아직 계정이 없으신가요?
-                    <a href={`${window.location.origin}/signup`} tabIndex={6}>
-                      회원 가입하기
-                    </a>
-                  </SignUpPrompt>
-                )}
+              <SignUpPrompt>
+                아직 계정이 없으신가요?
+                <a href={`${window.location.origin}/signup`} tabIndex={6}>
+                  회원 가입하기
+                </a>
+              </SignUpPrompt>
             </div>
 
             {/* 소셜 로그인 */}
-            {hasSocialProviders && social?.providers && (
+            {/* {hasSocialProviders && social?.providers && (
               <SocialProviders
                 id="kc-social-providers"
                 aria-label="소셜 로그인"
@@ -237,7 +233,7 @@ export function LoginForm({
                   ))}
                 </SocialProvidersList>
               </SocialProviders>
-            )}
+            )} */}
           </form>
         )}
       </div>
