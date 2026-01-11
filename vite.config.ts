@@ -9,7 +9,7 @@ export default defineConfig({
     svgr(),
     react(),
     keycloakify({
-      themeName: ["astrago-v2"],
+      themeName: ["astrago", "astrago-variant-1"],
       accountThemeImplementation: "none",
       keycloakVersionTargets: {
         "all-other-versions": "keycloak-theme.jar",
