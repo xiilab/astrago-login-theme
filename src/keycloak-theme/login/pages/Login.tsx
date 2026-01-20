@@ -61,7 +61,8 @@ export default function Login(
 
   console.log('kcContext:', kcContext);
 
-  const { msg, msgStr } = i18n;
+  const { msg, msgStr, changeLocale, currentLanguageTag } = i18n;
+  const isIntlEnabled = kcContext.realm?.internationalizationEnabled ?? false;
 
   const [isLoginButtonDisabled, setIsLoginButtonDisabled] = useState(false);
   const [passwordType, setPasswordType] = useState({
@@ -72,6 +73,50 @@ export default function Login(
   const [validationMessage, setValidationMessage] = useState<
     string | undefined
   >(undefined);
+  // 언어 설정 상태 (선택 UI 제거 후 자동 처리)
+  const initialLocaleTag: 'ko' | 'en' =
+    isIntlEnabled && currentLanguageTag === 'en' ? 'en' : 'ko';
+  const [localeTag, setLocaleTag] = useState<'ko' | 'en'>(initialLocaleTag);
+
+  // 초기 로드 시 URL에서 lang 파라미터 확인 및 redirect_uri 업데이트
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const applyLocale = (lang: 'ko' | 'en') => {
+      setLocaleTag(prev => (prev === lang ? prev : lang));
+      if (isIntlEnabled && lang !== currentLanguageTag) {
+        changeLocale(lang);
+      }
+    };
+
+    const currentUrl = new URL(window.location.href);
+    const redirectUri = currentUrl.searchParams.get('redirect_uri');
+
+    try {
+      if (!redirectUri) {
+        applyLocale(localeTag);
+        return;
+      }
+
+      const decodedRedirectUri = decodeURIComponent(redirectUri);
+      const redirectUrl = new URL(decodedRedirectUri);
+      const existingLang = redirectUrl.searchParams.get('lang');
+
+      if (existingLang === 'ko' || existingLang === 'en') {
+        applyLocale(existingLang);
+      } else {
+        redirectUrl.searchParams.set('lang', localeTag);
+        const updatedRedirectUri = encodeURIComponent(redirectUrl.toString());
+        currentUrl.searchParams.set('redirect_uri', updatedRedirectUri);
+        window.history.replaceState({}, '', currentUrl.toString());
+        applyLocale(localeTag);
+      }
+    } catch (error) {
+      console.warn('Failed to process redirect_uri:', error);
+    }
+  }, [changeLocale, currentLanguageTag, isIntlEnabled, localeTag]);
 
   // ===== onSubmit 함수 수정 =====
   const onSubmit = useConstCallback<FormEventHandler<HTMLFormElement>>((e) => {
@@ -338,6 +383,7 @@ export default function Login(
                         </PasswordInputWrapper>
                       </div>
 
+                      <input type="hidden" name="kc_locale" value={localeTag} />
                       {/* <div
                     className={clsx(
                       getClassName('kcFormGroupClass'),
