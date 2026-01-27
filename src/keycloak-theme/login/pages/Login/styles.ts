@@ -10,13 +10,21 @@ import styled from "@emotion/styled";
 export const PageContainer = styled.div`
   width: 100vw;
   height: 100vh;
-  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
   background-color: #fff;
-  overflow: hidden;
+`;
+
+export const PageContainerInner = styled.div`
+  height: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
 `;
 
 export const FormPanel = styled.div`
-  flex: 0 0 620px;
+  width: 620px;
+  flex-shrink: 0;
   height: 100%;
   padding: 30px 90px;
   display: flex;
@@ -32,7 +40,7 @@ export const FormPanelContent = styled.div`
 
 export const BackgroundPanel = styled.div<{ $backgroundUrl: string }>`
   flex: 1;
-  min-width: 1200px;
+  min-width: 620px;
   height: 100%;
   background: url(${(props) => props.$backgroundUrl}) center / cover no-repeat;
 `;
@@ -274,7 +282,11 @@ export const SubmitButtonWrapper = styled.div`
 export const SubmitButton = styled.button`
   width: 100%;
   height: 34px;
-  background: radial-gradient(74.04% 44.5% at 50% 50%, #15155d 0%, #070913 100%);
+  background: radial-gradient(
+    74.04% 44.5% at 50% 50%,
+    #15155d 0%,
+    #070913 100%
+  );
   border: 1px solid #000;
   border-radius: 2px;
   box-shadow: 0 2px 2px rgba(0, 0, 0, 0.15);

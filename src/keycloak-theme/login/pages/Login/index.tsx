@@ -28,6 +28,7 @@ import {
   LogoWrapper,
   PageTitle,
   PageSubtitle,
+  PageContainerInner,
 } from "./styles";
 
 type LoginProps = PageProps<Extract<KcContext, { pageId: "login.ftl" }>, I18n>;
@@ -40,43 +41,47 @@ export default function Login(props: LoginProps) {
 
   return (
     <PageContainer>
-      <FormPanel>
-        <FormPanelContent>
-          <Template
-            kcContext={kcContext}
-            i18n={i18n}
-            doUseDefaultCss={doUseDefaultCss}
-            classes={classes}
-            displayInfo={social?.displayInfo}
-            headerNode={<></>}
-          >
-            <LoginFormWrapper>
-              {/* 헤더 */}
-              <Header>
-                <LogoWrapper>
-                  <LogoIcon aria-hidden="true" />
-                </LogoWrapper>
-                <PageTitle>Log in</PageTitle>
-              </Header>
-              <PageSubtitle>세상의 모든 GPU, AstraGo로 관리해 보세요.</PageSubtitle>
+      <PageContainerInner>
+        <FormPanel>
+          <FormPanelContent>
+            <Template
+              kcContext={kcContext}
+              i18n={i18n}
+              doUseDefaultCss={doUseDefaultCss}
+              classes={classes}
+              displayInfo={social?.displayInfo}
+              headerNode={<></>}
+            >
+              <LoginFormWrapper>
+                {/* 헤더 */}
+                <Header>
+                  <LogoWrapper>
+                    <LogoIcon aria-hidden="true" />
+                  </LogoWrapper>
+                  <PageTitle>Log in</PageTitle>
+                </Header>
+                <PageSubtitle>
+                  세상의 모든 GPU, AstraGo로 관리해 보세요.
+                </PageSubtitle>
 
-              {/* 로그인 폼 */}
-              <LoginForm
-                kcContext={kcContext}
-                i18n={i18n}
-                doUseDefaultCss={doUseDefaultCss}
-                classes={classes}
-                form={form}
-              />
-            </LoginFormWrapper>
-          </Template>
-        </FormPanelContent>
+                {/* 로그인 폼 */}
+                <LoginForm
+                  kcContext={kcContext}
+                  i18n={i18n}
+                  doUseDefaultCss={doUseDefaultCss}
+                  classes={classes}
+                  form={form}
+                />
+              </LoginFormWrapper>
+            </Template>
+          </FormPanelContent>
 
-        {/* 푸터 */}
-        <Footer />
-      </FormPanel>
+          {/* 푸터 */}
+          <Footer />
+        </FormPanel>
 
-      <BackgroundPanel $backgroundUrl={backgroundImage} aria-hidden="true" />
+        <BackgroundPanel $backgroundUrl={backgroundImage} aria-hidden="true" />
+      </PageContainerInner>
     </PageContainer>
   );
 }
